@@ -1,0 +1,112 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <style type="text/css">
+            .ui-panel {
+                margin-top:20px
+            }
+        </style>
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+        <h:outputScript name="js/es.js" library="sentinel-layout" />
+        <h3 class="hardblue TexAlCenter">Reporte Comprobantes</h3>
+        <p:panel>
+            <p:messages id="m-mensajes" showDetail="true" autoUpdate="true" closable="true" />
+            <h:form id="form-noautorizados">
+                <script>
+                    function soloNumeros(evt)
+                    {
+                        tecla = (document.all) ? evt.keyCode : evt.which;
+                        //Tecla de retroceso para borrar, siempre la permite
+                        if (tecla === 8)
+                            return true;
+                        // Patron de entrada, en este caso solo acepta letras
+                        patron = /\d/;
+
+                        tecla_final = String.fromCharCode(tecla);
+                        return patron.test(tecla_final);
+
+                        //Solo números patron = /\d/;
+
+                        //Números y letras patron = /\w/;
+
+                        //No acepta números patron = /\D/;
+
+                    }
+                </script>
+                <h:panelGrid columns="2" style="margin: auto;">
+                    <p:spacer height="50"/>
+                    <p:spacer height="50"/>
+                    <p:outputLabel value="Seleccione un mes:" style="font-size:16px;"/>
+
+
+                    <p:selectOneMenu id="console" value="#{beanReporte.messelecionado}" style="width:125px;margin-left:20px">
+                        <f:selectItem itemLabel="Enero" itemValue="1" />
+                        <f:selectItem itemLabel="Febrero" itemValue="2" />
+                        <f:selectItem itemLabel="Marzo" itemValue="3" />
+                        <f:selectItem itemLabel="Abril" itemValue="4" />
+                        <f:selectItem itemLabel="Mayo" itemValue="5" />
+                        <f:selectItem itemLabel="Junio" itemValue="6" />
+                        <f:selectItem itemLabel="Julio" itemValue="7" />
+                        <f:selectItem itemLabel="Agosto" itemValue="8" />
+                        <f:selectItem itemLabel="Septiembre" itemValue="9" />
+                        <f:selectItem itemLabel="Octubre" itemValue="10" />
+                        <f:selectItem itemLabel="Noviembre" itemValue="11" />
+                        <f:selectItem itemLabel="Diciembre" itemValue="12" />
+                        <p:ajax listener="#{beanReporte.obtenerComprobantes()}" update="dt-comprobantes-emitidos-autorizados"/>
+                    </p:selectOneMenu>
+                    <p:outputLabel value="Año" style="font-size:16px;"/>
+                    <p:inputText maxlength="4"  value="#{beanReporte.anioSeleccionado}"  size="15"  onkeypress="return soloNumeros(event);"  style="font-size:16px;margin-left:20px;">
+                        <p:ajax listener="#{beanReporte.obtenerComprobantes()}" update="dt-comprobantes-emitidos-autorizados"/>
+                    </p:inputText>
+                </h:panelGrid>
+                <div class="EmptyBox10 "/>
+
+                <p:dataTable id="dt-comprobantes-emitidos-autorizados" widgetVar="wv-dt-emitidos-autorizados" var="registro" value="#{beanReporte.comprobantesRecibidos}" paginator="true" rows="15" emptyMessage="No hay registros." 
+                             paginatorPosition="bottom"
+                             rowsPerPageTemplate="5,10,15"  reflow="true" rowKey="#{registro.idAsignacionComprobanteElectronico}"  scrollable="false" >
+
+                    <p:column headerText="Nombres Comercial" width="35" >
+                        <h:outputText value="#{registro.comprobanteElectronico.nombreComercialEmisorComprobanteElectronico}" />
+                    </p:column>
+                    <p:column headerText="Ruc Emisor" width="20" >
+                        <h:outputText value="#{registro.comprobanteElectronico.rucEmisorComprobanteElectronico}" />
+                    </p:column>
+                    <p:column headerText="Fecha Emision" width="20">
+                        <h:outputText value="#{registro.comprobanteElectronico.fechaEmisionComprobanteElectronico}" >
+                            <f:convertDateTime pattern="dd/MM/yyyy " />
+                        </h:outputText>
+
+                    </p:column>
+                    <p:column headerText="Secuencial" width="20">
+                        <h:outputText value="#{registro.comprobanteElectronico.secuencialComprobanteElectronico}" >
+
+                        </h:outputText>
+
+                    </p:column>
+                    <p:column headerText="Numero Autorizacion" width="55">
+                        <h:outputText value="#{registro.comprobanteElectronico.numeroAutorizacionComprobanteElectronico}" >
+
+                        </h:outputText>
+
+                    </p:column>
+
+
+
+
+                </p:dataTable>
+                <h:panelGrid columns="1"  style="margin-left:270px;margin-top:40px;">
+                    <p:commandButton ajax="false" style="width:400px" value="Generar Reporte" action="#{beanReporte.generacionreporte()}"/>
+                    <p:spacer height="10"/>
+
+                </h:panelGrid>
+            </h:form>
+
+        </p:panel>
+    </ui:define>
+</ui:composition>
+

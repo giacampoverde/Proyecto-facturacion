@@ -1,0 +1,158 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <style type="text/css">
+            .ui-panel {
+                margin-top:20px
+            }
+        </style>
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+
+        <h3 class="hardblue TexAlCenter">Comprobantes Recibidos Autorizados</h3>
+        <p:panel>
+            <p:messages id="m-mensajes" showDetail="true" autoUpdate="true" closable="true" />
+            <h:form id="form-recibidos">
+                <h:panelGrid  columns="1" style="margin-left: auto; margin-right: auto;font-size:12px;margin-top:50px;" >
+                    <h:outputText value="Cargar comprobante Xml" styleClass="FontBold Fs14 hardblue"/>    
+                    <p:fileUpload  fileUploadListener="#{ beanComprobantesRecibidos.cargaxml}"
+                                   allowTypes="/(\.|\/)(xml)$/" sizeLimit="100000000"
+                                   uploadLabel="Subir"
+                                   cancelLabel="Cancelar"
+                                   update=":form-recibidos"
+                                   label="Seleccionar"
+
+                                   />
+                </h:panelGrid>
+                <h:panelGrid rendered="false"  columns="1" style="margin-left: auto; margin-right: auto;font-size:12px;margin-top:50px;" >
+                    <h:outputText value="Cargar comprobantes por Txt" styleClass="FontBold Fs14 hardblue"/>    
+                    <p:fileUpload  fileUploadListener="#{beanComprobantesRecibidos.cargatxtclavesAcceso}"
+                                   allowTypes="/(\.|\/)(txt)$/" sizeLimit="100000000"
+                                   uploadLabel="Subir"
+                                   cancelLabel="Cancelar"
+                                   update=":form-recibidos"
+                                   label="Seleccionar"
+
+                                   />
+                </h:panelGrid>
+                <p:panel>
+
+                    <h:outputText value="Búsquedas:" styleClass="FontBold Fs14 hardblue"/>
+                    <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none" class="Wid70 TexAlCenter MarAuto">
+                        <h:outputText value="Fecha:" styleClass="FontBold Fs14 hardblue"/>                
+                        <p:selectOneMenu id="som-fechas" value="#{beanComprobantesRecibidos.seleccionPeriodoTiempo}" effect="drop" >
+                            <f:selectItem itemLabel="Todos" itemValue="1" />
+                            <f:selectItem itemLabel="Hoy" itemValue="2" />
+                            <f:selectItem itemLabel="Últimos 7 días" itemValue="3" />  
+                            <f:selectItem itemLabel="Último mes" itemValue="4" />  
+                            <f:selectItem itemLabel="Últimos 6 meses" itemValue="5" />      
+                            <f:selectItem itemLabel="Periodo" itemValue="6" />
+                            <p:ajax event="valueChange" listener="#{beanComprobantesRecibidos.abrirDialogRangoFechas()}" update=":form-periodo-fechas:pg-periodo-fechas"/>
+                        </p:selectOneMenu>
+                        <h:outputText value="Secuencial:" styleClass="FontBold Fs14 hardblue"/>  
+                        <p:inputText id="it-secuencial-busqueda" value="#{beanComprobantesRecibidos.secuencialBusqueda}" maxlength="9"/>
+
+                        <h:outputText value="Tipo:" styleClass="FontBold Fs14 hardblue"/>  
+                        <p:selectOneMenu id="som-tipo" value="#{beanComprobantesRecibidos.tipoDocumento}">
+                            <f:selectItem itemLabel="Seleccione" itemValue="-1" />
+                            <f:selectItem itemLabel="Factura" itemValue="01" />
+                            <f:selectItem itemLabel="Nota de Crédito" itemValue="04" />
+                            <f:selectItem itemLabel="Comprobante de Retención" itemValue="07" />
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none" class="Wid45">
+                        <p:commandButton value="Buscar" update=":form-recibidos:dt-comprobantes-recibidos-autorizados" actionListener="#{beanComprobantesRecibidos.buscarComprobantesRecibidosAutorizados()}" onclick="PF('wv-dt-emitidos-autorizados').getPaginator().setPage(0);"/>
+
+                        <p:commandButton value="Recargar" update=":form-recibidos:dt-comprobantes-recibidos-autorizados it-secuencial-busqueda som-fechas som-tipo" actionListener="#{beanComprobantesRecibidos.reiniciarParametros()}" onclick="PF('wv-dt-emitidos-autorizados').getPaginator().setPage(0);"/>
+                    </p:panelGrid>
+                </p:panel>
+                <div class="EmptyBox10 "></div>
+                <p:panelGrid columns="1" layout="grid" style="border:0px none;background:none" class="TexAlRight">
+                    <p:commandLink ajax="false"  title="Descargar ZIP"                                               
+                                   action="#{beanComprobantesRecibidos.bajarZIP()}">
+                        <h:graphicImage value="/imagenes/zip_icon.png"  width="50px" height="50px"/>
+
+                    </p:commandLink>
+                </p:panelGrid>
+
+                <p:dataTable id="dt-comprobantes-recibidos-autorizados" widgetVar="wv-dt-emitidos-autorizados" var="comprobante_electronico" value="#{beanComprobantesRecibidos.comprobantesRecibidosLazy}" paginator="true" rows="5" emptyMessage="No hay registros" 
+                             paginatorPosition="bottom"
+                             rowsPerPageTemplate="5,10,15" lazy="true" reflow="true" rowKey="#{comprobante_electronico.idAsignacionComprobanteElectronico}" selection="#{beanComprobantesRecibidos.comprobantesElectronicosSeleccionados}" scrollable="false" >
+
+                    <p:column headerText="Número" width="15%" class="scrollColumn">
+                        <h:outputText value="#{comprobante_electronico.comprobanteElectronico.codigoEstablecimientoComprobanteElectronico}-#{comprobante_electronico.comprobanteElectronico.puntoEmisionComprobanteElectronico}-#{comprobante_electronico.comprobanteElectronico.secuencialComprobanteElectronico}" />
+                    </p:column>
+
+                    <p:column headerText="Fecha Emisión" width="80">
+                        <h:outputText value="#{comprobante_electronico.comprobanteElectronico.fechaEmisionComprobanteElectronico}" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>
+
+                    </p:column>
+                    <p:column headerText="Fecha Autorización" width="20%" >
+                        <h:outputText value="#{comprobante_electronico.comprobanteElectronico.fechaAutorizacionComprobanteElectronico}" />
+                    </p:column>
+                    <p:column headerText="Emisor" width="20%" >
+                        <p:tooltip for="ot-emisor" class="FontBold Fs14"/>
+                        <h:outputText id="ot-emisor" value="#{comprobante_electronico.comprobanteElectronico.razonSocialEmisorComprobanteElectronico}"/>
+                    </p:column>
+                    <p:column headerText="Tipo" width="80">
+                        <h:outputText value="#{comprobante_electronico.comprobanteElectronico.tipoComprobanteElectronico.nombreTipoComprobanteElectronico}" />
+                    </p:column>
+                    <p:column headerText="PDF" width="10%" class="TexAlCenter">
+                        <h:commandLink title="PDF"                                   
+                                       action="#{beanComprobantesRecibidos.descargarRIDE()}" target="_blank">
+                            <h:graphicImage value="/imagenes/pdf_icon.png"  width="20px" height="25px"/>
+                            <f:setPropertyActionListener value="#{comprobante_electronico}"
+                                                         target="#{beanComprobantesRecibidos.comprobanteElectronicoSeleccionado}"/>
+                        </h:commandLink>     
+                    </p:column>  
+                    <p:column headerText="XML" width="10%" class="TexAlCenter">
+                        <h:commandLink title="XML"                                               
+                                       action="#{beanComprobantesRecibidos.descargarRespuestaXML()}" >
+                            <h:graphicImage value="/imagenes/xml.png"  width="20px" height="25px"/>
+                            <f:setPropertyActionListener value="#{comprobante_electronico}"
+                                                         target="#{beanComprobantesRecibidos.comprobanteElectronicoSeleccionado}"/>
+                        </h:commandLink>
+                    </p:column>
+
+                    <p:column  selectionMode="multiple" width="10%" />
+                </p:dataTable>
+            </h:form>
+            <h:form id="form-periodo-fechas">
+                <p:dialog modal="true" widgetVar="wv-periodo-fechas" draggable="false" resizable="false" fitViewport="true" maximizable="false" header="Periodo de fechas" closable="false">
+                    <h:panelGrid columns="1" id="pg-periodo-fechas">
+                        <p:tabView cache="false" dynamic="true">
+                            <p:tab title="Fecha inicial" >
+                                <p:panelGrid columns="1" layout="grid" style="border:0px none;background:none" class="TexAlCenter MarAuto">
+                                    <h:outputText id="ot-fecha-inicial" value="Fecha inicial: #{beanComprobantesRecibidos.fechaFormateada(beanComprobantesRecibidos.fechaInicial)}" styleClass="FontBold Fs12 hardblue" />
+                                    <p:calendar value="#{beanComprobantesRecibidos.fechaInicial}" mode="inline" locale="es" >
+                                        <p:ajax event="dateSelect" update="ot-fecha-inicial" />
+                                    </p:calendar>
+
+                                </p:panelGrid>
+                            </p:tab>
+                            <p:tab title="Fecha final">
+                                <p:panelGrid columns="1" layout="grid" style="border:0px none;background:none" class="TexAlCenter MarAuto">
+                                    <h:outputText id="ot-fecha-final" value="Fecha final: #{beanComprobantesRecibidos.fechaFormateada(beanComprobantesRecibidos.fechaFinal)}" styleClass="FontBold Fs12 hardblue" />
+                                    <p:calendar value="#{beanComprobantesRecibidos.fechaFinal}" mode="inline" locale="es" >
+                                        <p:ajax event="dateSelect" update="ot-fecha-final" />
+                                    </p:calendar>
+
+                                </p:panelGrid>
+                            </p:tab>
+                        </p:tabView>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="1" cellpadding="5" cellspacing="5" class="MarAuto">                        
+                        <p:commandButton value="Aceptar" actionListener="#{beanComprobantesRecibidos.cerrarDialogRangoFechas()}" icon="fa fa fw fa-check" iconPos="right" update=":form-recibidos:som-fechas" />
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+        </p:panel>
+    </ui:define>
+</ui:composition>

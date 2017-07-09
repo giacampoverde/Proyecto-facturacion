@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd">
+<hibernate-reverse-engineering>
+  <schema-selection match-catalog="discheca"/>
+  <table-filter match-name="detalle"/>
+  <table-filter match-name="comprobante_electronico"/>
+  <table-filter match-name="recurso"/>
+  <table-filter match-name="asignacion_comprobante_electronico"/>
+  <table-filter match-name="empresa"/>
+  <table-filter match-name="certificado"/>
+  <table-filter match-name="secuencial"/>
+  <table-filter match-name="tipo_impuesto"/>
+  <table-filter match-name="configuracion"/>
+  <table-filter match-name="auditoria"/>
+  <table-filter match-name="detalleadicional"/>
+  <table-filter match-name="comprobante_electronico_pendiente"/>
+  <table-filter match-name="producto"/>
+  <table-filter match-name="perfil"/>
+  <table-filter match-name="tarifas_impuesto"/>
+  <table-filter match-name="tipo_comprobante_electronico"/>
+  <table-filter match-name="usuario_acceso"/>
+  <table-filter match-name="permiso"/>
+  <table-filter match-name="receptor"/>
+</hibernate-reverse-engineering>

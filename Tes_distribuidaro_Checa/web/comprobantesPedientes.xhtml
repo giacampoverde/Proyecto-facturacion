@@ -1,0 +1,110 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <style type="text/css">
+            .ui-panel {
+                margin-top:20px
+            }
+        </style>
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+        <h:outputScript name="js/es.js" library="sentinel-layout" />
+        <h3 class="hardblue TexAlCenter">Comprobantes Pendientes</h3>
+        <p:panel id="enviartodos">
+            <p:messages id="m-mensajes" showDetail="true" autoUpdate="true" closable="true" />
+            <h:form id="form-comprobantes-emitidos-autorizados">
+                <p:panel>
+                    <h:outputText value="Búsquedas:" styleClass="FontBold Fs14 hardblue"/>
+                    <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none" class="Wid70 TexAlCenter MarAuto">
+                        <h:outputText value="Fecha:" styleClass="FontBold Fs14 hardblue"/>                
+                        <p:selectOneMenu id="som-fechas" value="#{beanComprobantePendientes.seleccionPeriodoTiempo}" effect="drop" >
+                            <f:selectItem itemLabel="Todos" itemValue="1" />
+                            <f:selectItem itemLabel="Hoy" itemValue="2" />
+                            <f:selectItem itemLabel="Últimos 7 días" itemValue="3" />  
+                            <f:selectItem itemLabel="Último mes" itemValue="4" />  
+                            <f:selectItem itemLabel="Últimos 6 meses" itemValue="5" />                             
+                            <f:selectItem itemLabel="Periodo" itemValue="6" />
+                            <p:ajax event="valueChange" listener="#{beanComprobantePendientes.abrirDialogRangoFechas()}" update=":form-periodo-fechas:pg-periodo-fechas"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none" class="Wid45">
+                        <p:commandButton id="btnBuscar" value="Buscar" update=":form-comprobantes-emitidos-autorizados:dt-comprobantes-emitidos-autorizados" actionListener="#{beanAuditoria.buscarRegistros()}" onclick="PF('wv-dt-emitidos-autorizados').getPaginator().setPage(0);"/>
+
+                        <p:commandButton value="Recargar" update=":form-comprobantes-emitidos-autorizados:dt-comprobantes-emitidos-autorizados  som-fechas " actionListener="#{beanAuditoria.reiniciarParametros()}" onclick="PF('wv-dt-emitidos-autorizados').getPaginator().setPage(0);"/>
+                    </p:panelGrid>
+                    <p:blockUI block="som-fechas  " trigger="btnBuscar"/>
+                </p:panel>
+                <div class="EmptyBox10 "/>
+
+                <p:dataTable id="dt-comprobantes-emitidos-autorizados" widgetVar="wv-dt-emitidos-autorizados" var="registro" value="#{beanComprobantePendientes.comporbantesPendientes}" paginator="true" rows="15" emptyMessage="No hay registros." 
+                             paginatorPosition="bottom"
+                             rowsPerPageTemplate="5,10,15"  reflow="true" rowKey="#{registro.idComprobanteElectronicoPendiente}"  scrollable="false" >
+
+                    <p:column headerText="Ruta Comprobante" width="15%" >
+                        <h:outputText value="#{registro.rutaComprobanteElectronicoPendiente}" />
+                    </p:column>
+
+                    <p:column headerText="Fecha" width="80">
+                        <h:outputText value="#{registro.fechaEnvioComprobanteElectronicoPendiente}" >
+                            <f:convertDateTime pattern="dd/MM/yyyy " />
+                        </h:outputText>
+
+                    </p:column>
+                    <p:column headerText="Hora" width="80">
+                        <h:outputText value="#{registro.fechaEnvioComprobanteElectronicoPendiente}" >
+                            <f:convertDateTime pattern="HH:mm:ss" timeZone="America/Mexico_City" />
+                        </h:outputText>
+
+                    </p:column>
+
+                    <p:column headerText="Mensaje" width="20%" >
+                        <p:tooltip for="ot-receptor" class="FontBold Fs14"/>
+                        <h:outputText id="ot-receptor" value="#{registro.mensajeComprobanteElectronicoPendiente}"/>
+                    </p:column>
+
+
+                </p:dataTable>
+                <p:spacer height="50"/>
+                <p:commandButton id="enviar" style="margin-left:300px;" update="dt-comprobantes-emitidos-autorizados" value="Enviar Comprobantes Pendientes" actionListener="#{beanComprobantePendientes.enviarComprobantesPendientes()}">
+                    <p:blockUI block="enviartodos" trigger="enviar" />
+                </p:commandButton>
+
+            </h:form>
+            <p:spacer height="50"/>
+            <h:form id="form-periodo-fechas">
+                <p:dialog modal="true" widgetVar="wv-periodo-fechas" draggable="false" resizable="false" fitViewport="true" maximizable="false" header="Periodo de fechas" closable="false">
+                    <h:panelGrid columns="1" id="pg-periodo-fechas">
+                        <p:tabView cache="false" dynamic="true">
+                            <p:tab title="Fecha inicial" >
+                                <p:panelGrid columns="1" layout="grid" style="border:0px none;background:none" class="TexAlCenter MarAuto">
+                                    <h:outputText id="ot-fecha-inicial" value="Fecha inicial: #{beanComprobantePendientes.fechaFormateada(beanComprobantesEmitidos.fechaInicial)}" styleClass="FontBold Fs12 hardblue" />
+                                    <p:calendar value="#{beanComprobantePendientes.fechaInicial}" mode="inline" locale="es" >
+                                        <p:ajax event="dateSelect" update="ot-fecha-inicial" />
+                                    </p:calendar>
+
+                                </p:panelGrid>
+                            </p:tab>
+                            <p:tab title="Fecha final">
+                                <p:panelGrid columns="1" layout="grid" style="border:0px none;background:none" class="TexAlCenter MarAuto">
+                                    <h:outputText id="ot-fecha-final" value="Fecha final: #{beanComprobantePendientes.fechaFormateada(beanComprobantesEmitidos.fechaFinal)}" styleClass="FontBold Fs12 hardblue" />
+                                    <p:calendar value="#{beanComprobantePendientes.fechaFinal}" mode="inline" locale="es" >
+                                        <p:ajax event="dateSelect" update="ot-fecha-final" />
+                                    </p:calendar>
+
+                                </p:panelGrid>
+                            </p:tab>
+                        </p:tabView>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="1" cellpadding="5" cellspacing="5" class="MarAuto">                        
+                        <p:commandButton value="Aceptar" actionListener="#{beanComprobantePendientes.cerrarDialogRangoFechas()}" icon="fa fa fw fa-check" iconPos="right" update=":form-comprobantes-emitidos-autorizados:som-fechas" />
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+        </p:panel>
+    </ui:define>
+</ui:composition>

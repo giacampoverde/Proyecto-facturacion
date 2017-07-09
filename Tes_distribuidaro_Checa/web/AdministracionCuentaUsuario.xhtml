@@ -1,0 +1,142 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+
+
+        <!--span class="TexAlCenter DispBlock Wid100">Use this page to start from scratch and place your custom content.</span-->
+        <div class="ContainerIndent">
+            <p:messages id="m-mensajes" showDetail="true" autoUpdate="true" closable="true" />
+            <p:tabView dynamic="true" cache="false">
+
+                <p:tab title="Información usuario" rendered="#{beanAdministracionCuenta.tipoUsuarioInterno}">
+
+                    <p:panel >
+                        <h3 class="hardblue TexAlCenter">Información de Usuario</h3>
+
+                        <h:form id="f-info-usuario">
+                            <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none" class="TexAlLeft">
+
+                                <h:outputText value="Nombre usuario:" styleClass="FontBold"/>
+                                <h:outputText styleClass="FontBold" value="#{beanAdministracionCuenta.usuarioAcceso.nombreUsuarioAcceso}"/>
+                                <h:outputText value="Nombre:" styleClass="FontBold"/>
+                                <p:inplace  saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionCuenta.usuarioAcceso.nombreUsuario}">
+                                    <p:ajax event="save" listener="#{beanAdministracionCuenta.validarNombre()}" />
+                                    <p:inputText maxlength="30"
+                                                 value="#{beanAdministracionCuenta.nombre}" />
+                                </p:inplace>
+                                <h:outputText rendered="false" value="Apellido:" styleClass="FontBold"/>
+                                <p:inplace rendered="false" saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionCuenta.usuarioAcceso.apellidoUsuario}" >
+                                    <p:ajax event="save" listener="#{beanAdministracionCuenta.validarApellido()}" />
+                                    <p:inputText maxlength="30"
+                                                 value="#{beanAdministracionCuenta.apellido}" />
+                                </p:inplace>
+
+                                <h:outputText value="Correo principal:" styleClass="FontBold"/>
+                                <p:inplace  saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionCuenta.usuarioAcceso.correoPrincipalUsuario}" >
+                                    <p:ajax event="save" listener="#{beanAdministracionCuenta.validarCorreoPrincipal()}" />
+                                    <p:inputText maxlength="30"
+                                                 value="#{beanAdministracionCuenta.correoPrincipal}" />
+                                </p:inplace>
+
+                                <h:outputText value="Correo adicional:" styleClass="FontBold"/>
+                                <p:inplace  saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionCuenta.correoAdicional}" >
+                                    <p:ajax event="save" listener="#{beanAdministracionCuenta.validarCorreoAdicional()}" />
+                                    <p:inputText maxlength="30"
+                                                 value="#{beanAdministracionCuenta.correoAdicional}" />
+                                </p:inplace>
+
+                                <h:outputText value="Teléfono principal:" styleClass="FontBold"/>
+                                <p:inplace  saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionCuenta.usuarioAcceso.telefonoPrincipalUsuario}" >
+                                    <p:ajax event="save" listener="#{beanAdministracionCuenta.validarTelefonoPrincipal()}" />
+                                    <p:inputText maxlength="20"
+                                                 value="#{beanAdministracionCuenta.telefonoPrincipal}" />
+                                </p:inplace>
+
+                                <h:outputText value="Teléfono adicional:" styleClass="FontBold"/>
+                                <p:inplace  saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionCuenta.telefonoAdicional}" >
+                                    <p:ajax event="save" listener="#{beanAdministracionCuenta.validarTelefonoAdicional()}" />
+                                    <p:inputText maxlength="20"
+                                                 value="#{beanAdministracionCuenta.telefonoAdicional}" />
+                                </p:inplace>
+                            </p:panelGrid>
+
+                        </h:form>
+                    </p:panel>
+                </p:tab>
+                <p:tab title="Información empresa" rendered="#{beanAdministracionCuenta.tipoUsuarioClienteEmpresa}">
+
+                    <p:panel >
+                        <h3 class="hardblue TexAlCenter">Información de Empresa</h3>
+
+                        <h:form id="f-info-usuario-cliente-empresa">
+                            <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none" class="TexAlLeft">
+                                <h:outputText value="Nombre usuario:" styleClass="FontBold"/>
+
+                                <h:outputText value="#{beanAdministracionCuenta.clienteEmpresa.nombreUsuarioClienteEmpresa}" styleClass="FontBold"/>
+                                <h:outputText value="Nombre comercial:" styleClass="FontBold"/>
+                                <p:inplace  saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionCuenta.clienteEmpresa.nombreComercialClienteEmpresa}">
+                                    <p:ajax event="save" listener="#{beanAdministracionCuenta.validarNombreComercialEmpresa()}" />
+                                    <p:inputText maxlength="30"
+                                                 value="#{beanAdministracionCuenta.nombreComercialClienteEmpresa}" />
+                                </p:inplace>
+                                <h:outputText value="Razón social:" styleClass="FontBold"/>
+                                <p:inplace  saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionCuenta.clienteEmpresa.razonSocialClienteEmpresa}" >
+                                    <p:ajax event="save" listener="#{beanAdministracionCuenta.validarRazonSocialEmpresa()}" />
+                                    <p:inputText maxlength="30"
+                                                 value="#{beanAdministracionCuenta.razonSocialClienteEmpresa}" />
+                                </p:inplace>
+
+                                <h:outputText value="Correo principal:" styleClass="FontBold"/>
+                                <p:inplace  saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionCuenta.clienteEmpresa.correoPrincipalClienteEmpresa}" >
+                                    <p:ajax event="save" listener="#{beanAdministracionCuenta.validarCorreoPrincipalEmpresa()}" />
+                                    <p:inputText maxlength="30"
+                                                 value="#{beanAdministracionCuenta.correoPrincipalClienteEmpresa}" />
+                                </p:inplace>
+
+                                <h:outputText value="Teléfono principal:" styleClass="FontBold"/>
+                                <p:inplace  saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionCuenta.clienteEmpresa.telefonoPrincipalClienteEmpresa}" >
+                                    <p:ajax event="save" listener="#{beanAdministracionCuenta.validarTelefonoPrincipalEmpresa()}" />
+                                    <p:inputText maxlength="20"
+                                                 value="#{beanAdministracionCuenta.telefonoPrincipalClienteEmpresa}" />
+                                </p:inplace>
+
+                                <h:outputText value="Número de resolución:" styleClass="FontBold"/>
+                                <p:inplace  saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionCuenta.clienteEmpresa.numeroResolucionClienteEmpresa}" >
+                                    <p:ajax event="save" listener="#{beanAdministracionCuenta.validarNumeroResolucion()}" />
+                                    <p:inputText maxlength="13"
+                                                 value="#{beanAdministracionCuenta.numeroResolucionClienteEmpresa}" />
+                                </p:inplace>
+                                <p:outputLabel id="ol-obligado-contabilidad" value="Obligado a llevar contabilidad: #{beanAdministracionCuenta.obligadoContabilidadClienteEmpresa eq'true'?'SI':'NO'}" />
+                                <p:selectBooleanCheckbox value="#{beanAdministracionCuenta.obligadoContabilidadClienteEmpresa}" >
+                                    <p:ajax update="f-info-usuario-cliente-empresa ol-obligado-contabilidad" listener="#{beanAdministracionCuenta.validarObligadoContabilidad()}" />
+
+                                </p:selectBooleanCheckbox>
+                            </p:panelGrid>
+
+                        </h:form>
+                    </p:panel>
+                </p:tab>
+                <p:tab title="Cambiar clave" >
+                    <h:form >
+                        <p:panel id="p-cambio-clave">
+                            <h3 class="hardblue TexAlCenter">Cambiar clave</h3>
+                            <p:panelGrid columns="1" layout="grid" style="border:0px none;background:none" class="MarAuto TexAlCenter">
+                                <p:password value="#{beanAdministracionCuenta.contraseniaActual}" placeholder="Clave actual" styleClass="Container80 Fnone MarAuto Fs18" feedback="false"/>
+                                <p:password value="#{beanAdministracionCuenta.contraseniaNueva}" placeholder="Clave nueva" styleClass="Container80 Fnone MarAuto Fs18" feedback="false"/>
+                                <p:password value="#{beanAdministracionCuenta.confirmaNuevaContrasenia}" placeholder="Confirmar nueva clave" styleClass="Container80 Fnone MarAuto Fs18" feedback="false"/>
+                                <p:commandButton value="Actualizar clave" icon="fa fa-fw fa-key" iconPos="right" actionListener="#{beanAdministracionCuenta.validarCambioClave()}" update="p-cambio-clave"/>
+                            </p:panelGrid>
+                        </p:panel>
+                    </h:form>
+                </p:tab>
+            </p:tabView>
+        </div>
+    </ui:define>
+
+</ui:composition>

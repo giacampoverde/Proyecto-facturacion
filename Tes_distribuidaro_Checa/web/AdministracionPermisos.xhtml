@@ -1,0 +1,111 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <style type="text/css">
+            .ui-panel {
+                margin-top:20px
+            }
+            .colored {
+                background-color: #0F6DBB !important;
+
+            }
+        </style>
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+        <h3 class="hardblue TexAlCenter">Administración de Recursos</h3>
+        <p:panel>
+            <p:messages id="m-mensajes" showDetail="true" autoUpdate="true" closable="true" />
+            <h:form id="form-permisos">
+                <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none">
+                    <h:outputText value="Perfiles" styleClass="FontBold Fs16 hardblue"></h:outputText>
+                    <p:selectOneMenu id="som-perfiles" value="#{beanAdministracionRecursos.perfilSeleccionado}" effect="drop" >
+
+                        <f:selectItems value="#{beanAdministracionRecursos.perfiles}" 
+                                       var="perfil"
+                                       itemLabel="#{perfil.nombrePerfil}-#{perfil.descripcionPerfil}"
+                                       itemValue="#{perfil.idPerfil}"/>
+                        <p:ajax update="dt-permisos ot-titulo-permiso"  
+                                listener="#{beanAdministracionRecursos.cargarPermisos()}"/>
+                    </p:selectOneMenu>
+                    <h:outputText value="Pantallas" styleClass="FontBold Fs16 hardblue"></h:outputText>
+
+                    <p:selectOneMenu id="som-pantallas" value="#{beanAdministracionRecursos.recursoSeleccionado}" effect="drop" style="width:45%">
+
+                        <f:selectItems value="#{beanAdministracionRecursos.recursos}" 
+                                       var="recurso"
+                                       itemLabel="#{recurso.nombreRecurso}"
+                                       itemValue="#{recurso.idRecurso}"/>
+                    </p:selectOneMenu>
+
+                </p:panelGrid>
+                <p:commandButton id="cb-nuevo" value="Asignar permiso" actionListener="#{beanAdministracionRecursos.asignarPermiso()}" update="dt-permisos" />
+                <i class="fa fa fw fa-plus"/>
+                <div class="EmptyBox20 "></div>
+
+                <div  class="Container100">
+                    <div class="ContainerIndent">
+                        <h:outputText  id="ot-titulo-permiso" value="Permisos del perfil: #{beanAdministracionRecursos.nombrePerfilSeleccionado}" styleClass="FontBold Fs18 hardblue">
+                        </h:outputText >
+                    </div>
+                </div>
+                <p:dataTable id="dt-permisos" value="#{beanAdministracionRecursos.permisos}" var="permiso" rows="5" paginator="true" 
+                              paginatorPosition="bottom"  emptyMessage="No hay registros." 
+                             >
+             
+                    <p:column headerText="Pantalla" width="20%" >
+                        <h:outputText value="#{permiso.recurso.nombreRecurso}" />
+                    </p:column>
+                    <p:column headerText="Descripción" width="20%">
+                        <h:outputText value="#{permiso.recurso.descripcionRecurso}" />
+
+                    </p:column>
+                    <p:column headerText="Tipo" width="6%">
+                        <h:outputText value="#{permiso.recurso.pestaniaRecurso eq'true'?'Pestaña':'Página'}" />
+
+                    </p:column>
+                    <p:column headerText="Eliminar" width="5%" class="TexAlCenter">
+                        <p:commandButton update="op-dialog-eliminado-hijos op-dialog-eliminado-pestania-hijos" icon="fa fa-fw fa-remove" title="Eliminar permiso" action="#{beanAdministracionRecursos.mostrarDialogSegunTipoRecurso()}">
+                            <f:setPropertyActionListener value="#{permiso}" target="#{beanAdministracionRecursos.permisoSeleccionado}" />
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+            <p:outputPanel id="op-dialog-eliminado-hijos" layout="inline">
+                <p:dialog fitViewport="true" modal="true" header="Confirmar eliminado permiso" widgetVar="wv-confirma-eliminado-hijos" draggable="true" resizable="false" class="TexAlCenter" showEffect="slide" hideEffect="slide">
+                    <p:outputLabel value="¿Desea quitar la pantalla"/><span class="FontBold hardblue"> #{beanAdministracionRecursos.permisoSeleccionado.recurso.nombreRecurso}</span> al perfil <span class="FontBold hardblue">#{beanAdministracionRecursos.permisoSeleccionado.perfil.nombrePerfil}?</span>                        
+                    <div class="EmptyBox20 "></div>
+                    <h:form id="f-eliminado-hijos"
+                            >
+                        <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none" class="Wid50 MarAuto">
+                            <p:commandButton value="Sí" actionListener="#{beanAdministracionRecursos.eliminarPermiso()}" update=":form-permisos:dt-permisos"/>
+                            <p:commandButton value="No" oncomplete="PF('wv-confirma-eliminado-hijos').hide()"/>
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
+            </p:outputPanel>
+            <p:outputPanel id="op-dialog-eliminado-pestania-hijos" layout="inline">
+                <p:dialog fitViewport="true" modal="true" header="Confirmar eliminado permiso" widgetVar="wv-confirma-eliminado-pestania-hijos" draggable="true" resizable="false" class="TexAlCenter" showEffect="slide" hideEffect="slide">
+                    <p:outputLabel value="Pestaña"/><span class="FontBold hardblue"> #{beanAdministracionRecursos.permisoSeleccionado.recurso.nombreRecurso}</span> páginas asignadas:                     
+                    <div class="EmptyBox10 "></div>
+                    <p:dataList value="#{beanAdministracionRecursos.permisosHijos}" var="permiso" type="ordered" emptyMessage="No hay registros.">
+                        #{permiso.recurso.nombreRecurso}
+                    </p:dataList>
+                    <div class="EmptyBox10 "></div>
+                    <p:outputLabel value="¿Desea quitar todos los permisos?"/>
+                    <div class="EmptyBox10 "></div>
+                    <h:form id="f-eliminado-pestania-hijos"
+                            >
+                        <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none" class="Wid50 MarAuto">
+                            <p:commandButton value="Sí" actionListener="#{beanAdministracionRecursos.eliminarPermiso()}" update=":form-permisos:dt-permisos" icon="fa fa fw fa-check" iconPos="right" />
+                            <p:commandButton value="No" oncomplete="PF('wv-confirma-eliminado-pestania-hijos').hide()" icon="fa fa fw fa-close" iconPos="right" />
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
+            </p:outputPanel>
+        </p:panel>
+    </ui:define>
+</ui:composition>

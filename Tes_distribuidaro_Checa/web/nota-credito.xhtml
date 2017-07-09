@@ -1,0 +1,985 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <style type="text/css">
+            .ui-panel {
+                margin-top:10px
+            }
+        </style>
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+        <div class="ContainerIndent">
+            <h3 class="hardblue TexAlCenter">Emisión de Nota de Crédito Electrónica</h3>
+            <!--span class="TexAlCenter DispBlock Wid100">Use this page to start from scratch and place your custom content.</span-->
+            <p:panel header="Generar Nota de Crédito" id="notatodo">
+                <p:ajaxStatus style="position:fixed;right:10px;bottom:10px">  
+                    <f:facet name="start">  
+                        <p:graphicImage value="/imagenes/ajax-loader.gif" 
+                                        width="100"
+                                        height="100"/>  
+                    </f:facet>  
+                    <f:facet name="complete">  
+                        <h:outputText value="" />  
+                    </f:facet>  
+                </p:ajaxStatus> 
+                <h:form id="form">
+                    <div class="ContainerIndent">
+                        <p:messages id="mensajes" showDetail="true" autoUpdate="true" closable="true" />
+                        <p:tabView activeIndex="#{beanNotaCredito.indexTab}" id="tvNotaCredito"  scrollable="true">
+
+                            <p:tab id="tabInfoNotaCredito" titleStyle="font-size: 14px"
+                                   title="Información Nota de Credito" disabled="#{!beanNotaCredito.tab1}">
+
+                                <p:panelGrid columns="2"
+                                             class="Wid50 MarAuto TexAlCenter" layout="grid" 
+                                             style="border: 0px none; background: none">
+                                    <p:outputLabel id="itaNombreComercialEmisor2"
+                                                   style="color: #0B0B61;"
+                                                   title="Nombre Comercial del Emisor"
+                                                   value="#{beanNotaCredito.emisor.nombreComercialClienteEmpresa}"
+                                                   /> 
+                                    <p:outputLabel  id="itaNombreComercialEmisor22"
+
+                                                    title="ruc"
+                                                    value="RUC: #{beanNotaCredito.emisor.idEmpresa}"
+                                                    /> 
+
+                                    <h:outputText rendered="false" value="Los campos marcados con * son obligatorios." styleClass="FontBold Fs14 hardblue"></h:outputText>
+                                </p:panelGrid>
+                                <p:spacer height="20px"/>
+                                <p:panelGrid id="pgInfoNotaCredito" columns="2"
+                                             class="MaxWid500 MarAuto TexAlCenter" layout="grid" 
+                                             style="border: 0px none; background: none">
+                                    <p:outputLabel value="Motivo:" for="itMotivo" />
+                                    <p:inputText id="itMotivo" value="#{beanNotaCredito.motivo}" maxlength="300"/>
+                                    <h:outputLabel rendered="false" id="olFechaFacturacion"
+                                                   for="cFechaFacturacion"
+                                                   style="color: #0B0B61;"
+                                                   value="Fecha Emisión:"/>
+                                    <p:inputText rendered="false"  readonly="true"  id="cFechaFacturacion"
+                                                 value="#{beanNotaCredito.fechaEmision}">
+                                        <f:convertDateTime pattern="dd-MM-yyyy"/> 
+                                    </p:inputText>
+
+
+                                </p:panelGrid>
+                                <p:panelGrid columns="2"
+                                             class="MaxWid500 MarAuto TexAlCenter" layout="grid" 
+                                             style="border: 0px none; background: none">
+                                    <p:outputLabel for="cFechaDocSustento" value="Fecha Emisión Doc. Sustento: "/>
+                                    <p:calendar id="cFechaDocSustento" value="#{beanNotaCredito.fechaEmisionDocSustento}"/>
+                                    <p:outputLabel value="Tipo  Doc. Sustento:" for="somCodDoc" />
+                                    <p:outputLabel value="Factura" />
+                                    <p:selectOneMenu rendered="false" id="somCodDoc"  style="width:140px" value="#{beanNotaCredito.codigoDocModificado}">
+                                        <f:selectItem itemLabel="Factura" itemValue="01" />
+
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel value="Número Doc. Sustento:" for="itNumDocMod"/>
+                                    <p:inputMask id="itNumDocMod" value="#{beanNotaCredito.numDocModificado}" mask="999-999-999999999"/>
+                                    <p:spacer/>
+                                    <h:panelGrid columns="1" style="margin-left: auto; margin-right: auto;">
+
+                                        <p:commandButton value="Buscar Documento" actionListener="#{beanNotaCredito.buscarDocumentoAsociadoANotaCredito()}" 
+                                                         update="fsd"     />
+
+                                    </h:panelGrid>
+
+
+
+                                </p:panelGrid>
+
+
+                                <h:panelGrid id="fsd" columns="2"
+                                             class="Wid50 TexAlCenter MarAuto" 
+                                             style="border: 0px none; background: none">
+                                    <h:panelGrid columns="2">
+                                        <p:outputLabel id="olIdentificionComprador" title="CI / RUC / Pasaporte Comprador" value="CI / RUC / Pasaporte: "  />
+                                        <p:outputLabel value="#{beanNotaCredito.identificacionComprador}"/>
+                                        <p:outputLabel id="olRazonSocialReceptor"
+                                                       title="Razón Social Comprador"
+                                                       value="Razón Social Comprador: " />
+                                        <p:outputLabel value="#{beanNotaCredito.razonSocialComprador}"/>
+
+                                    </h:panelGrid>
+                                </h:panelGrid>
+
+
+
+                                <p:messages id="mensajesInfoNotaCredito" showDetail="true" autoUpdate="true" closable="true" />
+                                <br/>
+                                <h:panelGrid columns="1" style="margin-left: auto; margin-right: auto;" >
+                                   
+                                    <p:commandButton value="siguiente" actionListener="#{beanNotaCredito.validacionesInformacionNotaCredito()}" update=":form:tvNotaCredito" icon="ui-icon-arrowthick-1-e"
+                                                     iconPos="right"/>
+
+                                </h:panelGrid>
+                            </p:tab>
+
+                            <p:tab id="tabInfoDetalles"
+                                   titleStyle="font-size: 14px"
+                                   title="Detalles" disabled="#{!beanNotaCredito.tab2}">
+                                <p:panelGrid id="pgInfoFactura2" columns="2"
+                                             class="Wid50 MarAuto TexAlCenter" layout="grid" 
+                                             style="border: 0px none; background: none">
+                                    <p:outputLabel id="itaNombreComercialEmisor3"
+                                                   style="color: #0B0B61;"
+                                                   title="Nombre Comercial del Emisor"
+                                                   value="#{beanNotaCredito.emisor.nombreComercialClienteEmpresa}:"
+                                                   /> 
+                                    <p:outputLabel  id="itaNombreComercialEmisor33"
+
+                                                    title="ruc"
+                                                    value="RUC: #{beanNotaCredito.emisor.idEmpresa}"
+                                                    /> 
+                                    <h:outputLabel id="olRazonSocialReceptor2"
+                                                   style="color: #0B0B61;"
+                                                   for="itRazonSocialReceptor2"
+                                                   value="Razón Social Receptor:"/>
+
+                                    <p:outputLabel id="itRazonSocialReceptor2"
+                                                   title="Razón Social Receptor"
+
+                                                   value="#{beanNotaCredito.clienteEmpresaReceptor.razonSocialReceptor}"/>
+
+                                    <h:outputLabel id="olIdentificacionReceptor2"
+                                                   
+                                                   value="Ci/ Ruc/ Pasaporte Cliente:"
+                                                   style="color: #0B0B61;"/>
+
+                                    <h:outputLabel id="olIdentificacionReceptor3"
+
+                                                   value="#{beanNotaCredito.clienteEmpresaReceptor.rucReceptor}"
+                                                   />
+
+
+
+                                </p:panelGrid>
+
+                                <p:panel id="detallesF" class="MarAuto TexAlCenter"
+                                         style="border: 0px none; background: none">
+                                    <p:panelGrid class="MarAuto TexAlCenter" layout="grid" columns="1"
+                                                 style="border: 0px none; background: none" rendered="#{!beanNotaCredito.panelDetalle}">
+                                        <p:commandButton id="btnIngresarDetalle"
+                                                         value="Nuevo Detalle"
+                                                         update="detallesF :form:tvNotaCredito"
+                                                         actionListener="#{beanNotaCredito.panelIngresarNuevoDetalleAbrir()}"
+                                                         icon="ui-icon-arrowreturnthick-1-e"/>
+                                        <p:overlayPanel id="opBtnIngresarDetalle"
+                                                        for="btnIngresarDetalle"
+                                                        showEvent="mouseover"
+                                                        hideEvent="mouseleave"> 
+                                            <p:outputPanel>  
+                                                <h:outputText value="Ingresar un nuevo detalle para este comprobante." />  
+                                            </p:outputPanel>
+                                        </p:overlayPanel>
+
+                                    </p:panelGrid>
+                                    <p:panel class="Container80 MaxWid500 TexAlCenter white-back Fnone MarAuto BordRad10" rendered="#{beanNotaCredito.panelDetalle}">
+                                        <p:panel style="border: 0px none; background: none" rendered="#{beanNotaCredito.panelDetalle}">
+                                            <p:outputLabel value="La información obligatoria se encuentra marcada en este color."
+                                                           style="font-weight: bold; color: #0B0B61;"  /> 
+                                        </p:panel>
+                                        <h:panelGrid style="margin-left:80px;" columns="2" rendered="#{beanNotaCredito.panelDetalle}">
+                                            <h:outputText value="Código Principal:" styleClass="FontBold Fs14 hardblue"/>
+                                            <p:inputText id="it-id-buscar"  value="#{beanNotaCredito.codigoPrincipal}" maxlength="13" />
+                                            <h:outputText value="Descripcion Producto:" styleClass="FontBold Fs14 hardblue"/>
+                                            <p:inputText id="it-id-buscar2"  value="#{beanNotaCredito.descripcion}" maxlength="13"/>
+                                            <p:commandButton   value="Buscar" update=" pg-nuevo-cliente2"  actionListener="#{beanNotaCredito.busquedaDeProductos2()}"/>
+                                            <p:commandButton rendered="false" update="detallesF :form:tvNotaCredito" value="Buscar" actionListener="#{beanNotaCredito.busquedaDeProductos()}"/>
+
+                                            <p:commandButton rendered="#{!beanNotaCredito.datosDetalles}"  id="btnCerrarIngProduto2"
+                                                             value="Cerrar"
+                                                             update="detallesF"
+                                                             actionListener="#{beanNotaCredito.panelIngresarNuevoDetalleCerrar()}"
+                                                             onclick="
+                                                                     somTarifasIva.selectValue('');
+                                                                     somTarifasIce.selectValue('');"/>
+                                        </h:panelGrid>
+                                        <p:panelGrid class="TexAlCenter MarAuto" layout="grid" columns="2"
+                                                     style="border: 0px none; background: none" rendered="#{beanNotaCredito.datosDetalles}">
+
+                                            <h:outputLabel id="olCodigoPrincipal"
+                                                           value="Código Principal:"
+                                                           for="itCodigoPrincipal"
+                                                           style="color: #0B0B61;"/>
+                                            <p:inputText readonly="true" id="itCodigoPrincipal"
+                                                         autocomplete="off"
+                                                         maxlength="25"
+                                                         value="#{beanNotaCredito.producto.codigoProducto}"/>
+                                            <h:outputLabel id="olDescripcion"
+                                                           value="Descripción:"
+                                                           for="itDescripcion"
+                                                           style="color: #0B0B61;"/>
+                                            <p:inputText readonly="true" id="itDescripcion"
+                                                         maxlength="300"
+                                                         autocomplete="off"
+                                                         value="#{beanNotaCredito.producto.descripcion}"/>
+
+                                            <h:outputLabel id="olUnidadMedida"
+                                                           value="Unidad de Medida"
+                                                           for="itUnidadMedida"
+                                                           style="color: #0B0B61;"/>
+                                            <p:inputText readonly="true" id="itUnidadMedida"
+                                                         maxlength="300"
+                                                         autocomplete="off"
+                                                         value="#{beanNotaCredito.producto.unidadMedida}"/>
+
+                                            <h:outputLabel id="olCantidad"
+                                                           value="Cantidad:"
+                                                           for="itCantidad"
+                                                           style="color: #0B0B61;"/>
+                                            <p:inputText  id="itCantidad"
+                                                          autocomplete="off"
+                                                          value="#{beanNotaCredito.cantidad}"
+                                                          maxlength="19"
+                                                          converterMessage="La información ingresada no corresponde al formato. Recuerde utilizar el punto como separador de decimales."/>
+                                            <h:outputText value="Valor  " />  
+                                            <h:selectOneRadio class="MarAuto" id="valor" value="#{beanNotaCredito.valorSelecionado}">  
+                                                <f:selectItem itemLabel="#{beanNotaCredito.producto.precioVenta}" itemValue="#{beanNotaCredito.producto.precioVenta}" />
+                                                <f:selectItem itemLabel="#{beanNotaCredito.producto.precioVentaDos}" itemValue="#{beanNotaCredito.producto.precioVentaDos}" />                                             
+                                            </h:selectOneRadio>
+
+                                        </p:panelGrid>
+                                        <br/>
+                                        <p:panelGrid id="pgOpDesc" class="MarAuto TexAlCenter" rendered="#{beanNotaCredito.datosDetalles}">
+                                            <h:outputText value="Opciones de Descuento: " />  
+                                            <p:selectOneRadio class="MarAuto" id="sorOpcionesDescuento" value="#{beanNotaCredito.opcionesDescuento}">  
+                                                <f:selectItem itemLabel="Valor" itemValue="1" />
+                                                <f:selectItem itemLabel="Porcentaje" itemValue="2" />                                             
+                                            </p:selectOneRadio>
+
+                                            <p:outputLabel id="olDescuentoDetalleValor"
+                                                           for="itDescuento"
+                                                           value="Descuento: "/>
+
+                                            <p:inputText id="itDescuento"
+                                                         autocomplete="off"
+                                                         maxlength="14"
+                                                         value="#{beanNotaCredito.descuento}"/>
+
+                                        </p:panelGrid>
+
+
+
+                                        <p:panel class="MarAuto TexAlCenter" style="border: 0px none; background: none" rendered="#{beanNotaCredito.datosDetalles}">
+                                            <p:outputLabel value="Impuestos Aplicables" style="font-weight: bold; color: #0B0B61;" /> 
+                                            <p:panelGrid id="pgImpuestos"
+                                                         class="MarAuto TexAlCenter" layout="grid"
+                                                         columns="2" style="border: 0px none; background: none">
+                                                <p:outputLabel id="olIVA"
+                                                               value="IVA: "
+                                                               for="somTarifasIva"/>
+                                                <p:selectOneMenu id="somTarifasIva"
+                                                                 widgetVar="somTarifasIva"
+                                                                 value="#{beanNotaCredito.idImpuestoIVASeleccionado}"
+                                                                 effect="fade"
+                                                                 style="width: 160px; text-align: center">
+                                                    <f:selectItem itemLabel="Ninguno"
+                                                                  itemValue="-1"/>
+                                                    <f:selectItems value="#{beanNotaCredito.listaTarifaImpuestoIVA}" itemDescription="#{tarifaImpuestoIce.descripcionTarifaImpuesto}" 
+                                                                   var="tarifaImpuestoIva"
+                                                                   itemLabel="#{tarifaImpuestoIva.codigoTarifaImpuesto} - #{tarifaImpuestoIva.descripcionTarifaImpuestoCorto}"
+                                                                   itemValue="#{tarifaImpuestoIva.codigoTarifaImpuesto}"/>
+                                                </p:selectOneMenu>
+                                                <p:outputLabel id="olICE"
+                                                               rendered="false"
+                                                               value="ICE: "
+                                                               for="somTarifasIce"/>
+                                                <p:selectOneMenu id="somTarifasIce"
+                                                                 rendered="false"
+                                                                 widgetVar="somTarifasIce"
+                                                                 value="#{beanNotaCredito.idImpuestoICESeleccionado}"
+                                                                 effect="fade"
+                                                                 style="width: 160px; text-align: center">
+                                                    <f:selectItem itemLabel="Ninguno"
+                                                                  itemValue="-1"/>
+                                                    <f:selectItems class="TexAlRight" itemDescription="#{tarifaImpuestoIce.descripcionTarifaImpuesto}" value="#{beanNotaCredito.listaTarifaImpuestoICE}"
+                                                                   var="tarifaImpuestoIce"
+                                                                   itemLabel="#{tarifaImpuestoIce.codigoTarifaImpuesto} - #{tarifaImpuestoIce.descripcionTarifaImpuestoCorto}"
+                                                                   itemValue="#{tarifaImpuestoIce.codigoTarifaImpuesto}"/>
+                                                </p:selectOneMenu>
+                                            </p:panelGrid>
+                                        </p:panel>
+
+                                        <br/>
+
+                                        <p:panelGrid   columns="1" layout="grid" class="MarAuto TexAlCenter" style="border: 0px none; background: none" rendered="#{beanNotaCredito.datosDetalles}">
+                                            <p:commandButton rendered="false" id="btnDetalleAdicional"
+                                                             value="Información Adicional"
+                                                             actionListener="#{beanNotaCredito.limpiarovalores()}"
+                                                             onclick="PF('dialogDetalleAdicionalWV').show();"/>
+                                            <p:overlayPanel id="opBtnDetalleAdicional"
+                                                            for="btnDetalleAdicional"
+                                                            showEvent="mouseover"
+                                                            hideEvent="mouseleave"> 
+                                                <p:outputPanel>  
+                                                    <h:outputText value="Puede agregar Información Adicional para el detalle a ingresar." />  
+                                                </p:outputPanel>
+                                            </p:overlayPanel>
+                                        </p:panelGrid>
+
+                                        <br/>
+                                        <p:panelGrid  id="pgListaDetalleAdicionalDialog" layout="grid" columns="1" class="MarAuto TexAlCenter" rendered="#{beanNotaCredito.datosDetalles}">
+                                            <p:dataTable rendered="false" id="tablaListaDetalleAdicionalDialog"
+                                                         reflow="true"
+                                                         value="#{beanNotaCredito.detallesAdicionales}"
+                                                         var="detallesA"
+                                                         emptyMessage="No existe Información Adicional."
+                                                         >
+                                                <p:column headerText="Nombre" style="width: 100px; color: #0B0B61;">
+                                                    <h:outputText value="#{detallesA.nombre}" style="color: #A4A4A4;" />
+                                                </p:column>
+                                                <p:column headerText="Valor" style="width: 100px; color: #0B0B61;">
+                                                    <h:outputText value="#{detallesA.valor}" style="color: #A4A4A4;"/>
+                                                </p:column>
+                                                <p:column headerText="Eliminar" style="width: 100px; color: #0B0B61;" >
+                                                    <p:commandLink title="Eliminar Información Adicional"
+                                                                   update="tablaListaDetalleAdicionalDialog"
+                                                                   action="#{beanNotaCredito.eliminarDetalleAdicional()}">
+                                                        <h:graphicImage value="/imagenes/eliminar.png"  width="30px" height="25px"/>
+                                                        <f:setPropertyActionListener value="#{detallesA}"
+                                                                                     target="#{beanNotaCredito.informacionAdicionalDetalleSeleccionado}"/>
+                                                    </p:commandLink>
+                                                </p:column>
+
+                                            </p:dataTable>
+                                        </p:panelGrid>
+                                        <p:messages id="mensajesDetalles" showDetail="true" autoUpdate="true" closable="true" />
+                                        <br/>
+                                        <p:panelGrid class="MarAuto TexAlCenter Wid40" columns="2" layout="grid" style="border: 0px none; background: none" rendered="#{beanNotaCredito.datosDetalles}">
+                                            <p:commandButton id="btnRegistrarDetalle"
+                                                             actionListener="#{beanNotaCredito.agregarDetalleNotaCredito()}"
+                                                             update=":form:tvNotaCredito"
+                                                             value="Ingresar Detalle">
+                                                <p:resetInput target="somTarifasIce"/>
+                                            </p:commandButton>
+                                            <p:commandButton id="btnCerrarIngProduto"
+                                                             value="Cerrar"
+                                                             update="detallesF"
+                                                             actionListener="#{beanNotaCredito.panelIngresarNuevoDetalleCerrar()}"
+                                                             onclick="
+                                                                     somTarifasIva.selectValue('');
+                                                                     somTarifasIce.selectValue('');"/>
+                                        </p:panelGrid>
+                                    </p:panel>
+                                    <br/>
+                                    <p:panelGrid class="MarAuto TexAlCenter" layout="grid" columns="1"
+                                                 style="border: 0px none; background: none">
+                                        <p:dataTable id="tablaDetalles"
+                                                     emptyMessage="No se han ingresado detalles en la Nota de Crédito."
+                                                     selection="#{beanNotaCredito.detalleSeleccionado}"
+                                                     var="detalles"
+                                                     reflow="true"
+                                                     rowKey="#{detalles.identificador}"
+                                                     value="#{beanNotaCredito.listaDetalles}"> 
+                                            <p:column headerText="Cantidad" >
+                                                <h:outputText value="#{detalles.detalleComprobante.cantidad}" />
+                                            </p:column>
+
+                                            <p:column headerText="Descripción" >
+                                                <h:outputText value="#{detalles.detalleComprobante.descripcion}" />
+                                            </p:column>
+
+                                            <p:column style="text-align: right" headerText="V. Unitario" >
+                                                <h:outputText value="#{detalles.detalleComprobante.precioUnitario}" />
+                                            </p:column>
+
+                                            <p:column style="text-align: right" headerText="Descuento" >
+
+                                                <h:outputText value="#{detalles.detalleComprobante.descuento}" >
+
+                                                </h:outputText>
+                                            </p:column>
+
+                                            <p:column style="text-align: right" headerText="V. Total" >
+                                                <h:outputText value="#{detalles.detalleComprobante.precioTotalSinImpuesto}" />
+                                            </p:column>
+
+                                            <p:column headerText="V. Impuestos" >
+                                                <p:commandLink title="Visualizar Impuestos"
+                                                               update=":form:pgListaImpuestos"
+                                                               oncomplete="PF('dialogListaImpuestosWV').show();"
+                                                               action="#{beanNotaCredito.obtenerImpuestos()}">
+                                                    <p:graphicImage value="/imagenes/impuestos.png"  width="20px" height="20px"/>
+                                                    <f:setPropertyActionListener value="#{detalles}"
+                                                                                 target="#{beanNotaCredito.detalleSeleccionado}"/>
+                                                </p:commandLink>
+                                            </p:column>
+
+                                            <p:column rendered="false" headerText="Det. Adicional">
+                                                <p:commandLink title="Visualizar Detalles Adicionales"
+                                                               update=":form:pgListaDetalleAdicional"
+                                                               oncomplete="PF('dialogListaDetalleAdicionalDetalleWV').show();"
+                                                               action="#{beanNotaCredito.obtenerDetallesAdicionales()}">
+                                                    <h:graphicImage value="/imagenes/detalles.png"  width="20px" height="20px"/>
+                                                    <f:setPropertyActionListener value="#{detalles}"
+                                                                                 target="#{beanNotaCredito.detalleSeleccionado}"/>
+                                                </p:commandLink>
+                                            </p:column>
+                                            <p:column headerText="Editar" styleClass="FontBold Fs12"  class="TexAlCenter" >
+
+                                                <p:commandButton 
+                                                    title="Editar Detalle"
+                                                    action="#{beanNotaCredito.verificarEdicionDetalle()}"
+                                                    update=":form-edicion-detalle:pg-edicion-detalle :form-edicion-detalle:pgListaImpuestos"
+                                                    icon="fa fa fw fa-edit"
+                                                    >                                    
+                                                    <f:setPropertyActionListener value="#{detalles}"
+                                                                                 target="#{beanNotaCredito.detalleSeleccionado}"/>
+                                                </p:commandButton>
+                                            </p:column>
+                                            <p:column headerText="Eliminar" >
+                                                <p:commandLink id="btnEliminarDetalle"
+                                                               title="Eliminar Detalle"
+                                                               action="#{beanNotaCredito.eliminarImpuesto()}"
+                                                               update=":form:tvNotaCredito">
+                                                    <h:graphicImage value="/imagenes/eliminar.png"  width="20px" height="20px"/>
+                                                    <f:setPropertyActionListener value="#{detalles}"
+                                                                                 target="#{beanNotaCredito.detalleSeleccionado}"/>
+                                                </p:commandLink>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:panelGrid>
+                                    <p:panelGrid class="MarAuto TexAlCenter" layout="grid" columns="2"  style="border: 0px none; background: none">
+                                        <p:panel>
+                                            <p:panelGrid class="MarAuto TexAlCenter" layout="grid" columns="2"  style="border: 0px none; background: none">
+                                                <h:outputLabel id="olSubTotal12"
+                                                               for="itSubTotal12"
+                                                               value="Subtotal 14%: "/>
+                                                <p:inputText style="text-align: right" id="itSubTotal12"
+                                                             readonly="true"
+                                                             value="#{beanNotaCredito.subtotal12C}"
+                                                             >
+                                                    <f:convertNumber pattern="0.00" type="currency" locale="ec" />
+                                                </p:inputText>
+                                                <h:outputLabel id="olSubTotal0"
+                                                               for="itSubTotal0"
+                                                               value="Subtotal 0%: "/>
+                                                <p:inputText style="text-align: right" id="itSubTotal0"
+                                                             readonly="true"
+                                                             value="#{beanNotaCredito.subtotal0C}"
+                                                             >
+                                                    <f:convertNumber pattern="0.00" type="currency" locale="ec" />
+                                                </p:inputText>
+                                                <h:outputLabel id="olSubTotalNoIva"
+                                                               for="itSubTotalNoIva"
+                                                               value="Subtotal No IVA: "/>
+                                                <p:inputText style="text-align: right" id="itSubTotalNoIva"
+                                                             readonly="true"
+                                                             value="#{beanNotaCredito.subtotalNoIvaC}"
+                                                             >
+                                                    <f:convertNumber pattern="0.00" type="currency" locale="ec" />
+                                                </p:inputText>
+                                                <h:outputLabel id="olSubTotal"
+                                                               for="itSubTotal"
+                                                               value="Subtotal: " style="color: #0B0B61;"/>
+                                                <p:inputText style="text-align: right" id="itSubTotal"
+                                                             readonly="true"
+                                                             value="#{beanNotaCredito.subtotalC}"
+                                                             >
+                                                    <f:convertNumber pattern="0.00" type="currency" locale="ec" />
+                                                </p:inputText>
+                                            </p:panelGrid>
+                                        </p:panel>
+
+                                        <p:panel>
+                                            <p:panelGrid class="MarAuto TexAlCenter" layout="grid" columns="2"  style="border: 0px none; background: none">
+                                                <h:outputLabel id="olTotalDescuento"
+                                                               for="itTotalDescuento"
+                                                               value="Total Descuento:"/>
+                                                <p:inputText style="text-align: right" id="itTotalDescuento"
+                                                             readonly="true"
+                                                             value="#{beanNotaCredito.totalDescuentoComprobanteC}"
+                                                             >
+                                                    <f:convertNumber pattern="0.00" type="currency" locale="ec" />
+                                                </p:inputText>
+                                                <h:outputLabel id="olValorIce"
+                                                               for="itValorIce"
+                                                               value="ICE"/>
+                                                <p:inputText style="text-align: right" id="itValorIce"
+                                                             readonly="true"
+                                                             value="#{beanNotaCredito.valorICEC}">
+                                                    <f:convertNumber pattern="0.00" type="currency" locale="ec" />
+                                                </p:inputText>
+                                                <h:outputLabel id="olImpuestos"
+                                                               for="itImpuestos"
+                                                               value="IVA (14%):"/>
+                                                <p:inputText style="text-align: right" id="itImpuestos"
+                                                             readonly="true"
+                                                             value="#{beanNotaCredito.iva12C}"
+                                                             >
+                                                    <f:convertNumber pattern="0.00" type="currency" locale="ec" />
+                                                </p:inputText>
+                                            </p:panelGrid>
+                                        </p:panel>
+                                    </p:panelGrid>
+                                    <p:panel class="MarAuto TexAlCenter">
+                                        <h:outputLabel id="olValorTotal"
+                                                       for="itValorTotal"
+                                                       value="Importe Total: "
+                                                       style="color: #0B0B61; font-size:18px;"/>
+                                        <p:outputLabel id="itValorTotal"
+                                                       value=" #{beanNotaCredito.valorTotalC}"
+                                                       style="font-size:18px;"
+                                                       >
+                                            <f:convertNumber pattern="0.00" type="currency" locale="ec" />
+                                        </p:outputLabel>
+                                    </p:panel>
+
+                                    <br/>
+                                    <p:panelGrid class="TexAlCenter Wid20 MarAuto" layout="grid" columns="2"
+                                                 style="border: 0px none; background: none">
+                                        <p:commandButton value="atrás" actionListener="#{beanNotaCredito.atras()}" update=":form:tvNotaCredito"/>
+                                        <p:commandButton value="siguiente" actionListener="#{beanNotaCredito.validacionesDetallesNotaCredito()}" update=":form:tvNotaCredito"/>
+
+                                    </p:panelGrid>
+                                    <p:dialog id="dialogDetalleAdicional3"
+
+                                              header="Productos"
+                                              widgetVar="dialogDetalleAdicionalWV3"
+                                              draggable="true"
+                                              resizable="false"
+                                              closable="true"
+                                              style=" max-height: 500px; max-width: 800px; overflow-y: scroll;"
+                                              modal="true">
+                                        <h:panelGrid id="pg-nuevo-cliente2" columns="1"  style="border:0px none;background: none">
+                                            <p:messages id="mensajesInfAdic3" showDetail="true" autoUpdate="true" closable="true" />
+                                            <p:dataTable id="dt-productos" value="#{beanNotaCredito.productosbusqueda}" 
+                                                         var="productos" rows="5" paginator="true" rowsPerPageTemplate="5,10,15"
+                                                         selectionMode="single" paginatorPosition="bottom"  selection="#{beanNotaCredito.productoSeleccionado}"
+                                                         reflow="true" 
+                                                         rowKey="#{productos.idproducto}" widgetVar="wv-productos">
+                                                <p:ajax event="rowSelect" listener="#{beanNotaCredito.onRowSelect}" />
+                                                <p:ajax event="rowUnselect" listener="#{beanNotaCredito.onRowUnselect}" />
+                                                <p:column style="text-align:center" width="120" filterBy="#{productos.codigoProducto}" headerText="Codigo Producto">
+                                                    <h:outputText value="#{productos.codigoProducto}"/>
+                                                </p:column>
+                                                <p:column style="text-align:center" width="120" filterBy="#{productos.descripcion}" headerText="Descripcion" >
+                                                    <h:outputText value="#{productos.descripcion}"/>
+                                                </p:column>
+
+
+
+                                            </p:dataTable>
+                                        </h:panelGrid>
+
+                                        <h:panelGrid columns="2" style="margin-left: auto; margin-right: auto;" >
+                                            <p:commandButton value="Seleccionar" update="detallesF :form:tvNotaCredito"  actionListener="#{beanNotaCredito.llenarProducto()}"  />
+                                            <p:commandButton id="btnCancelarRegistroDetalleAdicional3"
+                                                             value="Cancelar"
+                                                             onclick="PF('dialogDetalleAdicionalWV3').hide();"
+                                                             />
+                                        </h:panelGrid>
+                                    </p:dialog>
+                                </p:panel>
+
+                            </p:tab>
+                            <p:tab id="tabInfoAdicional"
+                                   titleStyle="font-size: 14px"
+                                   title="Información Adicional" disabled="#{!beanNotaCredito.tab3}">
+
+
+                                <p:panel id="detallesAd" class="MarAuto TexAlCenter"
+                                         style="border: 0px none; background: none">
+                                    <h:panelGrid columns="1" style="margin-left: auto; margin-right: auto;" >
+                                        <p:spacer height="10" />
+
+                                    </h:panelGrid>
+                                    <p:panel style="margin-left: auto; margin-right: auto;" >
+                                       <p:outputLabel   value="secuencial: #{beanFactura.secuencial.puntoEmisionSecuencial}-#{beanFactura.secuencial.codigoEstablecimientoSecuencial}-#{beanFactura.obtenerSecuencialActivoFactura(beanFactura.secuencial.secuencialFacturaSecuencial)}" 
+                                                         style="font-weight: bold; color: #0B0B61;" />       
+                                       <p:panelGrid rendered="false" columns="1" layout="grid" class="MarAuto TexAlCenter"  style="border: 0px none; background: none">
+                                            <p:outputLabel value="Secuencial Activo: " for="som-Secuenciales" styleClass="FontBold Fs16 hardblue"/>
+                                            <p:selectOneMenu style="width:160px" id="som-Secuenciales" value="#{beanNotaCredito.codigoSecuencialSeleccionado}" effect="drop" >
+                                                <f:selectItems value="#{beanNotaCredito.secuenciales}" 
+                                                               var="secuencial" 
+                                                               itemLabel="#{secuencial.puntoEmisionSecuencial}-#{secuencial.codigoEstablecimientoSecuencial}-#{beanNotaCredito.obtenerSecuencialActivoCredito(secuencial.secuencialNotaCreditoSecuencial)}"
+                                                               itemValue="#{secuencial.idSecuencial}"/>
+                                            </p:selectOneMenu>
+
+                                        </p:panelGrid>
+                                    </p:panel>
+                                    <h:panelGrid  columns="2" style="margin-left: auto; margin-right: auto;" >
+                                        <p:outputLabel value="¿Desea agregar un correo adicional a la Nota de Crédito?"/>
+                     
+                                        <p:selectBooleanCheckbox  id="sbcInfoAdicional"
+                                                                  value="#{beanNotaCredito.infoAdicional}">
+                                            <p:ajax event="change"
+                                                    update="detallesAd" />
+                                        </p:selectBooleanCheckbox>
+                                    </h:panelGrid>
+
+                                    <p:panel class="Container80 MaxWid500 TexAlCenter white-back Fnone MarAuto BordRad10" rendered="#{beanNotaCredito.infoAdicional}">
+                                        <h:panelGrid columns="1" class="MarAuto TexAlLeft" rendered="#{beanNotaCredito.infoAdicional}">
+                                            <p:outputLabel rendered="false" value="* Solo se pueden agregar 15 campos de Información Adicional por Comprobante."
+                                                           style="font-weight: bold"/>
+                                            <p:outputLabel rendered="false" value="* Para ingresar un mail se debe poner CORREO en nombre y el correo en valor."
+                                                           style="font-weight: bold"/>
+                                        </h:panelGrid>
+                                            <p:panelGrid id="pgInfoAdicional"
+                                                     rendered="#{beanNotaCredito.infoAdicional}"
+                                                     layout="grid"
+                                                     columns="2"
+                                                     class="MarAuto TexAlCenter">
+                                            <h:outputLabel id="olNombreInfoAdicional"
+                                                           value="CORREO: "
+                                                           style="color: #0B0B61; margin-left:180px;"/>
+                                            <p:inputText id="itaValorInfoAdicional"
+                                                         style="margin-right:200px;"
+                                                         maxlength="300"
+                                                         autocomplete="off"
+                                                         value="#{beanNotaCredito.valorInfoAdicional}"/>
+                                        </p:panelGrid>
+                               
+                                        <h:panelGrid columns="1" style="margin-left: auto; margin-right: auto;" rendered="#{beanNotaCredito.infoAdicional}">
+                                            <p:commandButton id="btnAgregarInfoAdicional"
+                                                               value="Agregar Correo Adicional"
+                                                             actionListener="#{beanNotaCredito.ingresarInformacionAdicional()}"
+                                                             update="tablaInformacionAdicionales :form:mensajes pgInfoAdicional"/>
+                                        </h:panelGrid>
+                                        <p:spacer height="8" />
+                                        <h:panelGrid columns="1" 
+                                                     style="margin-left: auto; margin-right: auto;" 
+                                                     rendered="#{beanNotaCredito.infoAdicional}">
+                                            <p:dataTable id="tablaInformacionAdicionales"
+                                                         emptyMessage="No se han encontrado registros"
+                                                         rendered="#{beanNotaCredito.infoAdicional}"
+                                                         value="#{beanNotaCredito.listaInfoAdicional}"
+                                                         reflow="true"
+                                                         var="infoAdicional"
+                                                         style="text-align: center; margin: 0 auto;"> 
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Nombre" />
+                                                    </f:facet>
+                                                    <h:outputText value="#{infoAdicional.nombre}" title="#{infoAdicional.nombre}" />
+                                                </p:column>
+                                                <p:column >
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Valor" />
+                                                    </f:facet>
+                                                    <h:outputText value="#{infoAdicional.valor}" title="#{infoAdicional.valor}" />
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Eliminar"/>
+                                                    </f:facet>
+                                                    <p:commandLink title="Eliminar Información Adicional"
+                                                                   update="tablaInformacionAdicionales"
+                                                                   action="#{beanNotaCredito.eliminarInfoAdicional()}">
+                                                        <h:graphicImage value="/imagenes/eliminar.png"  width="30px" height="25px"/>
+                                                        <f:setPropertyActionListener value="#{infoAdicional}"
+                                                                                     target="#{beanNotaCredito.infoAdicionalSeleccionada}"/>
+                                                    </p:commandLink>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </h:panelGrid>
+                                        <p:spacer height="8" />
+
+                                    </p:panel>
+
+                                    <p:panel class="Container80 MaxWid500 TexAlCenter white-back Fnone MarAuto BordRad10">
+
+                                        <h:panelGrid   columns="2" style="margin: 0 auto;">
+                                            <h:outputText value="Visualizar  pdf" />
+                                            <p:panelGrid id="pg-firma-autorizacion2" columns="1" layout="grid" style="border:0px none;background:none" class="MarAuto TexAlCenter">
+                                                <h:commandLink id="clVerPDF"
+                                                               title="ver pdf"
+                                                               target="_blank"
+                                                               actionListener="#{beanNotaCredito.generarRIDE()}"
+
+                                                               >
+                                                    <p:graphicImage value="/imagenes/pdf_icon.png"  width="50px" height="50px" />
+                                                </h:commandLink>
+                                            </p:panelGrid>
+                                            <h:outputText value="Autorizar SRI" styleClass="FontBold Fs16 hardblue"></h:outputText>
+                                            <p:panelGrid id="pg-firma-autorizacion" columns="1" layout="grid" style="border:0px none;background:none" class="MarAuto TexAlCenter">
+
+                                                <p:commandLink id="cl-firma-autorizacion" 
+                                                               oncomplete="PF('confirmacionFirmaAutorizacion').show();"
+
+                                                               >
+                                                    <h:graphicImage  value="/imagenes/firmar.png"  width="50px" height="50px" />
+
+                                                </p:commandLink>
+                                            </p:panelGrid>
+
+                                        </h:panelGrid>
+                                    </p:panel>
+                                </p:panel>
+                                <br/>
+                                <p:panelGrid class="TexAlCenter Wid20 MarAuto" layout="grid" columns="1"
+                                             style="border: 0px none; background: none">
+                                    <p:commandButton value="atrás" actionListener="#{beanNotaCredito.atras()}" update=":form:tvNotaCredito"/>
+                                </p:panelGrid>
+
+                            </p:tab>
+                        </p:tabView>
+
+
+                        <p:dialog id="dialogListaDetalleAdicionalDetalle"
+                                  header="Información Adicional del Detalle"
+                                  widgetVar="dialogListaDetalleAdicionalDetalleWV"
+                                  resizable="false"
+                                  modal="true">
+                            <h:panelGrid id="pgListaDetalleAdicional"
+                                         columns="2"
+                                         cellpadding="4"
+                                         style='margin: 0 auto;'
+                                         class="Container80 MaxWid500 TexAlCenter white-back Fnone MarAuto BordRad10">
+                                <p:dataTable id="tablaListaDetalleAdicional"
+                                             value="#{beanNotaCredito.listaDetallesAdicionales}"
+                                             var="detallesA"
+                                             emptyMessage="No existe Información Adicional."
+                                             style="text-align: center;">
+                                    <p:column headerText="Nombre" style="width: 100px;">
+                                        <h:outputText value="#{detallesA.nombre}" />
+                                    </p:column>
+                                    <p:column headerText="Valor" style="width: 100px;">
+                                        <h:outputText value="#{detallesA.valor}" />
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGrid>
+                        </p:dialog>
+
+                        <p:dialog id="dialogDetalleAdicional"
+                                  header="Información Adicional"
+                                  widgetVar="dialogDetalleAdicionalWV"
+
+                                  draggable="true"
+                                  resizable="false"
+                                  closable="true"
+                                  modal="true">
+                            <h:panelGrid columns="1" style="margin-left: auto; margin-right: auto; text-align: center;" >
+                                <p:messages id="mensajesInfAdic" showDetail="true" autoUpdate="true" closable="true" />
+                                <p:outputLabel value="Solo se pueden agregar 3 campos de Información Adicional por Detalle."
+                                               style="font-weight: bold; font-size: 15px;" />
+                            </h:panelGrid>
+                            <h:panelGrid id="pgInsertarDetalleAdicional"
+                                         style="margin-left: auto; margin-right: auto; font-size: 15px;"
+                                         columns="2"
+                                         cellpadding="4">
+                                <h:outputLabel id="olNombreDetalleAdicional"
+                                               value="Nombre Campo:"
+                                               for="itNombreDetalleAdicional"
+                                               style="color: #0B0B61;" />
+                                <p:inputText id="itNombreDetalleAdicional"
+                                             size="30"
+                                             autocomplete="off"
+                                             maxlength="199"
+                                             value="#{beanNotaCredito.nombreInfoAdicionalDetalle}"/>
+                                <h:outputLabel id="olValorDetalleAdicional"
+                                               value="Valor Campo:"
+                                               for="itValorDetalleAdicional"
+                                               style="color: #0B0B61;"/>
+                                <p:inputText id="itValorDetalleAdicional"
+                                             size="30"
+                                             maxlength="17"
+                                             autocomplete="off"
+                                             value="#{beanNotaCredito.valorInfoAdicionalDetalle}"/>
+                            </h:panelGrid>
+
+                            <h:panelGrid columns="2" style="margin-left: auto; margin-right: auto;" >
+                                <p:commandButton id="btnRegistrarDetalleAdicional"
+                                                 actionListener="#{beanNotaCredito.ingresarDetalleAdicional()}"
+                                                 value="Agregar"
+                                                 update=":form:tvNotaCredito">
+                                </p:commandButton>
+                                <p:commandButton id="btnCancelarRegistroDetalleAdicional"
+                                                 value="Cancelar"
+                                                 onclick="PF('dialogDetalleAdicionalWV').hide();"
+                                                 />
+                            </h:panelGrid>
+                        </p:dialog>
+
+                        <p:dialog id="dialogListaImpuestos"
+                                  header="Impuestos del Detalle"
+                                  widgetVar="dialogListaImpuestosWV"
+                                  resizable="false"
+                                  modal="true">
+                            <p:panelGrid id="pgListaImpuestos" layout="grid" columns="1"
+                                         class="Container80 MaxWid500 TexAlCenter white-back Fnone MarAuto BordRad10">
+                                <p:dataTable id="tablaListaImpuestos"
+                                             value="#{beanNotaCredito.listaImpuestoDetalle}"
+                                             var="impuestos"
+                                             emptyMessage="El detalle no tiene impuestos."
+                                             >
+                                    <p:column headerText="Código">
+                                        <h:outputText value="#{impuestos.codigoPorcentaje}" />
+                                    </p:column>
+                                    <p:column headerText="Porcentaje">
+                                        <h:outputText value="#{impuestos.tarifa}" >
+                                            <f:convertNumber pattern="0.00" type="percent" locale="ec" />
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Base Imponible">
+                                        <h:outputText value="#{impuestos.baseImponible}" >
+                                            <f:convertNumber pattern="0.00" type="currency" locale="ec" />
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Total Impuesto">
+                                        <h:outputText value="#{impuestos.valor}" >
+                                            <f:convertNumber pattern="0.00" type="currency" locale="ec" />
+                                        </h:outputText>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:panelGrid>
+                        </p:dialog>
+                    </div>
+                </h:form>
+                <h:form id="form-edicion-detalle">
+                    <p:dialog header="Actualizar detalle" widgetVar="detalle-cantidades" fitViewport="true"  draggable="true" width="700" height="300" style="overflow-y: scroll;"  resizable="false" modal="true">
+                        <p:panelGrid id="pg-edicion-detalle" columns="2" layout="grid" style="border:0px none;background:none" >
+                            <h:outputText value="Descripción:" styleClass="FontBold Fs12 hardblue" />
+                            <h:outputText value="Descripción: #{beanNotaCredito.detalleSeleccionado.detalleComprobante.descripcion}" />
+
+
+                            <h:outputText value="Precio unitario:" styleClass="FontBold Fs12 hardblue"/>
+                            <h:outputText value="#{beanNotaCredito.detalleSeleccionado.detalleComprobante.precioUnitario}" />
+
+
+                            <h:outputText value="Cantidad:" styleClass="FontBold Fs12 hardblue" />
+                            <p:inplace saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanNotaCredito.detalleSeleccionado.detalleComprobante.cantidad}" >
+                                <p:ajax event="save" update=":form:tvNotaCredito ot-ptsi form:tvNotaCredito:tablaDetalles tablaListaImpuestos" listener="#{beanNotaCredito.actualizarCantidad()}" />
+                                <p:inputText
+                                    value="#{beanNotaCredito.edicionCantidad}" converterMessage="Debe ser un número."/>
+                            </p:inplace>
+
+                            <h:outputText value="Descuento en Dolares:" styleClass="FontBold Fs12 hardblue"/>
+                            <p:inplace saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanNotaCredito.detalleSeleccionado.detalleComprobante.descuento}" >
+                                <p:ajax event="save" update=":form:tvNotaCredito ot-ptsi form:tvNotaCredito:tablaDetalles tablaListaImpuestos" listener="#{beanNotaCredito.actualizarDescuento()}" />
+                                <p:inputText
+                                    value="#{beanNotaCredito.edicionDescuento}" converterMessage="Debe ser un número."/>
+                            </p:inplace>
+                            <h:outputText value="Precio total sin impuestos:" styleClass="FontBold Fs12 hardblue"/>
+                            <h:outputText id="ot-ptsi" value="#{beanNotaCredito.detalleSeleccionado.detalleComprobante.precioTotalSinImpuesto}" />
+                        </p:panelGrid>
+                     
+                        <h:outputText value="Impuestos Aplicables" styleClass="FontBold Fs12 hardblue"/>
+                        <p:panelGrid id="pgListaImpuestos"  layout="grid" columns="1" class="MarAuto MaxWid600">
+                            <p:dataTable id="tablaListaImpuestos"
+                                         value="#{beanNotaCredito.detalleSeleccionado.detalleComprobante.impuestos}"
+                                         editable="true"
+                                         var="impuestos"
+                                         emptyMessage="El detalle no tiene impuestos."
+
+                                         >
+                                <p:ajax event="rowEdit" listener="#{beanNotaCredito.onRowEdit2}"  update=":form:tvNotaCredito form:tvNotaCredito:tablaDetalles tablaListaImpuestos " >
+
+
+                                </p:ajax>
+
+
+
+                                <p:column headerText="Tipo" style="width:200px;" >
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{impuestos.codigo eq '2'?'IVA':impuestos.codigo eq '3'?'ICE':'IRBPNR'}" /></f:facet>
+                                        <f:facet name="input">
+                                            <p:selectOneMenu rendered="#{impuestos.codigo eq '2'}" value="#{impuestos.codigo}"  style="width:180px">
+                                                <f:selectItems  value="#{beanNotaCredito.listaTarifaImpuestoIVA}" itemDescription="#{tarifaImpuestoIce.descripcionTarifaImpuesto}" 
+                                                                var="tarifaImpuestoIva"
+                                                                itemLabel="#{tarifaImpuestoIva.codigoTarifaImpuesto} - #{tarifaImpuestoIva.descripcionTarifaImpuestoCorto}"
+                                                                itemValue="#{tarifaImpuestoIva.codigoTarifaImpuesto}" >
+
+                                                </f:selectItems>
+
+                                            </p:selectOneMenu>
+                                            <h:selectOneMenu rendered="#{impuestos.codigo eq '3'}" value="#{impuestos.codigo}" style="width:100%">
+                                                <f:selectItems value="#{beanNotaCredito.listaTarifaImpuestoICE}" itemDescription="#{tarifaImpuestoIce2.descripcionTarifaImpuesto}" 
+                                                               var="tarifaImpuestoIva2"
+                                                               itemLabel="#{tarifaImpuestoIva2.codigoTarifaImpuesto} - #{tarifaImpuestoIva2.descripcionTarifaImpuestoCorto}"
+                                                               itemValue="#{tarifaImpuestoIva2.codigoTarifaImpuesto}" >
+
+                                                </f:selectItems>
+
+                                            </h:selectOneMenu>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+
+
+                                <p:column headerText="Código">
+                                    <h:outputText value="#{impuestos.codigoPorcentaje}" />
+                                </p:column>
+                                <p:column headerText="Porcentaje">
+                                    <h:outputText value="#{impuestos.tarifa}" >
+                                        <f:convertNumber pattern="0.00" type="percent" locale="ec" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Base Imponible">
+                                    <h:outputText value="#{impuestos.baseImponible}" >
+                                        <f:convertNumber pattern="0.00" type="currency" locale="ec" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Total Impuesto">
+                                    <h:outputText value="#{impuestos.valor}" >
+                                        <f:convertNumber pattern="0.00" type="currency" locale="ec" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Editar" style="width:32px">
+
+                                    <p:rowEditor />
+
+
+                                </p:column>
+                            </p:dataTable>
+                        </p:panelGrid>
+
+
+                        <p:panelGrid  columns="1" layout="grid" style="border:0px none;background:none" class="TexAlCenter MarAuto MaxWid500">
+
+                            <p:commandButton value="Cerrar" oncomplete="PF('detalle-cantidades').hide();" icon="fa fa fw fa-close" iconPos="right"/>
+                        </p:panelGrid>
+                    </p:dialog>
+                </h:form>
+
+                <h:form id="form-confirma-firma-autorizacion">
+                    <p:dialog header="Confirmación" widgetVar="confirmacionFirmaAutorizacion" fitViewport="true"  draggable="false" resizable="false" modal="true">
+                        <p:panelGrid id="pg-confirma-firma-autorizacion" columns="1" layout="grid" style="border:0px none;background:none" class="TexAlCenter MarAuto">
+                            <h:outputText value="¿Desea continuar con la FIRMA Y AUTORIZACIÓN CON EL SRI del comprobante electrónico?"/>   
+                        </p:panelGrid>
+                        <h:panelGrid columns="2" class="TexAlCenter MarAuto">
+                            <p:commandButton id="cb-firma-autorizacion" value="Sí" onclick="PF('confirmacionFirmaAutorizacion').hide();" actionListener="#{beanNotaCredito.firmarYAutorizar()}" update=":form-mensaje-autorizacion:pg-mensaje-autorizacion :bien:pg-mensaje-autorizacion1 :mal:pg-mensaje-autorizacion2" icon="fa fa fw fa-check" iconPos="right" />
+                            <p:commandButton value="No" onclick="PF('confirmacionFirmaAutorizacion').hide();" icon="fa fa fw fa-close" iconPos="right" />
+                        </h:panelGrid>
+                        <p:blockUI block="notatodo" trigger="cb-firma-autorizacion" />
+                    </p:dialog>
+                </h:form>
+                <h:form id="form-mensaje-autorizacion">
+                    <p:dialog header="MENSAJE AUTORIZACIÓN" widgetVar="mensajeAutorizacion" fitViewport="true"  draggable="false" resizable="false" modal="true" closable="false">
+                        <p:panelGrid id="pg-mensaje-autorizacion" columns="1" layout="grid" style="border:0px none;background:none" class="MarAuto TexAlCenter">
+                            <h:outputText value="MENSAJE: #{beanFacturaReembolsoSimple.mensajeProceso}" styleClass="FontBold Fs16 hardblue"/>
+                            <p:commandButton value="Aceptar" icon="fa fa fw fa-check" iconPos="right" onclick="PF('mensajeAutorizacion').hide();" 
+                                             update=":form" actionListener="#{beanFacturaReembolsoSimple.recargarPagina()}"/>
+                        </p:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <h:form id="bien">
+                    <p:dialog header="MENSAJE AUTORIZACIÓN" widgetVar="autorizadoNoautorizado" fitViewport="true"  draggable="false" resizable="false" modal="true" closable="false">
+                        <p:panelGrid id="pg-mensaje-autorizacion1" columns="1" layout="grid" style="border:0px none;background:none" class="MarAuto TexAlCenter">
+                            <h:outputText value="MENSAJE: #{beanNotaCredito.mensajeResultado}" styleClass="FontBold Fs16 hardblue"/>
+                            <p:commandButton value="ACEPTAR" actionListener="#{beanNotaCredito.direccionamiento()}"/>
+                        </p:panelGrid>
+                        <p:blockUI block="notatodo"  />
+                    </p:dialog>
+                </h:form>
+                <h:form id="mal">
+                    <p:dialog header="MENSAJE AUTORIZACIÓN" widgetVar="noenviado" fitViewport="true"  draggable="false" resizable="false" modal="true" closable="false">
+                        <p:panelGrid id="pg-mensaje-autorizacion2" columns="1" layout="grid" style="border:0px none;background:none" class="MarAuto TexAlCenter">
+                            <h:outputText value="MENSAJE: #{beanNotaCredito.mensajeResultado}" styleClass="FontBold Fs16 hardblue"/>
+                            <p:commandButton value="ACEPTAR" actionListener="#{beanNotaCredito.direccionamiento()}" onclick="PF('noenviado').hide();"/>
+                        </p:panelGrid>
+                    </p:dialog>
+                </h:form>
+
+            </p:panel>
+        </div>
+    </ui:define>
+
+</ui:composition>

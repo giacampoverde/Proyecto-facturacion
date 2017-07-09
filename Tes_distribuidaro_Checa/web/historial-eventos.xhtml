@@ -1,0 +1,115 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <style type="text/css">
+            .ui-panel {
+                margin-top:20px
+            }
+        </style>
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+        <h:outputScript name="js/es.js" library="sentinel-layout" />
+        <h3 class="hardblue TexAlCenter">Historial De Eventos</h3>
+        <p:panel>
+            <p:messages id="m-mensajes" showDetail="true" autoUpdate="true" closable="true" />
+            <h:form id="form-comprobantes-emitidos-autorizados">
+                <p:panel>
+                    <h:outputText value="Búsquedas:" styleClass="FontBold Fs14 hardblue"/>
+                    <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none" class="Wid70 TexAlCenter MarAuto">
+                        <h:outputText value="Fecha:" styleClass="FontBold Fs14 hardblue"/>                
+                        <p:selectOneMenu id="som-fechas" value="#{beanAuditoria.seleccionPeriodoTiempo}" effect="drop" >
+                            <f:selectItem itemLabel="Hoy" itemValue="2" />
+                            <f:selectItem itemLabel="Últimos 7 días" itemValue="3" />  
+                            <f:selectItem itemLabel="Último mes" itemValue="4" />  
+                            <f:selectItem itemLabel="Últimos 6 meses" itemValue="5" />                             
+                            <f:selectItem itemLabel="Periodo" itemValue="6" />
+                             <f:selectItem itemLabel="Todos" itemValue="1" />
+                            <p:ajax event="valueChange" listener="#{beanAuditoria.abrirDialogRangoFechas()}" update=":form-periodo-fechas:pg-periodo-fechas"/>
+                        </p:selectOneMenu>
+                        <h:outputText value="RUC/Cédula:" styleClass="FontBold Fs14 hardblue"/>
+
+                        <p:autoComplete  id="it-receptor-busqueda"  value="#{beanAuditoria.rucReceptorBusqueda}" maxlength="13" completeMethod="#{beanAuditoria.autocompletarUsuariosruc}">
+                            <p:ajax event="click" listener="#{beanAuditoria.borrarBusqueda()}" update="it-receptor-busqueda"/>
+                        </p:autoComplete>
+
+                    </p:panelGrid>
+                    <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none" class="Wid45">
+                        <p:commandButton id="btnBuscar" value="Buscar" update=":form-comprobantes-emitidos-autorizados:dt-comprobantes-emitidos-autorizados" actionListener="#{beanAuditoria.buscarRegistros()}" onclick="PF('wv-dt-emitidos-autorizados').getPaginator().setPage(0);"/>
+
+                        <p:commandButton value="Recargar" update=":form-comprobantes-emitidos-autorizados:dt-comprobantes-emitidos-autorizados it-receptor-busqueda som-fechas " actionListener="#{beanAuditoria.reiniciarParametros()}" onclick="PF('wv-dt-emitidos-autorizados').getPaginator().setPage(0);"/>
+                    </p:panelGrid>
+                    <p:blockUI block="som-fechas  it-receptor-busqueda " trigger="btnBuscar"/>
+                </p:panel>
+                <div class="EmptyBox10 "/>
+
+                <p:dataTable id="dt-comprobantes-emitidos-autorizados" widgetVar="wv-dt-emitidos-autorizados" var="registro" value="#{beanAuditoria.registrosLazy}" paginator="true" rows="15" emptyMessage="No hay registros." 
+                             paginatorPosition="bottom"
+                             rowsPerPageTemplate="5,10,15" lazy="true" reflow="true" rowKey="#{registro.idauditoria}"  scrollable="false" >
+
+                    <p:column headerText="Nombres Usuario" width="15%" >
+                        <h:outputText value="#{registro.usuarioAcceso.nombreUsuarioAcceso}" />
+                    </p:column>
+                    <p:column headerText="Nombres" width="15%" >
+                        <h:outputText value="#{registro.usuarioAcceso.nombreUsuario}" />
+                    </p:column>
+
+                    <p:column headerText="Fecha" width="80">
+                        <h:outputText value="#{registro.fecha}" >
+                            <f:convertDateTime pattern="dd/MM/yyyy " />
+                        </h:outputText>
+
+                    </p:column>
+                    <p:column headerText="Hora" width="80">
+                        <h:outputText value="#{registro.fechaHora}" >
+                            <f:convertDateTime pattern="HH:mm:ss" timeZone="America/Mexico_City" />
+                        </h:outputText>
+
+                    </p:column>
+
+                    <p:column headerText="Mensaje" width="20%" >
+                        <p:tooltip for="ot-receptor" class="FontBold Fs14"/>
+                        <h:outputText id="ot-receptor" value="#{registro.mensajeTransaccion}"/>
+                    </p:column>
+
+
+                </p:dataTable>
+                <p:spacer height="50"/>
+                <p:commandButton value="Descargar Documento" ajax="false" actionListener="#{beanAuditoria.generacionreporte()}" style="margin-left:400px"/>
+            </h:form>
+            <h:form id="form-periodo-fechas">
+                <p:dialog modal="true" widgetVar="wv-periodo-fechas" draggable="false" resizable="false" fitViewport="true" maximizable="false" header="Periodo de fechas" closable="false">
+                    <h:panelGrid columns="1" id="pg-periodo-fechas">
+                        <p:tabView cache="false" dynamic="true">
+                            <p:tab title="Fecha inicial" >
+                                <p:panelGrid columns="1" layout="grid" style="border:0px none;background:none" class="TexAlCenter MarAuto">
+                                    <h:outputText id="ot-fecha-inicial" value="Fecha inicial: #{beanAuditoria.fechaFormateada(beanAuditoria.fechaInicial)}" styleClass="FontBold Fs12 hardblue" />
+                                    <p:calendar value="#{beanAuditoria.fechaInicial}" mode="inline" locale="es" >
+                                        <p:ajax event="dateSelect" update="ot-fecha-inicial" />
+                                    </p:calendar>
+
+                                </p:panelGrid>
+                            </p:tab>
+                            <p:tab title="Fecha final">
+                                <p:panelGrid columns="1" layout="grid" style="border:0px none;background:none" class="TexAlCenter MarAuto">
+                                    <h:outputText id="ot-fecha-final" value="Fecha final: #{beanAuditoria.fechaFormateada(beanAuditoria.fechaFinal)}" styleClass="FontBold Fs12 hardblue" />
+                                    <p:calendar value="#{beanAuditoria.fechaFinal}" mode="inline" locale="es" >
+                                        <p:ajax event="dateSelect" update="ot-fecha-final" />
+                                    </p:calendar>
+
+                                </p:panelGrid>
+                            </p:tab>
+                        </p:tabView>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="1" cellpadding="5" cellspacing="5" class="MarAuto">                        
+                        <p:commandButton value="Aceptar" actionListener="#{beanAuditoria.cerrarDialogRangoFechas()}" icon="fa fa fw fa-check" iconPos="right" update=":form-comprobantes-emitidos-autorizados:som-fechas" />
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+        </p:panel>
+    </ui:define>
+</ui:composition>

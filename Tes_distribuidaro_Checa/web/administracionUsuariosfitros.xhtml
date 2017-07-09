@@ -1,0 +1,215 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <style type="text/css">
+            .ui-panel {
+                margin-top:20px
+            }
+        </style>
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+        <h3 class="hardblue TexAlCenter">Administración de Usuarios</h3>
+
+        <p:panel  id="bloquear">
+
+            <p:messages id="m-mensajes" showDetail="true" autoUpdate="true" closable="true" />
+            <h:form id="form-admin-clientes">
+
+                <div class="Container100"><div class="ContainerIndent"> <h:outputText value="Clientes" styleClass="FontBold Fs18 hardblue"/></div></div>
+
+                <p:dataTable id="dt-clientes" value="#{beanAdministracionUsuariosfiltr.usuarios}" var="perfil" rows="5" paginator="true" 
+
+                             rowsPerPageTemplate="5,10,15" paginatorPosition="bottom" reflow="true" emptyMessage="No hay registros."
+                             selectionMode="single" selection="#{beanAdministracionUsuariosfiltr.usuarioselec}" rowKey="#{perfil.idUsuario}" widgetVar="dt-perfiles">
+                    <p:ajax event="rowSelect" listener="#{beanAdministracionUsuariosfiltr.onRowSelect}"/>
+                    <p:ajax event="rowUnselect" listener="#{beanAdministracionUsuariosfiltr.onRowUnselect}"/>
+                    <p:column width="115" filterBy="#{perfil.identificacionUsuario}" headerText="Identificacion">
+                        <h:outputText value="#{perfil.identificacionUsuario}" />
+                    </p:column>
+                    <p:column filterBy="#{perfil.nombreUsuarioAcceso}" filterMatchMode="contains" headerText="Nombre Usuario" >
+                        <h:outputText value="#{perfil.nombreUsuarioAcceso}" />
+                    </p:column>
+                    <p:column filterBy="#{perfil.nombreUsuario}" filterMatchMode="contains" headerText="Nombres" >
+                        <h:outputText value="#{perfil.nombreUsuario}" />
+                    </p:column>      
+                    <p:column rendered="false" filterBy="#{perfil.apellidoUsuario}" headerText="Apellidos" >
+                        <h:outputText value="#{perfil.apellidoUsuario}" />
+                    </p:column>  
+                    <p:column  width="120" headerText="Telefono" >
+                        <h:outputText value="#{perfil.telefonoPrincipalUsuario}" />
+                    </p:column>                 
+                    <p:column   headerText="Correo" >
+                        <h:outputText value="#{perfil.correoPrincipalUsuario}" />
+                    </p:column>  
+                    <p:column   headerText="Correo 2" >
+                        <h:outputText value="#{perfil.correoAdicionalUsuario}" />
+
+                    </p:column>  
+                    <p:column style="text-align:center" width="133" filterBy="#{perfil.estadoUsuario}" headerText="Estado"  filterMatchMode="exact">
+                        <f:facet name="filter">
+                            <p:selectOneMenu value="#{beanAdministracionClientes.estadobusqueda}" onchange="PF('dt-perfiles').filter()" >
+                                <f:selectItem itemLabel="Activo/Inactivo" itemValue="#{null}" />
+                                <f:selectItem itemLabel="Activo" itemValue="1" />
+                                <f:selectItem itemLabel="Inactivo" itemValue="2" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <h:outputText  value="#{perfil.estadoUsuario eq '1'?'Activo':'Inactivo'}"/>
+                    </p:column>
+
+
+
+                </p:dataTable>
+
+            </h:form>
+
+            <div class="EmptyBox20"/>
+            <h:panelGrid columns="3" class="MarAuto" cellpadding="5" cellspacing="5">
+                <p:commandButton id="cb-nuevo" value="Nuevo" actionListener="#{beanAdministracionUsuariosfiltr.mostrarDialogNuevo()}" update=":form-nuevo-usuario:pg-nuevo-usuario"/>
+                <p:commandButton value="Editar" update=":form-editar-cliente:pg-editar-cliente  :form-editar-cliente:pg-estado-usuario-actual"  actionListener="#{beanAdministracionUsuariosfiltr.editarCliente()}"/>
+
+                <p:commandButton value="Perfil" update=":form-editar-perfil:pg-editar-perfil" title="Editar"                                               
+                                 action="#{beanAdministracionUsuariosfiltr.mostrarDialogPerfil()}" 
+
+                                 >
+
+
+                </p:commandButton>
+            </h:panelGrid>
+            <div class="EmptyBox20"/>
+
+
+            <h:form id="form-editar-cliente">
+                <p:dialog fitViewport="true" modal="true" header="Editar cliente" widgetVar="wv-editar-cliente" draggable="true" closable="false" resizable="false" style=" max-height: 400px; max-width: 500px; overflow-y: scroll;">
+
+                    <p:panelGrid id="pg-editar-cliente" columns="2" layout="grid" style="border:0px none;background:none">
+                        <h:outputText value="Nombre de usuario:" styleClass="FontBold Fs14 hardblue" />                        
+                        <p:inplace saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionUsuariosfiltr.usuarioselec.nombreUsuarioAcceso}" >
+                            <p:ajax event="save" update=":form-admin-clientes:dt-clientes :form-editar-cliente:pg-editar-cliente" listener="#{beanAdministracionUsuariosfiltr.actualizarUsuario(1)}" />
+                            <p:inputText
+                                value="#{beanAdministracionUsuariosfiltr.nombreUsuarioEdicion}" />
+                        </p:inplace>
+                        <h:outputText value="Nombres:" styleClass="FontBold Fs14 hardblue" />                        
+                        <p:inplace saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionUsuariosfiltr.usuarioselec.nombreUsuario}" >
+                            <p:ajax event="save" update=":form-admin-clientes:dt-clientes :form-editar-cliente:pg-editar-cliente" listener="#{beanAdministracionUsuariosfiltr.actualizarUsuario(2)}" />
+                            <p:inputText
+                                value="#{beanAdministracionUsuariosfiltr.nombreEdicion}" />
+                        </p:inplace>
+                        <h:outputText rendered="false" value="Apellidos:" styleClass="FontBold Fs14 hardblue" />
+                        <p:inplace rendered="false" saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionUsuariosfiltr.usuarioselec.apellidoUsuario}" >
+                            <p:ajax event="save" update=":form-admin-clientes:dt-clientes :form-editar-cliente:pg-editar-cliente" listener="#{beanAdministracionUsuariosfiltr.actualizarUsuario(3)}" />
+                            <p:inputText
+                                value="#{beanAdministracionUsuariosfiltr.apellidoEdicion}" />
+                        </p:inplace>
+                        <h:outputText value="Teléfono principal:" styleClass="FontBold Fs14 hardblue" />
+                        <p:inplace saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionUsuariosfiltr.usuarioselec.telefonoPrincipalUsuario}" >
+                            <p:ajax event="save" update=":form-admin-clientes:dt-clientes :form-editar-cliente:pg-editar-cliente" listener="#{beanAdministracionUsuariosfiltr.actualizarUsuario(4)}" />
+                            <p:inputText
+                                value="#{beanAdministracionUsuariosfiltr.telefonoPrincipalEdicion}" />
+                        </p:inplace>
+                        <h:outputText value="Teléfono adicional:" styleClass="FontBold Fs14 hardblue" />
+                        <p:inplace saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionUsuariosfiltr.usuarioselec.telefonoAdicionalUsuario}" >
+                            <p:ajax event="save" update=":form-admin-clientes:dt-clientes :form-editar-cliente:pg-editar-cliente" listener="#{beanAdministracionUsuariosfiltr.actualizarUsuario(5)}" />
+                            <p:inputText
+                                value="#{beanAdministracionUsuariosfiltr.telefonoAdicionalEdicion}" placeholder="Telefono Adicional"/>
+                        </p:inplace>
+
+                        <h:outputText value="Correo principal:" styleClass="FontBold Fs14 hardblue" />
+                        <p:inplace saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionUsuariosfiltr.usuarioselec.correoPrincipalUsuario}" >
+                            <p:ajax event="save" update=":form-admin-clientes:dt-clientes :form-editar-cliente:pg-editar-cliente" listener="#{beanAdministracionUsuariosfiltr.actualizarUsuario(6)}" />
+                            <p:inputText
+                                value="#{beanAdministracionUsuariosfiltr.correoPrincipalEdicion}" />
+                        </p:inplace>
+
+                        <h:outputText value="Correo adicional:" styleClass="FontBold Fs14 hardblue" />
+                        <p:inplace saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionUsuariosfiltr.usuarioselec.correoAdicionalUsuario}">
+                            <p:ajax event="save" update=":form-admin-clientes:dt-clientes :form-editar-cliente:pg-editar-cliente" listener="#{beanAdministracionUsuariosfiltr.actualizarUsuario(7)}" />
+                            <p:inputText value="#{beanAdministracionUsuariosfiltr.correoAdicionalEdicion}"/>
+                        </p:inplace>  
+
+
+                    </p:panelGrid>
+                    <div class="EmptyBox20"></div>                    
+                    <p:panel >
+                        <h:outputText value="Estado" styleClass="FontBold Fs14 hardblue" />
+                        <h:panelGrid columns="1" id="pg-estado-usuario-actual" class="MarAuto TexAlCenter">
+
+                            <h:outputText id="ol-estado-usuario" styleClass="FontBold Fs14 hardblue" value="Usuario #{beanAdministracionUsuariosfiltr.estadoActualUsuario eq'true'?'Activo':'Inactivo'}" />
+                            <p:selectBooleanCheckbox value="#{beanAdministracionUsuariosfiltr.estadoActualUsuario}" >
+                                <p:ajax update=" :form-admin-clientes:dt-clientes :form-editar-cliente:pg-editar-cliente ol-estado-usuario" listener="#{beanAdministracionUsuariosfiltr.actualizarUsuario(8)}"/>
+
+                            </p:selectBooleanCheckbox> 
+                        </h:panelGrid>
+
+                    </p:panel>
+                    <div class="EmptyBox20"></div>
+
+
+                    <p:messages id="m-mensajes-editar" showDetail="true" autoUpdate="true" closable="true" />
+                    <p:panel class="TexAlCenter MarAuto" style="margin-top: 0px !important;border:0px none;background: none">
+                        <p:commandButton value="Cerrar" onclick="PF('wv-editar-cliente').hide();" icon="fa fa fw fa-close" iconPos="right"
+
+                                         update=":form-admin-clientes:dt-clientes pg-editar-cliente m-mensajes-editar"/>
+                    </p:panel>
+                </p:dialog>
+            </h:form>
+            <h:form id="form-editar-perfil" >
+                <p:dialog modal="true"  widgetVar="editarUsuarioPerfil" draggable="false" resizable="false" header="Cambiar perfil" >
+                    <p:messages showDetail="true" autoUpdate="true" closable="true" />
+                    <p:panelGrid id="pg-editar-perfil" columns="1" layout="grid" style="border:0px none;background:none" class="MarAuto TexAlCenter">
+
+
+                        <h:outputText value="Perfil Actual:" styleClass="FontBold Fs14 hardblue"/>
+                        <h:outputText value="#{beanAdministracionUsuariosfiltr.usuarioselec.perfil.nombrePerfil}" />
+
+
+                        <h:outputText value="Perfiles Disponibles:" styleClass="FontBold Fs14 hardblue"/>
+                        <p:selectOneMenu id="som-perfiles" value="#{beanAdministracionUsuariosfiltr.perfilSelecionado}" effect="drop" >
+
+                            <f:selectItems value="#{beanAdministracionUsuariosfiltr.listaperfiles}" 
+                                           var="perfil"
+                                           itemLabel="#{perfil.nombrePerfil}"
+                                           itemValue="#{perfil.idPerfil}"/>
+                        </p:selectOneMenu>
+
+                        <p:commandButton value="Aceptar" icon="fa fa fw fa-check" iconPos="right"  actionListener="#{beanAdministracionUsuariosfiltr.actualizarPerfil()}" onclick="PF('editarUsuarioPerfil').hide();" update=":form-admin-clientes:dt-clientes "/>
+
+                    </p:panelGrid>
+                </p:dialog>
+            </h:form>
+            <h:form id="form-nuevo-usuario" >
+                <p:dialog modal="true" widgetVar="nuevoUsuario" header="Nuevo Usuario" draggable="false" resizable="false" showEffect="">
+                    <p:focus for="it-identificacion"/>
+                    <h:panelGrid id="pg-nuevo-usuario" columns="4" cellpadding="5" cellspacing="5" class="MarAuto TexAlCenter">
+                        <p:focus for="it-identificacion"/>
+                        <p:inputText id="it-identificacion" value="#{beanAdministracionUsuariosfiltr.identificacion}" placeholder="Cédula" />  
+                        <div class="EmptyBox20 "></div>
+                        <p:inputText value="#{beanAdministracionUsuariosfiltr.nombreUsuario}" placeholder="Nombre Usuario"/>
+                        <div class="EmptyBox20 "></div>
+                        <p:inputText value="#{beanAdministracionUsuariosfiltr.nombres}" placeholder="Nombres"/>
+                      
+                        <p:inputText rendered="false" value="#{beanAdministracionUsuariosfiltr.apellidos}" placeholder="Apellidos"/>
+                        <div class="EmptyBox20 "></div>
+                        <p:inputText value="#{beanAdministracionUsuariosfiltr.telefonoPrincipal}" placeholder="Teléfono Principal"/>
+                        <div class="EmptyBox20 "></div>
+                        <p:inputText value="#{beanAdministracionUsuariosfiltr.telefonoAdicional}" placeholder="Teléfono Adicional"/>
+                        <div class="EmptyBox20 "></div>
+                        <p:inputText value="#{beanAdministracionUsuariosfiltr.correoPrincipal}" placeholder="Correo Principal"/>
+                        <div class="EmptyBox20 "></div>
+                        <p:inputText value="#{beanAdministracionUsuariosfiltr.correoAdicional}" placeholder="Correo Adicional"/>
+                        <div class="EmptyBox20 "></div>
+                        <p:spacer/>
+                        <div class="TexAlCenter">
+                            <p:commandButton value="Aceptar" icon="fa fa fw fa-check" iconPos="right"  actionListener="#{beanAdministracionUsuariosfiltr.guardarNuevoUsuarioInterno()}" update=":form-admin-clientes:dt-clientes"  oncomplete="setTimeout(function() { $('[id$=m-mensajes]').hide(500); }, 3000);"/>
+                            <p:spacer/>
+                            <p:commandButton value="Cancelar" icon="fa fa fw fa-close" iconPos="right"  onclick="PF('nuevoUsuario').hide();"/>
+                        </div>
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+        </p:panel>
+    </ui:define>
+</ui:composition>

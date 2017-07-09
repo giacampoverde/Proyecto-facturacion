@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>facturacion-proyecto</groupId>
+    <artifactId>firma</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>Firma electronica</name>
+
+    <parent>
+        <artifactId>facturacion-electronica</artifactId>
+        <groupId>facturacion-proyecto</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcmail-jdk16 -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcmail-jdk16</artifactId>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk16 -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk16</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>DNIeJCAProvider</groupId>
+            <artifactId>DNIeJCAProvider</artifactId>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.bouncycastle/bctsp-jdk16 -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bctsp-jdk16</artifactId>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/commons-httpclient/commons-httpclient -->
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/commons-lang/commons-lang -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>at.tugraz.iaik</groupId>
+            <artifactId>pkcs11-wrapper</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mozilla</groupId>
+            <artifactId>jss</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>MITyCLibAPI</groupId>
+            <artifactId>MITyCLibAPI</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>MITyCLibCert</groupId>
+            <artifactId>MITyCLibCert</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>MITyCLibCrypt</groupId>
+            <artifactId>MITyCLibCrypt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>MITyCLibOCSP</groupId>
+            <artifactId>MITyCLibOCSP</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>MITyCLibPolicy</groupId>
+            <artifactId>MITyCLibPolicy</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>MITyCLibTrust</groupId>
+            <artifactId>MITyCLibTrust</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>MITyCLibTSA</groupId>
+            <artifactId>MITyCLibTSA</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>MITyCLibXADES</groupId>
+            <artifactId>MITyCLibXADES</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>serializer</groupId>
+            <artifactId>serializer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>sunpkcs11</groupId>
+            <artifactId>sunpkcs11</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>es.mityc.jumbo.adsi</groupId>
+            <artifactId>xmlsec-1.4.2-ADSI</artifactId>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.sun.xml.ws/jaxws-rt -->
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-rt</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>facturacion-proyecto</groupId>
+            <artifactId>comprobantes-electronicos</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>facturacion-proyecto</groupId>
+            <artifactId>validador-xmls</artifactId>
+        </dependency>
+        <!--<dependency>
+            <groupId>facturacion-proyecto</groupId>
+            <artifactId>WebServicePruebas</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>facturacion-proyecto</groupId>
+            <artifactId>WebServicePro</artifactId>
+        </dependency>-->
+        <dependency>
+            <groupId>sriws</groupId>
+            <artifactId>sri-ws-produccion</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>sriws</groupId>
+            <artifactId>sri-ws-pruebas</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

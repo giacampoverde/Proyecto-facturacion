@@ -1,0 +1,143 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <style type="text/css">
+            .ui-panel {
+                margin-top:20px
+            }
+
+        </style>
+
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+
+        <h3 class="hardblue TexAlCenter">Administración de Sucursales</h3>
+        <p:panel >
+            <h:outputText value="#{beanAdminSecuenciales.info_empresa}" styleClass="FontBold Fs18 hardblue"></h:outputText>
+            <p:messages id="m-mensajes" showDetail="true" autoUpdate="true" closable="true" />
+            <div class="EmptyBox20 "></div>
+            <h:form id="form-secuenciales">                               
+                <p:dataTable id="dt-secuenciales" value="#{beanAdminSecuenciales.secuenciales}" var="secuencial" rows="5" paginator="true" 
+                             rowsPerPageTemplate="5,10,15" paginatorPosition="bottom" reflow="true" emptyMessage="No hay registros." 
+                             >
+                    <p:column headerText="Establecimiento" width="15%" >
+                        <h:outputText value="#{secuencial.codigoEstablecimientoSecuencial}" />
+                    </p:column>
+                    <p:column headerText="Punto Emisión" width="10%">
+                        <h:outputText value="#{secuencial.puntoEmisionSecuencial}"/>
+                    </p:column>
+                    <p:column headerText="Dirección" width="30%">
+                        <h:outputText value="#{secuencial.direccionSecuencial}" />
+                    </p:column>
+                    <p:column headerText="Estado" width="8%">
+                        <h:outputText value="#{secuencial.estadoSecuencial eq 'true'?'Activo':'Inactivo'}" />
+                    </p:column>
+                    <p:column headerText="Ver" width="8%" class="TexAlCenter">
+                        <p:commandButton update=":form-secuenciales:op-dialog-detalle-secuencial" icon="fa fa-fw fa-search-plus" title="Detalle secuencial" oncomplete="PF('wv-dialog-detalle-secuencial').show();">
+                            <f:setPropertyActionListener value="#{secuencial}" target="#{beanAdminSecuenciales.secuencialSeleccionado}" />
+                        </p:commandButton>
+                    </p:column> 
+                    <p:column headerText="Actualizar" width="10%" class="TexAlCenter">
+                        <p:commandButton update=":form-secuenciales:op-dialog-actualizar-secuencial" icon="fa fa-fw fa-refresh" title="Actualizar secuencial" action="#{beanAdminSecuenciales.cargarEstadoActualSecuencial()}">
+                            <f:setPropertyActionListener value="#{secuencial}" target="#{beanAdminSecuenciales.secuencialSeleccionado}" />
+                        </p:commandButton>
+                    </p:column> 
+                </p:dataTable>
+
+                <p:commandButton value="Nuevo" update=":form-secuenciales:op-dialog-nuevo" actionListener="#{beanAdminSecuenciales.abrirDialogoNuevo()}"/>
+
+                <p:outputPanel id="op-dialog-nuevo" layout="inline">
+                    <p:dialog fitViewport="true" modal="true" header="Nuevo Secuencial" widgetVar="wv-dialog-nuevo-secuencial" draggable="true" resizable="false" closable="false" class="TexAlCenter" showEffect="slide" hideEffect="slide">
+                        <p:messages id="m-mensajes2" showDetail="true" autoUpdate="true"/>
+                        <p:panelGrid id="pg-nuevo-secuencial" columns="2" layout="grid" style="border:0px none;background:none">
+                            <p:outputLabel value="Cod. Establecimiento:"/>
+                            <p:inputText value="#{beanAdminSecuenciales.nuevoSecuencial.codigoEstablecimientoSecuencial}" maxlength="3"/>
+                            <p:outputLabel value="Pto. Emisión:"/>
+                            <p:inputText value="#{beanAdminSecuenciales.nuevoSecuencial.puntoEmisionSecuencial}"  maxlength="3"/>
+                            <p:outputLabel value="Dirección:"/>
+                            <p:inputText value="#{beanAdminSecuenciales.nuevoSecuencial.direccionSecuencial}"  maxlength="200"/>
+                            <p:commandButton value="Aceptar" update=":form-secuenciales:dt-secuenciales" title="Agregar secuencial" actionListener="#{beanAdminSecuenciales.insertarSecuencial()}"/>
+                            <p:commandButton value="Cancelar" update=":form-secuenciales:op-dialog-nuevo" title="Cerrar Diálogo" actionListener="#{beanAdminSecuenciales.cerrarDialogoNuevo()}"/>
+                        </p:panelGrid>
+                        <div class="EmptyBox20 "></div>
+                    </p:dialog>
+                </p:outputPanel>
+
+                <p:outputPanel id="op-dialog-detalle-secuencial" layout="inline">
+                    <p:dialog fitViewport="true" modal="true" header="Detalle secuencial" widgetVar="wv-dialog-detalle-secuencial" draggable="true" resizable="false" class="TexAlCenter" showEffect="slide" hideEffect="slide">
+                        <span class="FontBold hardblue"> Secuenciales:</span>
+
+                        <p:panelGrid columns="1" layout="grid" style="border:0px none;background:none">
+                            <p:outputLabel value="Factura: #{beanAdminSecuenciales.secuencialSeleccionado.secuencialFacturaSecuencial}"/>
+                            <p:outputLabel value="Nota de crédito: #{beanAdminSecuenciales.secuencialSeleccionado.secuencialNotaCreditoSecuencial}"/>
+                            <p:outputLabel value="Comprobante de retención: #{beanAdminSecuenciales.secuencialSeleccionado.secuencialRetencionSecuencial}"/>
+                            <p:commandButton value="Editar" update="edicionsec:valores" actionListener="#{beanAdminSecuenciales.limpiarvalores()}" onclick="PF('wv-dialog-detalle-secuencial2').show();" icon="fa fa fw fa-close" iconPos="right"/>
+                            <p:commandButton value="Cerrar" onclick="PF('wv-dialog-detalle-secuencial').hide();" icon="fa fa fw fa-close" iconPos="right"/>
+
+                        </p:panelGrid>
+                    </p:dialog>
+
+                </p:outputPanel> 
+                <p:outputPanel id="op-dialog-actualizar-secuencial" layout="inline">
+                    <p:dialog fitViewport="true" modal="true" header="Actualizar información" widgetVar="wv-dialog-actualizar-secuencial" draggable="true" resizable="false" class="TexAlCenter" showEffect="slide" hideEffect="slide">
+                        <p:panelGrid id="pg-estado-secuencial" columns="2" layout="grid" style="border:0px none;background:none">
+                            <p:outputLabel value="Cod. Establecimiento:"/>
+                            <p:inplace saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdminSecuenciales.secuencialSeleccionado.codigoEstablecimientoSecuencial}" >
+                                <p:ajax event="save" update=":form-secuenciales:op-dialog-actualizar-secuencial :form-secuenciales:dt-secuenciales" listener="#{beanAdminSecuenciales.validarEdicionCodigoEstablecimiento()}" />
+                                <p:inputText
+                                    value="#{beanAdminSecuenciales.codigoEstablecimientoEdicion}" maxlength="3" size="3"/>
+                            </p:inplace>
+                            <p:outputLabel value="Pto. Emisión:"/>
+                            <p:inplace saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdminSecuenciales.secuencialSeleccionado.puntoEmisionSecuencial}" >
+                                <p:ajax event="save" update=":form-secuenciales:op-dialog-actualizar-secuencial :form-secuenciales:dt-secuenciales" listener="#{beanAdminSecuenciales.validarEdicionPuntoEmision()}" />
+                                <p:inputText
+                                    value="#{beanAdminSecuenciales.puntoEmisionEdicion}"  maxlength="3" size="3"/>
+                            </p:inplace>
+
+                            <p:outputLabel value="Dirección:"/>
+                            <p:inplace saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdminSecuenciales.secuencialSeleccionado.direccionSecuencial}" >
+                                <p:ajax event="save" update=":form-secuenciales:op-dialog-actualizar-secuencial :form-secuenciales:dt-secuenciales" listener="#{beanAdminSecuenciales.validarEdicionDireccion()}" />
+                                <p:inputText
+                                    value="#{beanAdminSecuenciales.direccionEstablecimientoEdicion}"  maxlength="200"/>
+                            </p:inplace>
+
+                            <p:outputLabel id="ol-estado" value="Estado actual: #{beanAdminSecuenciales.cambiaEstadoSecuencial eq'true'?'Activo':'Inactivo'}" />
+                            <p:selectBooleanCheckbox value="#{beanAdminSecuenciales.cambiaEstadoSecuencial}" >
+                                <p:ajax update=":form-secuenciales:op-dialog-actualizar-secuencial :form-secuenciales:dt-secuenciales ol-estado" listener="#{beanAdminSecuenciales.validarCambioEstadoSecuencial}" />
+
+                            </p:selectBooleanCheckbox>
+
+                        </p:panelGrid>
+                        <div class="EmptyBox20 "></div>
+                        <p:panelGrid columns="1" layout="grid"  style="border:0px none;background:none" class="MarAuto">
+                            <p:commandButton value="Cerrar" onclick="PF('wv-dialog-actualizar-secuencial').hide();" icon="fa fa fw fa-close" iconPos="right"/>
+                        </p:panelGrid>
+                    </p:dialog>
+                </p:outputPanel>  
+
+            </h:form> 
+            <h:form id="edicionsec">
+            <p:outputPanel id="op-dialog-detalle-secuencial2" layout="inline">
+                <p:dialog id="valoresfuera" fitViewport="true" modal="true" header="Detalle secuencial" widgetVar="wv-dialog-detalle-secuencial2" draggable="true" resizable="false" class="TexAlCenter" showEffect="slide" hideEffect="slide">
+                    <span class="FontBold hardblue">Editar Secuenciales:</span>
+
+                    <p:panelGrid id="valores" columns="2" layout="grid" style="border:0px none;background:none">
+                        <p:outputLabel value="Factura: #{beanAdminSecuenciales.secuencialSeleccionado.secuencialFacturaSecuencial}"/>
+                        <p:inputText value="#{beanAdminSecuenciales.sefac}"/>
+                        <p:outputLabel value="Nota de crédito: #{beanAdminSecuenciales.secuencialSeleccionado.secuencialNotaCreditoSecuencial}"/>
+                        <p:inputText value="#{beanAdminSecuenciales.senc}"/>
+                        <p:outputLabel value="Comprobante de retención: #{beanAdminSecuenciales.secuencialSeleccionado.secuencialRetencionSecuencial}"/>
+                        <p:inputText value="#{beanAdminSecuenciales.sere}"/>
+                        <p:commandButton value="Actualizar" update=":form-secuenciales:op-dialog-detalle-secuencial"  onclick="PF('wv-dialog-detalle-secuencial2').hide();" actionListener="#{beanAdminSecuenciales.actualizarSecuenciales()}" icon="fa fa fw fa-close" iconPos="right"/>
+                        <p:commandButton value="Cancelar"  onclick="PF('wv-dialog-detalle-secuencial2').hide();" icon="fa fa fw fa-close" iconPos="right"/>
+                    </p:panelGrid>
+                </p:dialog>
+            </p:outputPanel>
+                </h:form>
+        </p:panel>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Recuperar clave</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+        <link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/resources/imagenes-proyecto/favicon.ico"/>
+        <h:outputScript name="js/login.js" library="sentinel-layout" />
+        <h:outputStylesheet name="css/font-icon-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/sentinel-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/core-layout.css" library="sentinel-layout" />
+    </h:head>
+    <h:body class="login-back login-back white-back">
+        <h:form id="f-recuperacion-clave">
+            <br/>
+            <br/>
+            <div class="Container80 MaxWid500 Fnone MarAuto TexAlCenter PaddingTopPercent3">
+                <a id="recuperacion-clave">
+                    <span class="Fs20 FontBold Fnone"><span class="softgray">Checa</span></span>
+                </a>
+            </div>
+            <br/>
+            <div class="Container70 MaxWid500 white-back Fnone MarAuto BordRad10" id="login-box">
+                <div class="Container100">
+                    <div class="TexAlCenter Animated05 TabBtn">Recuperación de clave</div>
+                    <p:panel id="p-recuperacion-clave">
+                        <div class="TexAlCenter MarAuto Container90 Fnone TabContent" id="TAB1">
+                            <p:messages showDetail="true" autoUpdate="true" closable="true"/>
+                            <div class="EmptyBox5"/>
+                            <p:outputLabel value="Ingrese el numero de cedula para restablecer su clave."/>
+                            <div class="EmptyBox5"/>
+                            <p:inputText value="#{beanRecuperarClave.nombreUsuario}" placeholder="Numero de Cedula " styleClass="Container80 Fnone MarAuto Fs18"/>
+                            <div class="EmptyBox10"/>
+                            <p:commandButton id="btnRestablecer" value="Restablecer clave" actionListener="#{beanRecuperarClave.enviarCorreoRecuperacion()}"/>
+                            <div class="EmptyBox10"/>
+                            <div class="Animated05 BoxSizeBorder TabBtn left TabBtnActiveLeft" role="1">
+                                <div class="Container80 Fnone MarAuto TexAlCenter"><i class="icon-reply"></i>
+                                    <p:commandLink value="Regresar" action="#{beanDireccionamiento.direccionarLogin()}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </p:panel>
+                    <p:blockUI block="p-recuperacion-clave" trigger="btnRestablecer"/>
+                </div>
+            </div>
+        </h:form>
+    </h:body>
+</html>
+

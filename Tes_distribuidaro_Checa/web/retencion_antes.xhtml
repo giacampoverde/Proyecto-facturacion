@@ -1,0 +1,711 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <style type="text/css">
+            .ui-panel {
+                margin-top:10px
+            }
+        </style>
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+        <div class="ContainerIndent">
+            <h3 class="hardblue TexAlCenter">Emisión de Retención Electrónica</h3>
+            <!--span class="TexAlCenter DispBlock Wid100">Use this page to start from scratch and place your custom content.</span-->
+            <p:panel id="retenciontodo" header="Generar Retención">
+                
+                <h:form id="form">
+                    <div class="ContainerIndent">
+                        <p:messages id="mensajes" showDetail="true" autoUpdate="true" closable="true" />
+                        <p:tabView activeIndex="#{beanComprobanteRetencion.indexTab}" id="tvRetencion"  scrollable="true">
+                            <p:tab id="tabInfoTributaria" title="Inform. Tributaria" disabled="#{!beanComprobanteRetencion.tab1}">
+                                <p:panelGrid id="pgInfoEmisor" columns="2"
+                                             class="TexAlCenter Wid60 MarAuto" layout="grid"
+                                             style="border: 0px none; background: none">
+
+                                    <h:outputLabel id="olNombreComercialEmisor"
+                                                   value="Nombre Comercial:"
+                                                   for="itaNombreComercialEmisor"
+                                                   style="color: #0B0B61"/>
+
+                                    <p:inputText id="itaNombreComercialEmisor"
+                                                 readonly="true"
+                                                 title="Nombre Comercial del Emisor"
+                                                 value="#{beanComprobanteRetencion.nombreComercialEmisor}"
+                                                 /> 
+
+                                    <h:outputLabel id="olRazonSocialEmisor"
+                                                   value="Nombres y Apellidos / Razón Social:"
+                                                   for="itaRazonSocialEmisor"
+                                                   style="color: #0B0B61"/>
+
+                                    <p:inputText id="itaRazonSocialEmisor"
+                                                 title="Razón Social Emisor"
+                                                 readonly="true"
+                                                 value="#{beanComprobanteRetencion.razonSocialEmisor}"/>
+
+                                    <h:outputLabel id="olDireccionMatrizEmisor"
+                                                   value="Dirección Matriz: "
+                                                   for="itaDireccionMatrizEmisor"
+                                                   style="color: #0B0B61"/>
+
+                                    <p:inputText id="itaDireccionMatrizEmisor"
+                                                 readonly="true"
+                                                 title="Dirección Principal/Matriz Emisor"
+                                                 value="#{beanComprobanteRetencion.direccionMatrizEmisor}"/>
+
+                                    <h:outputLabel id="olDireccionEstablecimiento"
+                                                   value="Dirección Establecimiento: "
+                                                   for="itaDireccionEstablecimiento"
+                                                   style="color: #0B0B61"/>
+
+                                    <p:inputText id="itaDireccionEstablecimiento"
+                                                 readonly="true"
+                                                 title="Dirección Establecimiento Emisor"
+                                                 value="#{beanComprobanteRetencion.direccionEstablecimientoE}"/>
+
+                                    <h:outputLabel id="olTelefonoEmisor"
+                                                   value="Teléfono: "
+                                                   style="color: #0B0B61"
+                                                   for="itTelefonoEmisor"/>
+
+                                    <p:inputText id="itTelefonoEmisor"
+                                                 title="Teléfono Emisor"
+                                                 readonly="true"
+                                                 value="#{beanComprobanteRetencion.telefonoEmisor}"/>
+
+                                    <h:outputLabel id="olNumResolucionEmisor"
+                                                   rendered="false"
+                                                   value="Contribuyente Especial Num. Resolución: "
+                                                   style="color: #0B0B61"
+                                                   for="itNumResolucionEmisor"/>
+
+                                    <p:inputText id="itNumResolucionEmisor"
+                                                 readonly="true"
+                                                 rendered="false"
+                                                 title="Número de Resolución de Contribuyente Especial"
+                                                 value="#{beanComprobanteRetencion.numResolucionEmisor}"/>
+
+                                    <h:outputLabel id="olContabilidadEmisor"
+                                                   style="color: #0B0B61"
+                                                   value="Obligado a llevar contabilidad: "
+                                                   for="itContabilidadEmisor"/>
+
+                                    <p:inputText id="itContabilidadEmisor"
+                                                 readonly="true"
+                                                 title="Se ve obligado a llevar contabilidad"
+                                                 value="#{beanComprobanteRetencion.obligadoContabilidad}"/>
+                                </p:panelGrid>
+                                <br></br>
+                                <p:panelGrid class="TexAlCenter MarAuto" layout="grid" columns="1"
+                                             style="border: 0px none; background: none">
+                                    <p:commandButton value="siguiente" actionListener="#{beanComprobanteRetencion.validacionesEmisor()}" update=":form:tvRetencion :form:mensajes"
+
+                                                     iconPos="right"/>
+                                </p:panelGrid>
+                            </p:tab>
+                            <p:tab id="tabInfoFactura" titleStyle="font-size: 14px"
+                                   title="Información Comprobante Retención" disabled="#{!beanComprobanteRetencion.tab2}">
+
+                                <p:panel class="Container80 MaxWid500 white-back Fnone MarAuto BordRad10"
+                                         style="border: 0px none; background: none" >
+                                    <h:panelGrid columns="1" style="margin-left: auto; margin-right: auto;" >
+                                        <p:spacer height="10" />
+
+                                    </h:panelGrid>
+                                </p:panel>
+                                <p:panel id="panelDatos" class="Container80 MaxWid500 white-back Fnone MarAuto BordRad10"
+                                         >
+                                    <p:panelGrid id="pgInfoFactura" columns="2"
+                                                 class="MaxWid500 MarAuto TexAlCenter" layout="grid" 
+                                                 style="border: 0px none; background: none">
+
+                                        <p:outputLabel id="olFechaEmision"
+                                                       for="cFechaEmision"
+                                                       style="color: #0B0B61"
+                                                       value="Fecha emisión: "
+                                                       />
+                                        <p:inputText id="cFechaEmision" readonly="true"  
+                                                     value="#{beanComprobanteRetencion.fechaEmision}">
+                                            <f:convertDateTime pattern="dd-MM-yyyy"/> 
+                                        </p:inputText>
+
+                                    </p:panelGrid>
+                                </p:panel>
+                                <p:panel class="Container80 MaxWid500 white-back Fnone MarAuto BordRad10"
+                                         >
+                                    <p:panelGrid columns="1" class="MarAuto TexAlLeft" layout="grid" 
+                                                 style="border: 0px none; background: none">
+                                        <p:outputLabel style="color: #0B0B61" value="Ejercicio Fiscal:"
+                                                       />  
+                                        <p:spacer height="5"/>
+                                    </p:panelGrid>
+
+                                    <p:panelGrid columns="4"
+                                                 class="MarAuto TexAlCenter" layout="grid" 
+                                                 style="border: 0px none; background: none"
+                                                 >
+
+
+                                        <p:outputLabel  value="Mes" style="color: #0B0B61"/>
+                                        <p:selectOneMenu id="somMesPeriodoFiscal"
+                                                         value="#{beanComprobanteRetencion.mesSeleccionado}"
+                                                         >
+                                            <f:selectItem itemLabel="Seleccione" itemValue=""/>
+                                            <f:selectItems value="#{beanComprobanteRetencion.listaMeses}"/>
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Año" style="color: #0B0B61" />
+
+                                        <p:selectOneMenu id="soAnioPeriodoFiscal"
+                                                         value="#{beanComprobanteRetencion.anioSeleccionado}">
+                                            <f:selectItem itemLabel="Seleccione" itemValue=""/>
+                                            <f:selectItems value="#{beanComprobanteRetencion.listaAnios}"/>
+                                        </p:selectOneMenu>
+
+                                    </p:panelGrid>
+                                </p:panel>
+
+                                <p:panel class="Container80 MaxWid500 white-back Fnone MarAuto BordRad10"
+                                         >
+                                    <p:focus context="pgInfoReceptor"/>
+
+                                    <p:tooltip id="tTabReceptor"
+                                               for="pgInfoReceptor"
+                                               rendered="#{beanComprobanteRetencion.datosCliente}"
+                                               showEvent="focus"
+                                               hideEvent="blur"/>
+                                    <p:panelGrid columns="1" layout="grid" class="MarAuto TexAlLeft"
+                                                 style="border: 0px none; background: none"
+                                                 >
+                                        <p:outputLabel value="Información receptor"
+                                                       style="color: #0B0B61"     />
+                                        <p:spacer height="5"/>
+                                    </p:panelGrid>
+                                    <h:panelGrid columns="2"
+                                                 class="MarAuto"
+                                                 style="border: 0px none; background: none"
+                                                 >
+                                        <h:outputLabel id="olTipoIdentificacion"
+                                                       for="tipoIdentificacion"
+                                                       value="Tipo de identificación:"
+                                                       style="color: #0B0B61;"/>
+
+                                        <p:selectOneRadio id="tipoIdentificacion"
+
+                                                          value="#{beanComprobanteRetencion.tipoIdentificacion}"
+                                                          layout="custom">
+                                            <f:selectItem itemValue="4" itemLabel="RUC"/>  
+                                            <f:selectItem  itemValue="5"  itemLabel="Cédula"/>  
+                                            <f:selectItem itemValue="6" itemLabel="Pasaporte"/>  
+                                        </p:selectOneRadio>
+                                        <p:panelGrid columns="6" layout="grid" class="TexAlCenter Wid80 MarAuto"
+                                                     style="border: 0px none; background: none">
+                                            <p:radioButton id="opt1" for="tipoIdentificacion" itemIndex="0"/>  
+                                            <h:outputLabel for="opt1" value="RUC" />
+                                            <p:radioButton id="opt2" for="tipoIdentificacion" itemIndex="1"/>  
+                                            <h:outputLabel for="opt2" value="Cédula" /> 
+                                            <p:radioButton id="opt3" for="tipoIdentificacion" itemIndex="2"/>  
+                                            <h:outputLabel for="opt3" value="Pasaporte" /> 
+                                        </p:panelGrid>
+
+                                    </h:panelGrid>
+
+                                    <p:panelGrid columns="2"
+                                                 class="TexAlCenter MarAuto" layout="grid" 
+                                                 style="border: 0px none; background: none"
+                                                 >
+                                        <h:outputLabel id="olIdentificacionReceptor"
+                                                       for="itIdentificacionReceptor"
+                                                       value="CI/ RUC/ Pasaporte Cliente:"
+                                                       style="color: #0B0B61;"/>
+
+                                        <p:inputText id="itIdentificacionReceptor" title="CI / RUC / Pasaporte Cliente" value="#{beanComprobanteRetencion.identificacionComprador}" maxlength="13" />
+
+                                        <p:commandButton rendered="false" style="margin-left:30px;" value="Buscar" update=" itRazonSocialReceptor itdireccionReceptor itCorreoReceptor tipoIdentificacion" action="#{beanComprobanteRetencion.buscarClienteEmpresaReceptor()}"/>
+                                    </p:panelGrid>
+                                    <p:panelGrid  id="pgInfoReceptor" columns="2"
+                                                  class="TexAlCenter MarAuto" layout="grid" 
+                                                  style="border: 0px none; background: none"
+
+                                                  >
+                                        <h:outputLabel id="olRazonSocialReceptor"
+                                                       for="itRazonSocialReceptor"
+                                                       style="color: #0B0B61;"
+                                                       value="Razón Social:"/>
+
+                                        <p:inputText id="itRazonSocialReceptor"
+                                                     title="Razón Social Receptor"
+                                                     maxlength="200"
+                                                     autocomplete="off"
+                                                     value="#{beanComprobanteRetencion.razonSocialComprador}"/>
+                                    </p:panelGrid>
+                                    <p:panelGrid rendered="false" id="pgInfodireccionReceptor" columns="2"
+                                                 class="TexAlCenter MarAuto" layout="grid" 
+                                                 style="border: 0px none; background: none"
+
+                                                 >
+                                        <h:outputLabel id="oldireccionReceptor"
+                                                       for="itdireccionReceptor"
+                                                       value="Direccion:"/>
+
+                                        <p:inputText id="itdireccionReceptor"
+                                                     title="Direccion"
+                                                     maxlength="200"
+                                                     autocomplete="off"
+                                                     value="#{beanComprobanteRetencion.direccionReceptor}"/>
+                                    </p:panelGrid>
+                                    <p:panelGrid rendered="false" id="pgInfoCorreo" columns="2"
+                                                 class="TexAlCenter MarAuto" layout="grid" 
+                                                 style="border: 0px none; background: none"
+
+                                                 >
+                                        <h:outputLabel id="olCorreoReceptor"
+                                                       for="itCorreoReceptor"
+                                                       value="Correo:"/>
+
+                                        <p:inputText id="itCorreoReceptor"
+                                                     title="Correo"
+                                                     maxlength="200"
+                                                     autocomplete="off"
+                                                     value="#{beanComprobanteRetencion.correoReceptor}"/>
+                                    </p:panelGrid>
+
+
+
+                                </p:panel>
+                                <br/>
+                                <h:panelGrid columns="2" style="margin-left: auto; margin-right: auto;" >
+
+                                    <p:commandButton value="Atrás"
+                                                     action="#{beanComprobanteRetencion.atras()}"
+                                                     update=":form:tvRetencion"
+                                                     />
+
+                                    <p:commandButton value="Siguiente"
+                                                     action="#{beanComprobanteRetencion.validacionesReceptor()}"
+                                                     update=":form:mensajes :form:tvRetencion"
+
+                                                     iconPos="right"/>
+                                </h:panelGrid>
+
+                            </p:tab>
+
+                            <p:tab id="infoImpuetos"
+                                   titleStyle="font-size: 14px"
+                                   title="Impuestos" disabled="#{!beanComprobanteRetencion.tab3}" >
+
+                                <h:panelGrid columns="1" style="margin-left: auto; margin-right: auto;">
+
+
+                                    <h:panelGrid columns="1" style="margin-left: auto; margin-right: auto;" >
+                                        <p:commandButton id="btnIngresarImpuestoRetencion"
+                                                         value="Ingresar Impuesto"
+                                                         onclick="PF('dialogIngresarImpuestoRetencionWV').show();"
+                                                         action="#{beanComprobanteRetencion.limpiarImpuestos()}"
+                                                         update=":form:pgInsertarImpuestos :form:itPorcentajeRetener"
+                                                         />
+                                    </h:panelGrid>
+
+                                    <p:dataTable id="tablaImpuestosRetencion"
+                                                 tableStyle="width: 100%"
+                                                 reflow="true"
+                                                 emptyMessage="No se han encontrado registros"
+                                                 value="#{beanComprobanteRetencion.impuestos}"
+                                                 var="impuestosR"> 
+                                        <f:facet name="header">  
+                                            Detalle de impuestos
+                                        </f:facet> 
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Codigo Impuesto" />
+                                            </f:facet>
+                                            <h:outputText value="#{impuestosR.codigo}" />
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="Porcentaje a Retener" />
+                                            </f:facet>
+                                            <h:outputText value="#{impuestosR.porcentajeRetener}" />
+                                        </p:column>
+                                        <p:column >
+                                            <f:facet name="header">
+                                                <h:outputText value="Documento Sustento" />
+                                            </f:facet>
+                                            <h:outputText value="#{impuestosR.numDocSustento}" />
+                                        </p:column>
+                                        <p:column >
+                                            <f:facet name="header">
+                                                <h:outputText value="Base Imponible" />
+                                            </f:facet>
+                                            <h:outputText value="#{impuestosR.baseImponible}" />
+                                        </p:column>
+
+                                        <p:column >
+                                            <f:facet name="header">
+                                                <h:outputText value="Valor Retenido" />
+                                            </f:facet>
+                                            <h:outputText value="#{impuestosR.valorRetenido}" />
+                                        </p:column>
+
+                                        <p:column headerText="Eliminar" style="width: 100px; color: #0B0B61;">
+                                            <p:commandLink  action="#{beanComprobanteRetencion.eliminarImpuesto()}"  title="Eliminar "
+                                                            update="@form" >
+
+                                                <h:graphicImage value="/imagenes/eliminar.png"  width="30px" height="25px"/>
+                                                <f:setPropertyActionListener value="#{impuestosR}"
+                                                                             target="#{beanComprobanteRetencion.impuestosRetencionSeleccionado}"/>
+                                            </p:commandLink>
+                                        </p:column>
+
+
+                                    </p:dataTable>
+                                    <h:panelGrid columns="2" style="margin-left: auto; margin-right: auto;" >
+                                        <p:commandButton value="Atrás"
+                                                         action="#{beanComprobanteRetencion.atras()}"
+                                                         update=":form:tvRetencion"
+                                                         />
+
+                                        <p:commandButton value="Siguiente"
+                                                         action="#{beanComprobanteRetencion.validacionesImpuestos()}"
+                                                         update=":form:mensajes :form:tvRetencion"
+
+                                                         iconPos="right"/>
+                                    </h:panelGrid> 
+                                </h:panelGrid> 
+
+                            </p:tab>
+                            <p:tab id="infoAdicional"
+                                   titleStyle="font-size: 14px"
+                                   title="Info. Adicional"
+                                   disabled="#{!beanComprobanteRetencion.tab4}"
+                                   >
+                                <p:panel id="detallesAd" class="MarAuto TexAlCenter"
+                                         style="border: 0px none; background: none">
+
+                                    <h:panelGrid columns="1" style="margin-left: auto; margin-right: auto;" >
+                                        <p:spacer height="10" />
+
+                                    </h:panelGrid>
+                                    <p:panel style="margin-left: auto; margin-right: auto;" >
+                                        <p:outputLabel   value="Seleccione el secuencial con el que va a Facturar."
+                                                         style="font-weight: bold;" />    
+                                        <p:panelGrid columns="1" layout="grid" class="MarAuto TexAlCenter"  style="border: 0px none; background: none">
+                                            <p:outputLabel value="Secuencial Activo: " for="som-Secuenciales" styleClass="FontBold Fs16 hardblue"/>
+                                            <p:selectOneMenu style="width:160px" id="som-Secuenciales" value="#{beanComprobanteRetencion.codigoSecuencialSeleccionado}" effect="drop" >
+                                                <f:selectItems value="#{beanComprobanteRetencion.secuenciales}" 
+                                                               var="secuencial"
+                                                               itemLabel="#{secuencial.puntoEmisionSecuencial}-#{secuencial.codigoEstablecimientoSecuencial}-#{beanComprobanteRetencion.obtenerSecuencialActivoRetencion(secuencial.secuencialRetencionSecuencial)}"
+                                                               itemValue="#{secuencial.idSecuencial}"/>
+                                            </p:selectOneMenu>
+                                        </p:panelGrid>
+                                    </p:panel>
+                                    <h:panelGrid  columns="2" style="margin-left: auto; margin-right: auto;" >
+                                        <p:outputLabel value="¿Desea agregar Información Adicional a la factura?"/>
+                                        <p:selectBooleanCheckbox  id="sbcInfoAdicional"
+                                                                  value="#{beanComprobanteRetencion.infoAdicional}">
+                                            <p:ajax event="change"
+                                                    update="detallesAd" listener="#{beanComprobanteRetencion.verificarInfoAdicional()}"/>
+                                        </p:selectBooleanCheckbox>
+                                    </h:panelGrid>
+                                    <p:panel class="Container80 MaxWid500 TexAlCenter white-back Fnone MarAuto BordRad10" rendered="#{beanComprobanteRetencion.infoAdicional}">
+                                        <h:panelGrid columns="1" class="MarAuto TexAlLeft" rendered="#{beanComprobanteRetencion.infoAdicional}">
+                                            <p:outputLabel value="* Solo se pueden agregar 15 campos de Información Adicional por Comprobante."
+                                                           style="font-weight: bold"/>
+                                            <p:outputLabel value="* Para ingresar un mail se debe poner CORREO en nombre y el correo en valor."
+                                                           style="font-weight: bold"/>
+                                        </h:panelGrid>
+                                        <p:panelGrid id="pgInfoAdicional"
+                                                     rendered="#{beanComprobanteRetencion.infoAdicional}"
+                                                     layout="grid"
+                                                     columns="2"
+                                                     class="MarAuto TexAlCenter">
+                                            <h:outputLabel id="olNombreInfoAdicional"
+                                                           value="Nombre Campo: "
+                                                           for="itaNombreInfoAdicional"
+                                                           style="color: #0B0B61;"/>
+                                            <p:inputText id="itaNombreInfoAdicional"
+                                                         maxlength="300"
+                                                         autocomplete="off"
+                                                         value="#{beanComprobanteRetencion.nombreAdicional}"/>
+                                            <h:outputLabel id="olValorInfoAdicional"
+                                                           value="Valor Campo: "
+                                                           for="itaValorInfoAdicional"
+                                                           style="color: #0B0B61;"/>
+                                            <p:inputText id="itaValorInfoAdicional"
+                                                         maxlength="300"
+                                                         autocomplete="off"
+                                                         value="#{beanComprobanteRetencion.valorAdicional}"/>
+                                        </p:panelGrid>
+                                        <h:panelGrid columns="1" style="margin-left: auto; margin-right: auto;" rendered="#{beanComprobanteRetencion.infoAdicional}">
+                                            <p:commandButton id="btnAgregarInfoAdicional"
+                                                             value="Agregar Información Adicional"
+                                                             actionListener="#{beanComprobanteRetencion.ingresarInformacionAdicional()}"
+                                                             update="tablaInformacionAdicionales :form:mensajes pgInfoAdicional"/>
+                                        </h:panelGrid>
+                                        <p:spacer height="8" />
+                                        <h:panelGrid columns="1" 
+                                                     style="margin-left: auto; margin-right: auto;" 
+                                                     rendered="#{beanComprobanteRetencion.infoAdicional}">
+                                            <p:dataTable id="tablaInformacionAdicionales"
+                                                         emptyMessage="No se han encontrado registros"
+                                                         rendered="#{beanComprobanteRetencion.infoAdicional}"
+                                                         value="#{beanComprobanteRetencion.listaInfoAdicional}"
+                                                         reflow="true"
+                                                         var="infoAdicional"
+                                                         style="text-align: center; margin: 0 auto;"> 
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Nombre" />
+                                                    </f:facet>
+                                                    <h:outputText value="#{infoAdicional.nombre}" title="#{infoAdicional.nombre}" />
+                                                </p:column>
+                                                <p:column >
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Valor" />
+                                                    </f:facet>
+                                                    <h:outputText value="#{infoAdicional.valor}" title="#{infoAdicional.valor}" />
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Eliminar"/>
+                                                    </f:facet>
+                                                    <p:commandLink title="Eliminar Información Adicional"
+                                                                   update="tablaInformacionAdicionales"
+                                                                   action="#{beanComprobanteRetencion.eliminarInfoAdicional()}">
+                                                        <h:graphicImage value="/imagenes/eliminar.png"   width="30px" height="25px"/>
+                                                        <f:setPropertyActionListener value="#{infoAdicional}"
+                                                                                     target="#{beanComprobanteRetencion.infoAdicionalSeleccionada}"/>
+                                                    </p:commandLink>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </h:panelGrid>
+                                        <p:spacer height="8" />
+                                    </p:panel>
+                                    <p:panel class="Container80 MaxWid500 TexAlCenter white-back Fnone MarAuto BordRad10">
+                                        <h:panelGrid   columns="2" style="margin: 0 auto;">
+                                            <h:outputText value="Visualizar  pdf" styleClass="FontBold Fs16 hardblue" />
+                                            <p:panelGrid id="pg-firma-autorizacion2" columns="1" layout="grid" style="border:0px none;background:none" class="MarAuto TexAlCenter">
+                                                <h:commandLink id="clVerPDF"
+                                                               title="Visualizar Comprobante"
+                                                               target="_blank"
+                                                               actionListener="#{beanComprobanteRetencion.generarRIDE()}"
+
+                                                               >
+                                                    <p:graphicImage value="/imagenes/pdf_icon.png"  width="50px" height="50px" />
+                                                </h:commandLink>
+
+                                            </p:panelGrid>
+                                            <h:outputText value="Autorizar SRI" styleClass="FontBold Fs16 hardblue"></h:outputText>
+                                            <p:panelGrid id="pg-firma-autorizacion" columns="1" layout="grid" style="border:0px none;background:none" class="MarAuto TexAlCenter">
+
+                                                <p:commandLink id="cl-firma-autorizacion" 
+                                                               oncomplete="PF('confirmacionFirmaAutorizacion').show();"
+
+                                                               >
+                                                    <h:graphicImage  value="/imagenes/firmar.png"  width="50px" height="50px" />
+
+                                                </p:commandLink>
+                                            </p:panelGrid>
+
+
+                                        </h:panelGrid>
+                                    </p:panel>
+                                  
+                                </p:panel>
+                                <br/>
+                                <h:panelGrid columns="2" styleClass="panelGrid" style="margin-left: auto; margin-right: auto;" >
+                                    <p:commandButton value="Atrás"
+                                                     action="#{beanComprobanteRetencion.atras()}"
+                                                     update=":form:tvRetencion"
+                                                     />
+                                    <p:commandButton value="Siguiente"
+                                                     action="#{beanComprobanteRetencion.validacionessiguinete()}"
+                                                     update=":form:mensajes :form:tvRetencion"
+
+                                                     iconPos="right"/>
+
+                                </h:panelGrid>
+                            </p:tab> 
+                        </p:tabView>
+
+                        <p:dialog id="dialogIngresarImpuestoRetencion"
+                                  resizable="false"
+                                  header="Ingresar Impuesto"
+                                  widgetVar="dialogIngresarImpuestoRetencionWV"
+                                  modal="true"
+                                  >
+
+                            <p:focus context="pgInsertarImpuestos"/>
+
+                            <p:tooltip id="tTabInfoImpuestos"
+                                       for="pgInsertarImpuestos"
+                                       showEvent="focus"
+                                       hideEvent="blur"/>
+                            <p:panelGrid id="pgMensaje2" columns="1"
+                                         class="TexAlCenter Wid60 MarAuto" layout="grid"
+                                         style="border: 0px none; background: none">
+                                <p:messages id="mensajesImpuesto" showDetail="true" autoUpdate="true" closable="true" />
+                            </p:panelGrid>
+
+
+                            <h:panelGrid id="pgInsertarImpuestos"
+                                         columns="2"
+                                         style="text-align: right;"
+                                         cellpadding="4">
+
+                                <p:outputLabel id="olCodigo"
+                                               value="Código Impuesto:"
+                                               style="color: #0B0B61;"   
+                                               for="somCodigo"/>
+                                <p:selectOneMenu id="somCodigo"
+                                                 style="width: 150px; text-align: center"
+
+                                                 value="#{beanComprobanteRetencion.codigoImpuesto}"
+                                                 styleClass="combosArreglados">
+                                    <f:selectItems value="#{beanComprobanteRetencion.listaTipoImpuesto}"
+                                                   var="tipoImpuesto"
+                                                   itemLabel="#{tipoImpuesto.impuesto}"
+                                                   itemValue="#{tipoImpuesto.idTipoImpuesto}"/>
+                                    <p:ajax update="somCodigoRetencion itPorcentajeRetener itValorRetenido"
+                                            process="@form"
+                                            listener="#{beanComprobanteRetencion.cargarImpuestos()}"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel id="olCodigoRetencion"
+                                               style="color: #0B0B61;"   
+                                               value="Código Retención: "
+                                               for="somCodigoRetencion"/>
+                                <p:selectOneMenu id="somCodigoRetencion"
+                                                 style="width: 150px; text-align: center"
+                                                 value="#{beanComprobanteRetencion.codigoImpuestoRetencion}"
+                                                 styleClass="combosArreglados">
+                                    <f:selectItems value="#{beanComprobanteRetencion.impuestosRetenciones}"
+                                                   var="tarifaImpuesto"
+                                                   itemLabel="#{tarifaImpuesto.codigoTarifaImpuesto}-#{tarifaImpuesto.descripcionTarifaImpuesto}"
+                                                   itemValue="#{tarifaImpuesto.codigoTarifaImpuesto}"/>
+                                    <p:ajax update="itPorcentajeRetener itValorRetenido"
+                                            process="@form"
+                                            listener="#{beanComprobanteRetencion.verificarImpuestoVariable()}"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel id="olPorcentajeRetener"
+                                               value="Porcentaje a Retener: "
+                                               style="color: #0B0B61;"   />
+                                <p:inputText id="itPorcentajeRetener"
+                                             readonly="true"
+                                             value="#{beanComprobanteRetencion.porcentajeARetener}"
+                                             autocomplete="off"
+                                             >
+                                    <p:ajax event="keyup"
+                                            update="itValorRetenido"
+                                            global="false"
+                                            listener="#{beanComprobanteRetencion.verificarCambioPorcentajeARetener()}"/>
+                                </p:inputText>
+                                <p:outputLabel id="olBaseImponible"
+                                               value="Base Imponible:"
+                                               style="color: #0B0B61;"  
+                                               for="itBaseImponible"/>
+                                <p:inputText id="itBaseImponible"
+                                             maxlength="14"
+                                             value="#{beanComprobanteRetencion.baseImponible}"
+                                             autocomplete="off"
+                                             title="Ingresar la Base Imponible">                                        
+                                    <p:ajax event="keyup"
+                                            update="itValorRetenido"
+                                            global="false"
+                                            listener="#{beanComprobanteRetencion.calcularValorRetenido()}"/>
+                                </p:inputText>
+                                <p:outputLabel id="olValorRetenido"
+                                               value="Valor Retenido:"
+                                               style="color: #0B0B61;"   />
+                                <p:inputText id="itValorRetenido"
+                                             readonly="true"
+                                             value="#{beanComprobanteRetencion.valorRetenido}"
+                                             />
+
+                                <p:outputLabel id="olCodDocSustento"
+                                               value="Código Documento Sustento:"
+                                               style="color: #0B0B61;"  
+                                               for="itValorRetenido2"/>
+                                <p:selectOneMenu id="itValorRetenido2"
+                                                 value="#{beanComprobanteRetencion.codDocSustento}"
+                                                 >
+                                    <f:selectItems value="#{beanComprobanteRetencion.listaDocumentos}"
+                                                   var="documento"
+                                                   itemLabel="#{documento.codigoTipoComprobanteElectronico} - #{documento.nombreTipoComprobanteElectronico}"
+                                                   itemValue="#{documento.codigoTipoComprobanteElectronico}"/>    
+                                </p:selectOneMenu>
+
+                                <p:outputLabel id="olNumDocSustento"
+                                               style="color: #0B0B61;"  
+                                               value="Número Documento Sustento"
+                                               for="itmNumDocSustento"/>
+                                <p:inputMask id="itmNumDocSustento"
+                                             value="#{beanComprobanteRetencion.numeroDocSustento}"
+                                             autocomplete="off"
+                                             mask="999-999-999999999"/>
+                                <p:outputLabel id="olFechaEmisionDocSustento"
+                                               style="color: #0B0B61;"  
+                                               value="Fecha Emisión Documento Sustento"
+                                               for="cFechaEmisionDocSustento"/>
+                                <p:calendar id="cFechaEmisionDocSustento"
+                                            value="#{beanComprobanteRetencion.fechaEmisionDocSustento}"/>
+                            </h:panelGrid>
+
+                            <p:commandButton id="btnIngresarImpuesto"
+                                             value="Ingresar"
+                                             update=":form:tvRetencion"
+                                             actionListener="#{beanComprobanteRetencion.agregarImpuesto()}"/>
+
+                        </p:dialog>    
+
+                    </div>
+
+                </h:form>
+                <h:form id="form-mensaje-autorizacion">
+                    <p:dialog header="MENSAJE AUTORIZACIÓN" widgetVar="mensajeAutorizacion" fitViewport="true"  draggable="false" resizable="false" modal="true" closable="false">
+                        <p:panelGrid id="pg-mensaje-autorizacion" columns="1" layout="grid" style="border:0px none;background:none" class="MarAuto TexAlCenter">
+                            <h:outputText value="MENSAJE: #{beanFacturaReembolsoSimple.mensajeProceso}" styleClass="FontBold Fs16 hardblue"/>
+                            <p:commandButton value="Aceptar" icon="fa fa fw fa-check" iconPos="right" onclick="PF('mensajeAutorizacion').hide();" 
+                                             update=":form" actionListener="#{beanFacturaReembolsoSimple.recargarPagina()}"/>
+                        </p:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <h:form id="form-confirma-firma-autorizacion">
+                    <p:dialog header="Confirmación" widgetVar="confirmacionFirmaAutorizacion" fitViewport="true"  draggable="false" resizable="false" modal="true">
+                        <p:panelGrid id="pg-confirma-firma-autorizacion" columns="1" layout="grid" style="border:0px none;background:none" class="TexAlCenter MarAuto">
+                            <h:outputText value="¿Desea continuar con la FIRMA Y AUTORIZACIÓN CON EL SRI del comprobante electrónico?"/>   
+                        </p:panelGrid>
+                        <h:panelGrid columns="2" class="TexAlCenter MarAuto">
+                            <p:commandButton id="cb-firma-autorizacion" value="Sí" onclick="PF('confirmacionFirmaAutorizacion').hide();" actionListener="#{beanComprobanteRetencion.firmarYAutorizar()}" update=":form-mensaje-autorizacion:pg-mensaje-autorizacion :bien:pg-mensaje-autorizacion1 :mal:pg-mensaje-autorizacion2" icon="fa fa fw fa-check" iconPos="right" />
+                            <p:commandButton value="No" onclick="PF('confirmacionFirmaAutorizacion').hide();" icon="fa fa fw fa-close" iconPos="right" />
+                        </h:panelGrid>
+                        <p:blockUI block="retenciontodo" trigger="cb-firma-autorizacion" />
+                    </p:dialog>
+                </h:form>
+                <h:form id="bien">
+                    <p:dialog header="MENSAJE AUTORIZACIÓN" widgetVar="autorizadoNoautorizado" fitViewport="true"  draggable="false" resizable="false" modal="true" closable="false">
+                        <p:panelGrid id="pg-mensaje-autorizacion1" columns="1" layout="grid" style="border:0px none;background:none" class="MarAuto TexAlCenter">
+                            <h:outputText value="MENSAJE: #{beanComprobanteRetencion.mensajeResultado}" styleClass="FontBold Fs16 hardblue"/>
+                            <p:commandButton value="ACEPTAR" actionListener="#{beanComprobanteRetencion.direccionamiento()}"/>
+                        </p:panelGrid>
+                        <p:blockUI block="retenciontodo"  />
+                    </p:dialog>
+                </h:form>
+                <h:form id="mal">
+                    <p:dialog header="MENSAJE AUTORIZACIÓN" widgetVar="noenviado" fitViewport="true"  draggable="false" resizable="false" modal="true" closable="false">
+                        <p:panelGrid id="pg-mensaje-autorizacion2" columns="1" layout="grid" style="border:0px none;background:none" class="MarAuto TexAlCenter">
+                            <h:outputText value="MENSAJE: #{beanComprobanteRetencion.mensajeResultado}" styleClass="FontBold Fs16 hardblue"/>
+                            <p:commandButton value="ACEPTAR" actionListener="#{beanComprobanteRetencion.direccionamiento()}" onclick="PF('noenviado').hide();"/>
+                        </p:panelGrid>
+                    </p:dialog>
+                </h:form>
+
+            </p:panel>
+        </div>
+    </ui:define>
+
+</ui:composition>

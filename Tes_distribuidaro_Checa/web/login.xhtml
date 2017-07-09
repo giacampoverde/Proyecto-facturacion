@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>FT</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+        <link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/resources/imagenes-proyecto/favicon.ico"/>
+        <h:outputScript name="js/login.js" library="sentinel-layout" />
+        <h:outputStylesheet name="css/font-icon-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/sentinel-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/core-layout.css" library="sentinel-layout" />
+    </h:head>
+
+    <h:body class="fontRegular login-back white-back">
+        <h:form id="f-login">  
+
+            <div class="Container80 MaxWid500 Fnone MarAuto TexAlCenter PaddingTopPercent3">
+                <a href="" id="login-logo">
+                    <!--h:graphicImage name="images/LOGO.svg" library="sentinel-layout"/-->
+
+                    <span class="Fs20 FontBold Fleft"><span class="softgray">Facturación Electrónica </span></span>
+                </a>
+               
+                <div class="EmptyBox10"></div>
+            </div>
+
+            <!-- LOGIN BOX COVER START -->
+            <div class="Container80 MaxWid500 white-back Fnone MarAuto BordRad10" id="login-box">
+            
+                    <div class=" TexAlCenter Animated05 BoxSizeBorder TabBtn left TabBtnActiveLeft" role="1">
+                        <div class="Container80 Fnone MarAuto FontBold"><i class="icon-lock"></i>Inicio Sesión</div>
+                    </div>
+                 
+
+                    <div class="Container90 Fnone MarAuto TexAlCenter TabContent" id="TAB1">
+                        <p:focus for="it-nombre-usuario" />
+                        <p:messages showDetail="true" autoUpdate="true" closable="true" />
+                        <div class="EmptyBox50"></div>
+                        <p:inputText id="it-nombre-usuario" value="#{beanLogin.nombreUsuario}" placeholder="Usuario" styleClass="Container80 Fnone MarAuto Fs18"/>
+                        <div class="EmptyBox10"></div>
+                        <p:password value="#{beanLogin.claveUsuario}" placeholder="Clave" styleClass="Container80 Fnone MarAuto Fs18" feedback="false"/>
+
+                        <div class="EmptyBox30"></div>
+
+                        <p:commandButton  value="Iniciar" styleClass="Fs16" actionListener="#{beanLogin.validarUsuario()}" ></p:commandButton>
+
+                        <!--p:commandLink value="Registrarse" action="#"/-->
+                        <div class="EmptyBox10"></div>
+                        
+                        <p:commandLink rendered="false" value="Registrarse" action="#{beanDireccionamiento.direccionarRegistro()}"/>
+                        <div class="EmptyBox20"></div>
+
+                        <p:commandLink value="¿Olvidó su Clave?" action="#{beanDireccionamiento.direccionarRecuperacionClave()}"/>
+                        <div class="EmptyBox20"></div>
+
+                    </div>
+
+              
+            </div>
+        </h:form>
+        <!-- LOGIN BOX COVER END -->
+
+    </h:body>
+
+</html>

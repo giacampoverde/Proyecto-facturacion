@@ -1,0 +1,137 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <style type="text/css">
+            .ui-panel {
+                margin-top:20px
+            }
+        </style>
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+        <h:outputScript name="js/es.js" library="sentinel-layout" />
+        <h3 class="hardblue TexAlCenter">Comprobantes Emitidos Autorizados</h3>
+        <p:panel>
+            <p:messages id="m-mensajes" showDetail="true" autoUpdate="true" closable="true" />
+            <h:form id="form-comprobantes-emitidos-autorizados">
+                <p:panel>
+                    <h:outputText value="Búsquedas:" styleClass="FontBold Fs14 hardblue"/>
+                    <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none" class="Wid70 TexAlCenter MarAuto">
+                        <h:outputText value="Fecha:" styleClass="FontBold Fs14 hardblue"/>                
+                        <p:selectOneMenu id="som-fechas" value="#{beanComprobantesEmitidos.seleccionPeriodoTiempo}" effect="drop" >
+                            <f:selectItem itemLabel="Todos" itemValue="1" />
+                            <f:selectItem itemLabel="Hoy" itemValue="2" />
+                            <f:selectItem itemLabel="Últimos 7 días" itemValue="3" />  
+                            <f:selectItem itemLabel="Último mes" itemValue="4" />  
+                            <f:selectItem itemLabel="Últimos 6 meses" itemValue="5" />                             
+                            <f:selectItem itemLabel="Periodo" itemValue="6" />
+                            <p:ajax event="valueChange" listener="#{beanComprobantesEmitidos.abrirDialogRangoFechas()}" update=":form-periodo-fechas:pg-periodo-fechas"/>
+                        </p:selectOneMenu>
+                        <h:outputText value="Secuencial:" styleClass="FontBold Fs14 hardblue"></h:outputText>  
+                        <p:inputText id="it-secuencial-busqueda" value="#{beanComprobantesEmitidos.secuencialBusqueda}" maxlength="9"/>
+                        <h:outputText value="Receptor (RUC/Cédula/Pasaporte):" styleClass="FontBold Fs14 hardblue"></h:outputText>  
+                        <p:inputText id="it-receptor-busqueda" value="#{beanComprobantesEmitidos.rucReceptorBusqueda}" maxlength="50"/>
+                        <h:outputText value="Tipo:" styleClass="FontBold Fs14 hardblue"></h:outputText>  
+                        <p:selectOneMenu id="som-tipo" value="#{beanComprobantesEmitidos.tipoDocumento}">
+                            <f:selectItem itemLabel="Seleccione" itemValue="-1" />
+                            <f:selectItem itemLabel="Factura" itemValue="01" />
+                            <f:selectItem itemLabel="Nota de Crédito" itemValue="04" />
+                            <f:selectItem itemLabel="Nota de Débito" itemValue="05" />                           
+                            <f:selectItem itemLabel="Comprobante de Retención" itemValue="07" />
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none" class="Wid45">
+                        <p:commandButton id="btnBuscar" value="Buscar" update=":form-comprobantes-emitidos-autorizados:dt-comprobantes-emitidos-autorizados" actionListener="#{beanComprobantesEmitidos.buscarComprobantesEmitidosAutorizados()}" onclick="PF('wv-dt-emitidos-autorizados').getPaginator().setPage(0);"/>
+
+                        <p:commandButton value="Recargar" update=":form-comprobantes-emitidos-autorizados:dt-comprobantes-emitidos-autorizados it-secuencial-busqueda it-receptor-busqueda som-fechas som-tipo" actionListener="#{beanComprobantesEmitidos.reiniciarParametros()}" onclick="PF('wv-dt-emitidos-autorizados').getPaginator().setPage(0);"/>
+                    </p:panelGrid>
+                    <p:blockUI block="som-fechas it-secuencial-busqueda it-receptor-busqueda som-tipo" trigger="btnBuscar"/>
+                </p:panel>
+                <div class="EmptyBox10 "/>
+                <p:panelGrid columns="1" layout="grid" style="border:0px none;background:none" class="TexAlRight">
+                    <p:commandLink ajax="false"  title="Descargar ZIP"                                               
+                                   action="#{beanComprobantesEmitidos.bajarZIP()}">
+                        <h:graphicImage value="/imagenes/zip_icon.png"  width="50px" height="50px"/>
+
+                    </p:commandLink>
+                </p:panelGrid>
+                <p:dataTable id="dt-comprobantes-emitidos-autorizados" widgetVar="wv-dt-emitidos-autorizados" var="comprobante_electronico" value="#{beanComprobantesEmitidos.comprobantesEmitidosLazy}" paginator="true" rows="5" emptyMessage="No hay registros." 
+                             paginatorPosition="bottom"
+                             rowsPerPageTemplate="5,10,15" lazy="true" reflow="true" rowKey="#{comprobante_electronico.idAsignacionComprobanteElectronico}" selection="#{beanComprobantesEmitidos.comprobantesSeleccionados}" scrollable="false" >
+
+                    <p:column headerText="Número" width="15%" >
+                        <h:outputText value="#{comprobante_electronico.comprobanteElectronico.codigoEstablecimientoComprobanteElectronico}-#{comprobante_electronico.comprobanteElectronico.puntoEmisionComprobanteElectronico}-#{comprobante_electronico.comprobanteElectronico.secuencialComprobanteElectronico}" />
+                    </p:column>
+
+                    <p:column headerText="Fecha Emisión" width="80">
+                        <h:outputText value="#{comprobante_electronico.comprobanteElectronico.fechaEmisionComprobanteElectronico}" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>
+
+                    </p:column>
+                    <p:column headerText="Fecha Autorización" width="20%" >
+                        <h:outputText value="#{comprobante_electronico.comprobanteElectronico.fechaAutorizacionComprobanteElectronico}" />
+                    </p:column>
+                    <p:column headerText="Receptor" width="20%" >
+                        <p:tooltip for="ot-receptor" class="FontBold Fs14"/>
+                        <h:outputText id="ot-receptor" value="#{comprobante_electronico.receptor.razonSocialReceptor}"/>
+                    </p:column>
+                    <p:column headerText="Tipo" width="80">
+                        <h:outputText value="#{comprobante_electronico.comprobanteElectronico.tipoComprobanteElectronico.nombreTipoComprobanteElectronico}" />
+                    </p:column>
+                    <p:column headerText="PDF" width="10%" class="TexAlCenter">
+                        <h:commandLink title="PDF"                                   
+                                       action="#{beanComprobantesEmitidos.descargarRIDE()}" target="_blank">
+                            <h:graphicImage value="/imagenes/pdf.png"  width="20px" height="25px"/>
+                            <f:setPropertyActionListener value="#{comprobante_electronico}"
+                                                         target="#{beanComprobantesEmitidos.comprobanteSeleccionado}"/>
+                        </h:commandLink>     
+                    </p:column>  
+                    <p:column headerText="XML" width="10%" class="TexAlCenter">
+                        <h:commandLink title="XML"                                               
+                                       action="#{beanComprobantesEmitidos.descargarRespuestaXML()}" >
+                            <h:graphicImage value="/imagenes/xml.png"  width="20px" height="25px"/>
+                            <f:setPropertyActionListener value="#{comprobante_electronico}"
+                                                         target="#{beanComprobantesEmitidos.comprobanteSeleccionado}"/>
+                        </h:commandLink>
+                    </p:column>
+
+                    <p:column  selectionMode="multiple" width="10%" />
+                </p:dataTable>
+            </h:form>
+            <h:form id="form-periodo-fechas">
+                <p:dialog modal="true" widgetVar="wv-periodo-fechas" draggable="false" resizable="false" fitViewport="true" maximizable="false" header="Periodo de fechas" closable="false">
+                    <h:panelGrid columns="1" id="pg-periodo-fechas">
+                        <p:tabView cache="false" dynamic="true">
+                            <p:tab title="Fecha inicial" >
+                                <p:panelGrid columns="1" layout="grid" style="border:0px none;background:none" class="TexAlCenter MarAuto">
+                                    <h:outputText id="ot-fecha-inicial" value="Fecha inicial: #{beanComprobantesEmitidos.fechaFormateada(beanComprobantesEmitidos.fechaInicial)}" styleClass="FontBold Fs12 hardblue" />
+                                    <p:calendar value="#{beanComprobantesEmitidos.fechaInicial}" mode="inline" locale="es" >
+                                        <p:ajax event="dateSelect" update="ot-fecha-inicial" />
+                                    </p:calendar>
+
+                                </p:panelGrid>
+                            </p:tab>
+                            <p:tab title="Fecha final">
+                                <p:panelGrid columns="1" layout="grid" style="border:0px none;background:none" class="TexAlCenter MarAuto">
+                                    <h:outputText id="ot-fecha-final" value="Fecha final: #{beanComprobantesEmitidos.fechaFormateada(beanComprobantesEmitidos.fechaFinal)}" styleClass="FontBold Fs12 hardblue" />
+                                    <p:calendar value="#{beanComprobantesEmitidos.fechaFinal}" mode="inline" locale="es" >
+                                        <p:ajax event="dateSelect" update="ot-fecha-final" />
+                                    </p:calendar>
+
+                                </p:panelGrid>
+                            </p:tab>
+                        </p:tabView>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="1" cellpadding="5" cellspacing="5" class="MarAuto">                        
+                        <p:commandButton value="Aceptar" actionListener="#{beanComprobantesEmitidos.cerrarDialogRangoFechas()}" icon="fa fa fw fa-check" iconPos="right" update=":form-comprobantes-emitidos-autorizados:som-fechas" />
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+        </p:panel>
+    </ui:define>
+</ui:composition>

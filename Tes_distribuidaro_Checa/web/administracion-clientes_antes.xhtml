@@ -1,0 +1,185 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <style type="text/css">
+            .ui-panel {
+                margin-top:20px
+            }
+        </style>
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+        <h3 class="hardblue TexAlCenter">Administración de Clientes</h3>
+
+        <p:panel id="bloquear">
+
+            <p:messages id="m-mensajes" showDetail="true" autoUpdate="true" closable="true" />
+            <h:form id="form-admin-clientes">
+                <p:panel>
+                    <h:outputText value="Búsquedas:" styleClass="FontBold Fs14 hardblue"/> 
+                    <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none" class="Wid70 TexAlCenter MarAuto">
+                        <h:outputText value="Usuario RUC/Cédula:" styleClass="FontBold Fs14 hardblue"/>
+
+                        <p:autoComplete  id="it-id-buscar"  value="#{beanAdministracionClientes.cedulaBusqueda}" maxlength="13" completeMethod="#{beanAdministracionClientes.autocompletarUsuariosruc}">
+                            <p:ajax event="click" listener="#{beanAdministracionClientes.borrarBusqueda()}" update="it-id-buscar"/>
+                        </p:autoComplete>
+                        <h:outputText value="Nombres:" styleClass="FontBold Fs14 hardblue"/>
+                        <p:autoComplete  id="it-id-buscar2"  value="#{beanAdministracionClientes.nombre}" maxlength="13" completeMethod="#{beanAdministracionClientes.autocompletarUsuariosNombres}">
+                            <p:ajax event="click" listener="#{beanAdministracionClientes.borrarBusqueda()}" update="it-id-buscar2"/>
+                        </p:autoComplete>
+                        <h:outputText value="Estado" styleClass="FontBold Fs16 hardblue"/>
+                        <p:selectOneMenu id="som-tipo-perfil" value="#{beanAdministracionClientes.estadobusqueda}">
+                            <f:selectItem itemLabel="Activo/Inactivo" itemValue="-1" />
+                            <f:selectItem itemLabel="Activo" itemValue="1" />
+                            <f:selectItem itemLabel="Inactivo" itemValue="2" />
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton value="Buscar" actionListener="#{beanAdministracionClientes.busquedaDeClientes()}" update="dt-clientes" onclick="PF('dt-perfiles').getPaginator().setPage(0);" />
+                </p:panel>
+                <div class="Container100"><div class="ContainerIndent"> <h:outputText value="Clientes" styleClass="FontBold Fs18 hardblue"/></div></div>
+
+                <p:dataTable id="dt-clientes" value="#{beanAdministracionClientes.clientes}" var="perfil" rows="5" paginator="true" 
+                             
+                             rowsPerPageTemplate="5,10,15" paginatorPosition="bottom" reflow="true" emptyMessage="No hay registros."
+                             selectionMode="single" selection="#{beanAdministracionClientes.clienteselec}" rowKey="#{perfil.idReceptor}" widgetVar="dt-perfiles">
+                    <p:ajax event="rowSelect" listener="#{beanAdministracionClientes.onRowSelect}"/>
+                    <p:ajax event="rowUnselect" listener="#{beanAdministracionClientes.onRowUnselect}"/>
+                    <p:column headerText="Identificacion">
+                        <h:outputText value="#{perfil.rucReceptor}" />
+                    </p:column>
+                    <p:column headerText="Razon Social">
+                        <h:outputText value="#{perfil.razonSocialReceptor}" />
+                    </p:column>
+
+                    <p:column headerText="Telefono">
+                        <h:outputText value="#{perfil.telefono}" />
+                    </p:column>
+                    <p:column headerText="direccion">
+                        <h:outputText value="#{perfil.direccion}" />
+                    </p:column>
+                    <p:column headerText="Correo">
+                        <h:outputText value="#{perfil.correo}" />
+                    </p:column>
+                    <p:column headerText="Correo Adicional">
+                        <h:outputText value="#{perfil.correoAdicional}" />
+                    </p:column>
+
+                </p:dataTable>
+
+            </h:form>
+
+            <div class="EmptyBox20"/>
+            <h:panelGrid columns="2" class="MarAuto" cellpadding="5" cellspacing="5">
+                <p:commandButton value="Nuevo" update=":form-nuevo-cliente:pg-nuevo-cliente" actionListener="#{beanAdministracionClientes.abrirDialogoNuevo()}"/>
+                <p:commandButton value="Editar" update=":form-editar-cliente:pg-editar-cliente :form-editar-cliente:p-identificacion-cliente-e :form-editar-cliente:pg-estado-usuario-actual2" actionListener="#{beanAdministracionClientes.editarCliente()}"/>
+            </h:panelGrid>
+            <div class="EmptyBox20"/>
+
+            <h:form id="form-nuevo-cliente">
+                <p:dialog fitViewport="true" modal="true" class="MarAuto MaxWid500" header="Nuevo cliente" showEffect="slide" hideEffect="slide" widgetVar="wv-nuevo-cliente" draggable="true" resizable="false" style=" max-height: 500px; max-width: 500px; overflow-y: scroll;">
+                    <p:panel class="TexAlCenter white-back Fnone MarAuto BordRad10" style="margin-top: 0px !important;">
+                        <p:outputLabel  value="Tipo de Identificación del Cliente:"  style="font-weight: bold; color: #0B0B61;"/>
+                        <p:selectOneRadio layout="grid" columns="3" class="MarAuto" id="somIdentificacion" value="#{beanAdministracionClientes.tipoIdentificacion}">
+                            <f:selectItem itemLabel="Cédula" itemValue="5" />
+                            <f:selectItem itemLabel="RUC" itemValue="4" />
+                            <f:selectItem itemLabel="Pasaporte" itemValue="6" />
+                        </p:selectOneRadio>
+                    </p:panel>
+                    <p:panelGrid id="pg-nuevo-cliente" columns="2" layout="grid" style="border:0px none;background: none">
+                        <h:outputLabel value="Identificación:" for="it-ruc"/>
+                        <p:inputText id="it-ruc" maxlength="13" value="#{beanAdministracionClientes.ruc}" placeholder="Identificación Cliente"/>
+                        <h:outputLabel value="Razón Social/Nombres :" for="it-nombre"/>
+                        <p:inputText id="it-nombre" maxlength="100" value="#{beanAdministracionClientes.nombre}" placeholder="Nombre"/>
+                        <h:outputLabel value="Teléfono:" for="it-telefono"/>
+                        <p:inputText id="it-telefono" maxlength="15" value="#{beanAdministracionClientes.telefono}" placeholder="Teléfono"/>
+                        <h:outputLabel value="Dirección:" for="it-direccion"/>
+                        <p:inputText id="it-direccion" maxlength="300" value="#{beanAdministracionClientes.direccion}" placeholder="Dirección"/>
+                        <h:outputLabel value="Correo:" for="it-correo"/>
+                        <p:inputText id="it-correo" maxlength="60" value="#{beanAdministracionClientes.correo}" placeholder="Correo"/>
+                        <h:outputLabel value="Correo adicional" for="it-correo-adicional"/>
+                        <p:inputText id="it-correo-adicional" maxlength="60" value="#{beanAdministracionClientes.correoAdicional}" placeholder="Correo adicional"/>
+                    </p:panelGrid>
+                    <p:messages id="m-mensajes-nuevo" showDetail="true" autoUpdate="true" closable="true" />
+                    <p:panel class="TexAlCenter MarAuto" style="margin-top: 0px !important;border:0px none;background: none">
+                        <p:commandButton id="pilas" value="Agregar" actionListener="#{beanAdministracionClientes.insertarCliente()}" 
+                                         update=":form-admin-clientes:dt-clientes m-mensajes-nuevo" icon="fa fa fw fa-check"
+                                         oncomplete="setTimeout(function() { $('[id$=m-mensajes]').hide(500); }, 3000);"/>
+                        <p:commandButton 
+                            value="Cerrar"
+                            actionListener="#{beanAdministracionClientes.cerrarDatos()}"
+                            />
+                    </p:panel>
+                     <p:blockUI block="bloquear" trigger="pilas" />
+                </p:dialog>
+            </h:form>
+            <h:form id="form-editar-cliente">
+                <p:dialog fitViewport="true" modal="true" header="Editar cliente" widgetVar="wv-editar-cliente" draggable="true" closable="false" resizable="false" style=" max-height: 400px; max-width: 500px; overflow-y: scroll;">
+                    <p:panel id='p-identificacion-cliente-e' class="TexAlCenter white-back Fnone MarAuto BordRad10" style="margin-top: 0px !important;">
+                        <p:outputLabel  value="Tipo de Identificación del Cliente:"  style="font-weight: bold; color: #0B0B61;"/>
+                        <p:selectOneRadio layout="grid" columns="3" class="MarAuto" id="somIdentificacionE" value="#{beanAdministracionClientes.tipoIdentificacion}">
+                            <f:selectItem itemLabel="Cédula" itemValue="5" />
+                            <f:selectItem itemLabel="RUC" itemValue="4" />
+                            <f:selectItem itemLabel="Pasaporte" itemValue="6" />
+                            <p:ajax event="change" update="p-identificacion-cliente-e"/>
+                        </p:selectOneRadio>
+                    </p:panel>
+                    <p:panelGrid id="pg-editar-cliente" columns="2" layout="grid" style="border:0px none;background:none">
+                        <p:outputLabel value="Identificación: "/>
+                        <p:inplace saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionClientes.clienteselec.rucReceptor}">
+                            <p:ajax event="save" listener="#{beanAdministracionClientes.actualizarCliente(1)}" update=":form-admin-clientes:dt-clientes"/>
+                            <p:inputText value="#{beanAdministracionClientes.ruc}" maxlength="30" size="10"/>
+                        </p:inplace>
+                        <p:outputLabel value="Razón Social/Nombres:"/>
+                        <p:inplace saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionClientes.clienteselec.razonSocialReceptor}">
+                            <p:ajax event="save" listener="#{beanAdministracionClientes.actualizarCliente(2)}" update=":form-admin-clientes:dt-clientes :form-editar-cliente:pg-editar-cliente"/>
+                            <p:inputText value="#{beanAdministracionClientes.nombre}" maxlength="100" size="10"/>
+                        </p:inplace>
+                        <p:outputLabel value="Teléfono:"/>
+                        <p:inplace saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionClientes.clienteselec.telefono}">
+                            <p:ajax event="save" listener="#{beanAdministracionClientes.actualizarCliente(3)}" update=":form-admin-clientes:dt-clientes :form-editar-cliente:pg-editar-cliente"/>
+                            <p:inputText value="#{beanAdministracionClientes.telefono}" maxlength="100" size="10"/>
+                        </p:inplace>
+                        <p:outputLabel value="Dirección:"/>
+                        <p:inplace saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionClientes.clienteselec.direccion}">
+                            <p:ajax event="save" listener="#{beanAdministracionClientes.actualizarCliente(4)}" update=":form-admin-clientes:dt-clientes :form-editar-cliente:pg-editar-cliente"/>
+                            <p:inputText value="#{beanAdministracionClientes.direccion}" maxlength="300" size="10"/>
+                        </p:inplace>
+                        <p:outputLabel value="Correo:"/>
+                        <p:inplace saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionClientes.clienteselec.correo}">
+                            <p:ajax event="save" listener="#{beanAdministracionClientes.actualizarCliente(5)}" update=":form-admin-clientes:dt-clientes :form-editar-cliente:pg-editar-cliente"/>
+                            <p:inputText value="#{beanAdministracionClientes.correo}" maxlength="50" size="10"/>
+                        </p:inplace>
+                        <p:outputLabel value="Correo adicional:"/>
+                        <p:inplace saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionClientes.clienteselec.correoAdicional}">
+                            <p:ajax event="save" listener="#{beanAdministracionClientes.actualizarCliente(6)}" update=":form-admin-clientes:dt-clientes :form-editar-cliente:pg-editar-cliente"/>
+                            <p:inputText value="#{beanAdministracionClientes.correoAdicional}" maxlength="50" size="10" placeholder="Correo adicional"/>
+                        </p:inplace>
+                    </p:panelGrid>
+                    <div class="EmptyBox20"></div>                    
+                    <p:panel >
+                        <h:outputText value="Estado" styleClass="FontBold Fs14 hardblue" />
+                        <h:panelGrid columns="1" id="pg-estado-usuario-actual2" class="MarAuto TexAlCenter">
+
+                            <h:outputText id="ol-estado-usuario" styleClass="FontBold Fs14 hardblue" value="Usuario #{beanAdministracionClientes.estadoActualUsuario eq'true'?'Activo':'Inactivo'}" />
+                            <p:selectBooleanCheckbox value="#{beanAdministracionClientes.estadoActualUsuario}" >
+                                <p:ajax update=":form-admin-clientes:dt-clientes :form-editar-cliente:pg-editar-cliente" listener="#{beanAdministracionClientes.actualizarCliente(7)}"/>
+
+                            </p:selectBooleanCheckbox> 
+                        </h:panelGrid>
+
+                    </p:panel>
+                    <p:messages id="m-mensajes-editar" showDetail="true" autoUpdate="true" closable="true" />
+                    <p:panel class="TexAlCenter MarAuto" style="margin-top: 0px !important;border:0px none;background: none">
+                        <p:commandButton value="Cerrar" onclick="PF('wv-editar-cliente').hide();" icon="fa fa fw fa-close" iconPos="right"
+
+                                         update=":form-admin-clientes:dt-clientes pg-editar-cliente m-mensajes-editar"/>
+                    </p:panel>
+                </p:dialog>
+            </h:form>
+        </p:panel>
+    </ui:define>
+</ui:composition>
+

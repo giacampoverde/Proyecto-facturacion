@@ -1,0 +1,114 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <style type="text/css">
+            .ui-panel {
+                margin-top:20px
+            }
+        </style>
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+        <h3 class="hardblue TexAlCenter">Administración de Perfiles</h3>
+        <p:panel id="perfiles">
+            <p:messages id="m-mensajes" showDetail="true" autoUpdate="true" closable="true" />
+            <h:form id="form-perfiles">
+                <div class="Container100"><div class="ContainerIndent"><h:outputText value="Perfiles actuales" styleClass="FontBold Fs18 hardblue"/></div></div>
+                <p:dataTable id="dt-perfiles" value="#{beanAdministracionPerfiles.perfilesActuales}" var="perfil" rows="5" paginator="true" 
+                             rowsPerPageTemplate="5,10,15" paginatorPosition="bottom" reflow="true" emptyMessage="No hay registros."
+                             selectionMode="single" selection="#{beanAdministracionPerfiles.perfilSeleccionado}" rowKey="#{perfil.idPerfil}" widgetVar="dt-perfiles">
+                    <p:ajax event="rowSelect" listener="#{beanAdministracionPerfiles.onRowSelect}" />
+                    <p:ajax event="rowUnselect" listener="#{beanAdministracionPerfiles.onRowUnselect}" />
+                    <p:column headerText="Nombre" >
+                        <h:outputText value="#{perfil.nombrePerfil}" />
+                    </p:column>
+                    <p:column headerText="Descripción" >
+                        <h:outputText value="#{perfil.descripcionPerfil}" />
+
+                    </p:column>
+                    <p:column headerText="Estado" >
+                        <h:outputText value="#{perfil.estadoPerfil eq 'true'?'Activo':'Inactivo'}" />
+
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+
+            <div class="EmptyBox20 "></div>
+            <h:panelGrid columns="3" class="MarAuto" cellpadding="5" cellspacing="5">
+
+                <p:commandButton id="cb-nuevo" value="Nuevo"  actionListener="#{beanAdministracionPerfiles.mostrarDialogNuevo()}" update=":form-nuevo-perfil:pg-nuevo-perfil" >
+                    <p:blockUI block="perfiles" trigger="cb-nuevo" />
+                </p:commandButton>
+                <p:commandButton  id="cb-editar" value="Editar" actionListener="#{beanAdministracionPerfiles.mostrarDialogEditar()}" update=":form-editar-perfil:pg-editar-perfil"  >
+
+                </p:commandButton>
+
+                <p:commandButton id="cb-estado" value="Estado" actionListener="#{beanAdministracionPerfiles.mostrarDialogEstadoPerfil()}" update=":form-estado-perfil:pg-estado-perfil">
+
+                </p:commandButton>
+
+            </h:panelGrid>
+            <div class="EmptyBox20 "></div>
+
+            <h:form id="form-nuevo-perfil" >
+
+                <p:dialog widgetVar="nuevoPerfil" header="Nuevo perfil" fitViewport="true" draggable="false" resizable="false" modal="true" >
+                    <p:messages showDetail="true" autoUpdate="true" closable="true" />
+                    <p:panelGrid id="pg-nuevo-perfil" columns="1" layout="grid" style="border:0px none;background:none" class="MarAuto TexAlCenter">
+                        <p:focus for="it-nombre-perfil"/>
+                        <p:inputText id="it-nombre-perfil" value="#{beanAdministracionPerfiles.nombrePerfil}" placeholder="Nombre perfil" maxlength="40"/>
+                        <div class="EmptyBox20 "></div>
+                        <p:inputText value="#{beanAdministracionPerfiles.descripcionPerfil}" placeholder="Descripción" maxlength="40"/>
+                        <div class="EmptyBox20 "></div>
+                        <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none">
+                            <p:commandButton value="Aceptar" actionListener="#{beanAdministracionPerfiles.guardarNuevoPerfil()}" update=":form-perfiles:dt-perfiles" icon="fa fa fw fa-check" iconPos="right" oncomplete="setTimeout(function() { $('[id$=m-mensajes]').hide(500); }, 3000);"/>
+                            <p:commandButton value="Cancelar"  onclick="PF('nuevoPerfil').hide();" icon="fa fa fw fa-close" iconPos="right"/>
+                        </p:panelGrid>
+                    </p:panelGrid>
+                </p:dialog>
+
+            </h:form>
+            <h:form id="form-editar-perfil" >
+                <p:dialog style="margin-top: 20px !important;" modal="true" widgetVar="editarPerfil" header="Editar perfil" fitViewport="true" draggable="false" resizable="false">                       
+                    <p:panelGrid id="pg-editar-perfil" columns="2" layout="grid" style="border:0px none;background:none" >
+                        <p:outputLabel value="Nombre"/>
+                        <p:inplace saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionPerfiles.perfilSeleccionado.nombrePerfil}" >
+                            <p:ajax event="save" update=":form-perfiles:dt-perfiles" listener="#{beanAdministracionPerfiles.validarEdicionNombre()}" />
+                            <p:inputText
+                                value="#{beanAdministracionPerfiles.nombreEdicion}" size="10" maxlength="40"/>
+                        </p:inplace>
+                        <p:outputLabel value="Descripción"/>
+                        <p:inplace saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionPerfiles.perfilSeleccionado.descripcionPerfil}" >
+                            <p:ajax event="save" update=":form-perfiles:dt-perfiles" listener="#{beanAdministracionPerfiles.validarEdicionDescripcionPerfil()}" />
+                            <p:inputText
+                                value="#{beanAdministracionPerfiles.descripcionEdicion}" size="10" maxlength="40"/>
+                        </p:inplace>
+                    </p:panelGrid>
+                    <div class="EmptyBox20 "></div>
+                    <h:panelGrid columns="1" class="MarAuto TexAlCenter">
+                        <p:commandButton value="Cerrar" onclick="PF('editarPerfil').hide();" icon="fa fa fw fa-close" iconPos="right" oncomplete="setTimeout(function() { $('[id$=m-mensajes]').hide(500); }, 3000);"/>
+                    </h:panelGrid>
+                </p:dialog>
+
+            </h:form>-
+            <h:form id="form-estado-perfil" >
+
+                <p:dialog modal="true" widgetVar="estadoPerfil" header="Estado perfil" fitViewport="true" draggable="false" resizable="false">                       
+                    <p:panelGrid id="pg-estado-perfil" columns="1" layout="grid" style="border:0px none;background:none" class="MarAuto TexAlCenter">
+                        <p:outputLabel value="¿Desea cambiar el estado del perfil: #{beanAdministracionPerfiles.perfilSeleccionado.nombrePerfil}?"/>
+
+                        <p:outputLabel value="Estado actual: #{beanAdministracionPerfiles.perfilSeleccionado.estadoPerfil eq 'true'?'Activo':'Inactivo'}"/>
+                    </p:panelGrid>
+                    <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none" class="MarAuto">
+                        <p:commandButton value="Sí" actionListener="#{beanAdministracionPerfiles.cambiarEstadoPerfil()}" update=":form-perfiles:dt-perfiles" oncomplete="setTimeout(function() { $('[id$=m-mensajes]').hide(500); }, 3000);" process="@this" icon="fa fa fw fa-check" iconPos="right"/>
+                        <p:commandButton value="No"  onclick="PF('estadoPerfil').hide();" icon="fa fa fw fa-close" iconPos="right"/>
+                    </p:panelGrid>
+                </p:dialog>
+
+            </h:form>
+        </p:panel>
+    </ui:define>
+</ui:composition>

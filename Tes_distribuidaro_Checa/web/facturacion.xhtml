@@ -1,0 +1,1262 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <style type="text/css">
+            .ui-panel {
+                margin-top:10px
+            }
+        </style>
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+
+        <div class="ContainerIndent">
+            <h3 class="hardblue TexAlCenter">Emisión de Factura Electrónica</h3>
+            <!--span class="TexAlCenter DispBlock Wid100">Use this page to start from scratch and place your custom content.</span-->
+            <p:panel id="facturatodo" header="Generar Factura">
+                <p:ajaxStatus style="position:fixed;right:10px;bottom:10px">  
+                    <f:facet name="start">  
+                        <p:graphicImage value="/imagenes/ajax-loader.gif" 
+                                        width="100"
+                                        height="100"/>  
+                    </f:facet>  
+                    <f:facet name="complete">  
+                        <h:outputText value="" />  
+                    </f:facet>  
+                </p:ajaxStatus> 
+                <h:form id="form">
+                    <script>
+                        function soloNumeros(evt)
+                        {
+                            tecla = (document.all) ? evt.keyCode : evt.which;
+                            //Tecla de retroceso para borrar, siempre la permite
+                            if (tecla === 8)
+                                return true;
+                            if (tecla == 46)
+                                return true;
+                            // Patron de entrada, en este caso solo acepta letras
+                            patron = /\d/;
+
+                            tecla_final = String.fromCharCode(tecla);
+                            return patron.test(tecla_final);
+
+                            //Solo números patron = /\d/;
+
+                            //Números y letras patron = /\w/;
+
+                            //No acepta números patron = /\D/;
+
+                        }
+
+                    </script>
+                    <div class="ContainerIndent">
+                        <p:messages id="mensajes" showDetail="true" autoUpdate="true" closable="true" />
+                        <p:tabView activeIndex="#{beanFactura.indexTab}" id="tvFactura"  scrollable="true">
+
+                            <p:tab id="tabInfoFactura" titleStyle="font-size: 14px"
+                                   title="Información Factura" disabled="#{!beanFactura.tab1}">
+                                <p:panelGrid id="pgInfoFactura" columns="2"
+                                             class="Wid50 MarAuto TexAlCenter" layout="grid" 
+                                             style="border: 0px none; background: none">
+                                    <p:outputLabel id="itaNombreComercialEmisor2"
+                                                   style="color: #0B0B61;"
+                                                   title="Nombre Comercial del Emisor"
+                                                   value="#{beanFactura.emisor.nombreComercialClienteEmpresa}"
+                                                   /> 
+                                    <p:outputLabel  id="itaNombreComercialEmisor22"
+
+                                                    title="ruc"
+                                                    value="RUC: #{beanFactura.emisor.idEmpresa}"
+                                                    /> 
+
+                                    <h:outputLabel rendered="false" id="olFechaFacturacion"
+                                                   for="cFechaFacturacion"
+                                                   style="color: #0B0B61;"
+                                                   value="Fecha:"/>
+                                    <p:inputText rendered="false" readonly="true"  id="cFechaFacturacion"
+                                                 value="#{beanFactura.fechaEmision}">
+                                        <f:convertDateTime pattern="dd-MM-yyyy"/> 
+                                    </p:inputText>
+
+
+                                </p:panelGrid>
+
+
+                                <h:panelGrid columns="2"
+                                             class="Wid50 TexAlCenter MarAuto" 
+                                             style="border: 0px none; background: none">
+                                    <h:outputLabel id="olTipoRegistro"
+                                                   for="opcionRegistro"
+                                                   value="Seleccione el tipo de receptor:"
+                                                   style="color: #0B0B61;"/>
+                                    <p:selectOneRadio class="MarAuto" id="opcionRegistro" value="#{beanFactura.identificacion}"
+                                                      >
+                                        <p:ajax event="change"
+                                                listener="#{beanFactura.ingresarDatosUsuario}"
+                                                update=":form:tvFactura"/>
+                                        <f:selectItem itemLabel="Consumidor Final" itemValue="7" />  
+                                        <f:selectItem itemLabel="Datos" itemValue="1" />  
+                                    </p:selectOneRadio>
+                                </h:panelGrid>
+
+
+                                <p:panel id="panelDatos" class="Container80 MaxWid500 white-back Fnone MarAuto BordRad10" rendered="#{beanFactura.datosCliente}">
+                                    <h:panelGrid columns="2" class="TexAlCenter Wid60 MarAuto"
+                                                 style="border: 1px; background: none" >
+                                        <p:outputPanel id="opInfoReceptor">
+                                            <p:focus context="pgInfoReceptor"/>
+                                            <!-- INICIO Componente para desplegar mensajes en los inputText-->
+                                            <p:tooltip id="tTabReceptor"
+                                                       for="pgInfoReceptor"
+                                                       rendered="#{beanFactura.datosCliente}"
+                                                       showEvent="focus"
+                                                       hideEvent="blur"/>
+                                            <!-- FIN Componente para desplegar mensajes en los inputText-->
+                                            <h:panelGrid columns="2"
+                                                         class="MarAuto"
+                                                         style="border: 0px none; background: none"
+                                                         rendered="#{beanFactura.datosCliente}">
+                                                <h:outputLabel id="olTipoIdentificacion"
+                                                               for="tipoIdentificacion"
+                                                               value="Tipo de identificación:"
+                                                               style="color: #0B0B61;"/>
+
+                                                <p:selectOneRadio id="tipoIdentificacion"
+
+                                                                  value="#{beanFactura.tipoIdentificacion}"
+                                                                  layout="custom">
+                                                    <f:selectItem itemValue="4" itemLabel="RUC"/>  
+                                                    <f:selectItem  itemValue="5"  itemLabel="Cédula"/>  
+                                                    <f:selectItem itemValue="6" itemLabel="Pasaporte"/>  
+                                                </p:selectOneRadio>
+                                                <p:panelGrid columns="6" layout="grid" class="TexAlCenter Wid80 MarAuto"
+                                                             style="border: 0px none; background: none">
+                                                    <p:radioButton id="opt1" for="tipoIdentificacion" itemIndex="0"/>  
+                                                    <h:outputLabel for="opt1" value="RUC" />
+                                                    <p:radioButton id="opt2" for="tipoIdentificacion" itemIndex="1"/>  
+                                                    <h:outputLabel for="opt2" value="Cédula" /> 
+                                                    <p:radioButton id="opt3" for="tipoIdentificacion" itemIndex="2"/>  
+                                                    <h:outputLabel for="opt3" value="Pasaporte" /> 
+                                                </p:panelGrid>
+
+                                            </h:panelGrid>
+
+                                            <p:panelGrid columns="3"
+                                                         class="TexAlCenter MarAuto" layout="grid" 
+                                                         style="border: 0px none; background: none"
+                                                         rendered="#{beanFactura.datosCliente}">
+                                                <h:outputLabel id="olIdentificacionReceptor"
+                                                               for="itIdentificacionReceptor"
+                                                               value="CI/ RUC/ Pasaporte Cliente:"
+                                                               style="color: #0B0B61;"/>
+
+                                                <p:autoComplete  id="itIdentificacionReceptor" title="CI / RUC / Pasaporte Cliente"  maxResults="6" value="#{beanFactura.identificacionComprador}" maxlength="13" completeMethod="#{beanFactura.autoCompletarRUCCedulas}"/>
+
+                                                <p:commandButton  style="margin-left:30px;" value="Buscar"  update=":form:tvFactura" action="#{beanFactura.buscarClienteEmpresaReceptor()}"/>
+                                            </p:panelGrid>
+                                            <p:panelGrid  id="pgInfoReceptor" columns="2"
+                                                          class="TexAlCenter MarAuto" layout="grid" 
+                                                          style="border: 0px none; background: none"
+                                                          rendered="#{beanFactura.datosCliente2}"
+                                                          >
+                                                <h:outputLabel id="olRazonSocialReceptor"
+                                                               for="itRazonSocialReceptor"
+                                                               value="Razón Social:"/>
+
+                                                <p:inputText id="itRazonSocialReceptor"
+                                                             title="Razón Social Receptor"
+                                                             maxlength="200"
+                                                             readonly="true"
+                                                             autocomplete="off"
+                                                             value="#{beanFactura.razonSocialComprador}"/>
+                                            </p:panelGrid>
+                                            <p:panelGrid id="pgInfodireccionReceptor" columns="2"
+                                                         class="TexAlCenter MarAuto" layout="grid" 
+                                                         style="border: 0px none; background: none"
+                                                         rendered="#{beanFactura.datosCliente2}"
+                                                         >
+                                                <h:outputLabel id="oldireccionReceptor"
+                                                               for="itdireccionReceptor"
+                                                               value="Direccion:"/>
+
+                                                <p:inputText id="itdireccionReceptor"
+                                                             title="Direccion"
+                                                             maxlength="200"
+                                                             readonly="true"
+                                                             autocomplete="off"
+                                                             value="#{beanFactura.direccionReceptor}"/>
+                                            </p:panelGrid>
+                                            <p:panelGrid id="pgInfoCorreo" columns="2"
+                                                         class="TexAlCenter MarAuto" layout="grid" 
+                                                         style="border: 0px none; background: none"
+                                                         rendered="#{beanFactura.datosCliente2}"
+                                                         >
+                                                <h:outputLabel id="olCorreoReceptor"
+                                                               for="itCorreoReceptor"
+                                                               value="Correo:"/>
+
+                                                <p:inputText id="itCorreoReceptor"
+                                                             title="Correo"
+                                                             maxlength="200"
+                                                             autocomplete="off"
+                                                             readonly="true"
+                                                             value="#{beanFactura.correoReceptor}"/>
+                                            </p:panelGrid>
+
+
+                                            <p:spacer height="16" rendered="#{beanFactura.datosCliente2}" />
+
+                                        </p:outputPanel>
+                                    </h:panelGrid>
+                                </p:panel>
+
+                                <br/>
+                                <p:panelGrid class="TexAlCenter Wid20 MarAuto" layout="grid" columns="1"
+                                             style="border: 0px none; background: none">
+
+                                    <p:commandButton value="siguiente" actionListener="#{beanFactura.validacionesReceptor()}" update=":form:tvFactura"/>
+
+                                </p:panelGrid>
+                            </p:tab>
+
+                            <p:tab id="tabInfoDetalles"
+                                   titleStyle="font-size: 14px"
+                                   title="Detalles a Facturar" disabled="#{!beanFactura.tab2}">
+
+                                <p:panel id="detallesF" class="MarAuto TexAlCenter"
+                                         style="border: 0px none; background: none">
+                                    <p:panelGrid id="pgInfoFactura2" columns="2"
+                                                 class="Wid50 MarAuto TexAlCenter" layout="grid" 
+                                                 style="border: 0px none; background: none">
+                                        <p:outputLabel id="itaNombreComercialEmisor3"
+                                                       style="color: #0B0B61;"
+                                                       title="Nombre Comercial del Emisor"
+                                                       value="#{beanFactura.emisor.nombreComercialClienteEmpresa}:"
+                                                       /> 
+                                        <p:outputLabel  id="itaNombreComercialEmisor33"
+
+                                                        title="ruc"
+                                                        value="RUC: #{beanFactura.emisor.idEmpresa}"
+                                                        /> 
+                                        <h:outputLabel id="olRazonSocialReceptor2"
+                                                       style="color: #0B0B61;"
+                                                       for="itRazonSocialReceptor2"
+                                                       value="Razón Social Receptor:"/>
+
+                                        <p:outputLabel id="itRazonSocialReceptor2"
+                                                       title="Razón Social Receptor"
+
+                                                       value="#{beanFactura.clienteEmpresaReceptor.razonSocialReceptor}"/>
+
+                                        <h:outputLabel id="olIdentificacionReceptor2"
+                                                       for="itIdentificacionReceptor"
+                                                       value="Ci/ Ruc/ Pasaporte Cliente:"
+                                                       style="color: #0B0B61;"/>
+
+                                        <h:outputLabel id="olIdentificacionReceptor3"
+
+                                                       value="#{beanFactura.clienteEmpresaReceptor.rucReceptor}"
+                                                       />
+
+
+
+                                    </p:panelGrid>
+                                    <p:spacer/>
+                                    <p:panelGrid class="MarAuto TexAlCenter" layout="grid" columns="1"
+                                                 style="border: 0px none; background: none" rendered="#{!beanFactura.panelDetalle}">
+                                        <p:commandButton id="btnIngresarDetalle"
+                                                         value="Nuevo Detalle"
+                                                         update="detallesF :form:tvFactura"
+                                                         actionListener="#{beanFactura.panelIngresarNuevoDetalleAbrir()}"
+                                                         icon="ui-icon-arrowreturnthick-1-e"/>
+                                        <p:overlayPanel id="opBtnIngresarDetalle"
+                                                        for="btnIngresarDetalle"
+                                                        showEvent="mouseover"
+                                                        hideEvent="mouseleave"> 
+                                            <p:outputPanel>  
+                                                <h:outputText value="Ingresar un nuevo detalle para este comprobante." />  
+                                            </p:outputPanel>
+                                        </p:overlayPanel>
+
+                                    </p:panelGrid>
+                                    <p:panel class="Container80 MaxWid500 TexAlCenter white-back Fnone MarAuto BordRad10" rendered="#{beanFactura.panelDetalle}">
+                                        <p:panel style="border: 0px none; background: none" rendered="#{beanFactura.panelDetalle}">
+                                            <p:outputLabel value="Buscar producto por codigo o descripcion."
+                                                           style="font-weight: bold; color: #0B0B61;"  /> 
+                                        </p:panel>
+                                        <h:panelGrid style="margin-left:80px;" columns="2" rendered="#{beanFactura.panelDetalle}">
+
+                                            <h:outputText value="Código Principal:" styleClass="FontBold Fs14 hardblue"/>
+                                            <p:inputText id="it-id-buscar" title="Código Principal"  value="#{beanFactura.codigoPrincipal}" maxlength="13" />
+                                            <h:outputText value="Descripcion Producto:" styleClass="FontBold Fs14 hardblue"/>
+                                            <p:inputText id="it-id-buscar2" title="Descripcion Producto"  value="#{beanFactura.descripcion}" maxlength="13"/>
+
+                                            <p:commandButton   value="Buscar" update=" pg-nuevo-cliente2"  actionListener="#{beanFactura.busquedaDeProductos2()}"/>
+
+
+
+                                            <p:commandButton rendered="#{!beanFactura.datosDetalles}"  id="btnCerrarIngProduto2"
+                                                             value="Cerrar"
+                                                             update="detallesF"
+                                                             actionListener="#{beanFactura.panelIngresarNuevoDetalleCerrar()}"
+                                                             onclick="
+                                                                     somTarifasIva.selectValue('');
+                                                                     somTarifasIce.selectValue('');"/>
+                                        </h:panelGrid>
+                                        <p:panelGrid class="TexAlCenter MarAuto" layout="grid" columns="2"
+                                                     style="border: 0px none; background: none" rendered="#{beanFactura.datosDetalles}">
+
+                                            <h:outputLabel id="olCodigoPrincipal"
+                                                           value="Código Principal:"
+                                                           for="itCodigoPrincipal"
+                                                           style="color: #0B0B61;"/>
+                                            <p:inputText readonly="true" id="itCodigoPrincipal"
+                                                         autocomplete="off"
+                                                         maxlength="25"
+                                                         value="#{beanFactura.producto.codigoProducto}"/>
+                                            <h:outputLabel id="olDescripcion"
+                                                           value="Descripción:"
+                                                           for="itDescripcion"
+                                                           style="color: #0B0B61;"/>
+                                            <p:inputText readonly="true" id="itDescripcion"
+                                                         maxlength="300"
+                                                         autocomplete="off"
+                                                         value="#{beanFactura.producto.descripcion}"/>
+
+                                            <h:outputLabel id="olUnidadMedida"
+                                                           value="Unidad de Medida:"
+                                                           for="itUnidadMedida"
+                                                           style="color: #0B0B61;"/>
+                                            <p:inputText readonly="true" id="itUnidadMedida"
+                                                         maxlength="300"
+                                                         autocomplete="off"
+                                                         value="#{beanFactura.producto.unidadMedida}"/>
+
+
+                                            <h:outputText value="Seleccione un Precio Unitario:  " style="color: #0B0B61;" /> 
+                                            <h:selectOneRadio  class="MarAuto" id="valor" value="#{beanFactura.valorSelecionado}">  
+
+                                                <f:selectItem    itemLabel="#{beanFactura.producto.precioVenta}$" itemValue="#{beanFactura.producto.precioVenta}" />
+                                                <f:selectItem itemLabel="#{beanFactura.producto.precioVentaDos}$" itemValue="#{beanFactura.producto.precioVentaDos}" />                                             
+
+                                            </h:selectOneRadio>
+                                            <h:outputLabel id="olCantidad2"
+                                                           value="Cantidad:"
+                                                           for="itCantidad2"
+                                                           style="color: #0B0B61;"/>
+                                            <p:inputText id="itCantidad2"
+                                                         autocomplete="off"
+                                                         value="#{beanFactura.cantidad}"
+                                                         maxlength="19"
+                                                         converterMessage="La información ingresada no corresponde al formato. Recuerde utilizar el punto como separador de decimales."/>
+                                        </p:panelGrid>
+                                        <br/>
+                                        <p:panelGrid id="pgOpDesc" class="MarAuto TexAlCenter" rendered="#{beanFactura.datosDetalles}">
+                                            <h:outputText value="Opciones de Descuento: " />  
+                                            <p:selectOneRadio class="MarAuto" id="sorOpcionesDescuento" value="#{beanFactura.opcionesDescuento}">  
+                                                <f:selectItem itemLabel="Valor" itemValue="1" />
+                                                <f:selectItem itemLabel="Porcentaje" itemValue="2" />                                             
+                                            </p:selectOneRadio>
+
+                                            <p:outputLabel id="olDescuentoDetalleValor"
+                                                           for="itDescuento"
+                                                           value="Descuento: "/>
+
+                                            <p:inputText id="itDescuento"
+                                                         autocomplete="off"
+                                                         maxlength="14"
+                                                         value="#{beanFactura.descuento}"/>
+
+                                        </p:panelGrid>
+
+
+
+                                        <p:panel class="MarAuto TexAlCenter" style="border: 0px none; background: none" rendered="#{beanFactura.datosDetalles}">
+                                            <p:outputLabel value="Impuestos Aplicables" style="font-weight: bold; color: #0B0B61;" /> 
+                                            <p:panelGrid id="pgImpuestos"
+                                                         class="MarAuto TexAlCenter" layout="grid"
+                                                         columns="2" style="border: 0px none; background: none">
+                                                <p:outputLabel id="olIVA"
+                                                               value="IVA: "
+                                                               for="somTarifasIva"/>
+                                                <p:selectOneMenu id="somTarifasIva"
+                                                                 widgetVar="somTarifasIva"
+                                                                 value="#{beanFactura.idImpuestoIVASeleccionado}"
+                                                                 effect="fade"
+                                                                 style="width: 160px; text-align: center">
+                                                    <f:selectItem itemLabel="Ninguno"
+                                                                  itemValue="-1"/>
+                                                    <f:selectItems value="#{beanFactura.listaTarifaImpuestoIVA}" itemDescription="#{tarifaImpuestoIce.descripcionTarifaImpuesto}" 
+                                                                   var="tarifaImpuestoIva"
+                                                                   itemLabel="#{tarifaImpuestoIva.codigoTarifaImpuesto} - #{tarifaImpuestoIva.descripcionTarifaImpuestoCorto}"
+                                                                   itemValue="#{tarifaImpuestoIva.codigoTarifaImpuesto}"/>
+                                                </p:selectOneMenu>
+                                                <p:outputLabel rendered="false" id="olICE"
+                                                               value="ICE: "
+                                                               for="somTarifasIce"/>
+                                                <p:selectOneMenu id="somTarifasIce"
+                                                                 rendered="false"
+                                                                 widgetVar="somTarifasIce"
+                                                                 value="#{beanFactura.idImpuestoICESeleccionado}"
+                                                                 effect="fade"
+                                                                 style="width: 160px; text-align: center">
+                                                    <f:selectItem itemLabel="Ninguno"
+                                                                  itemValue="-1"/>
+                                                    <f:selectItems class="TexAlRight" itemDescription="#{tarifaImpuestoIce.descripcionTarifaImpuesto}" value="#{beanFactura.listaTarifaImpuestoICE}"
+                                                                   var="tarifaImpuestoIce"
+                                                                   itemLabel="#{tarifaImpuestoIce.codigoTarifaImpuesto} - #{tarifaImpuestoIce.descripcionTarifaImpuestoCorto}"
+                                                                   itemValue="#{tarifaImpuestoIce.codigoTarifaImpuesto}"/>
+                                                </p:selectOneMenu>
+                                            </p:panelGrid>
+                                        </p:panel>
+
+                                        <br/>
+
+                                        <p:panelGrid rendered="false" columns="1" layout="grid" class="MarAuto TexAlCenter" style="border: 0px none; background: none">
+                                            <p:commandButton id="btnDetalleAdicional"
+                                                             value="Información Adicional"
+                                                             actionListener="#{beanFactura.limpiarovalores()}"
+                                                             onclick="PF('dialogDetalleAdicionalWV').show();"/>
+
+                                            <p:overlayPanel id="opBtnDetalleAdicional"
+                                                            for="btnDetalleAdicional"
+                                                            showEvent="mouseover"
+                                                            hideEvent="mouseleave"> 
+                                                <p:outputPanel>  
+                                                    <h:outputText value="Puede agregar Información Adicional para el detalle a ingresar." />  
+                                                </p:outputPanel>
+                                            </p:overlayPanel>
+                                        </p:panelGrid>
+
+                                        <br/>
+                                        <p:panelGrid rendered="false" id="pgListaDetalleAdicionalDialog" layout="grid" columns="1" class="MarAuto TexAlCenter">
+                                            <p:dataTable id="tablaListaDetalleAdicionalDialog"
+                                                         reflow="true"
+                                                         value="#{beanFactura.detallesAdicionales}"
+                                                         var="detallesA"
+                                                         emptyMessage="No existe Información Adicional."
+                                                         >
+                                                <p:column headerText="Nombre" style="width: 100px; color: #0B0B61;">
+                                                    <h:outputText value="#{detallesA.nombre}" style="color: #A4A4A4;" />
+                                                </p:column>
+                                                <p:column headerText="Valor" style="width: 100px; color: #0B0B61;">
+                                                    <h:outputText value="#{detallesA.valor}" style="color: #A4A4A4;"/>
+
+                                                </p:column>
+                                                <p:column headerText="Eliminar" style="width: 100px; color: #0B0B61;" >
+                                                    <p:commandLink title="Eliminar Información Adicional"
+                                                                   update="tablaListaDetalleAdicionalDialog"
+                                                                   action="#{beanFactura.eliminarDetalleAdicional()}">
+                                                        <h:graphicImage value="/imagenes/eliminar.png"  width="30px" height="25px"/>
+                                                        <f:setPropertyActionListener value="#{detallesA}"
+                                                                                     target="#{beanFactura.informacionAdicionalDetalleSeleccionado}"/>
+                                                    </p:commandLink>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:panelGrid>
+                                        <p:messages id="mensajesDetalles" showDetail="true" autoUpdate="true" closable="true" />
+                                        <br/>
+                                        <p:panelGrid class="MarAuto TexAlCenter Wid40" columns="2" layout="grid" style="border: 0px none; background: none" rendered="#{beanFactura.datosDetalles}">
+                                            <p:commandButton id="btnRegistrarDetalle"
+                                                             actionListener="#{beanFactura.agregarDetalleFactura()}"
+                                                             update=":form:tvFactura"
+                                                             value="Ingresar Detalle">
+                                                <p:resetInput target="somTarifasIce"/>
+                                            </p:commandButton>
+                                            <p:commandButton id="btnCerrarIngProduto"
+                                                             value="Cerrar"
+                                                             update="detallesF"
+                                                             actionListener="#{beanFactura.panelIngresarNuevoDetalleCerrar()}"
+                                                             onclick="
+                                                                     somTarifasIva.selectValue('');
+                                                                     somTarifasIce.selectValue('');"/>
+                                        </p:panelGrid>
+                                    </p:panel>
+                                    <br/>
+                                    <p:panelGrid class="MarAuto TexAlCenter" layout="grid" columns="1"
+                                                 style="border: 0px none; background: none">
+                                        <p:dataTable id="tablaDetalles"
+                                                     emptyMessage="No se han ingresado detalles en la factura."
+                                                     selection="#{beanFactura.detalleSeleccionado}"
+                                                     var="detalles"
+                                                     reflow="true"
+                                                     rowKey="#{detalles.identificador}"
+                                                     value="#{beanFactura.listaDetalles}"> 
+                                            <p:column  headerText="Cantidad" >
+                                                <h:outputText value="#{detalles.detalleComprobante.cantidad}" />
+                                            </p:column>
+
+                                            <p:column headerText="Descripción" >
+                                                <h:outputText value="#{detalles.detalleComprobante.descripcion}" />
+                                            </p:column>
+
+                                            <p:column style="text-align: right" headerText="V. Unitario" >
+                                                <h:outputText value="#{detalles.detalleComprobante.precioUnitario}" />
+                                            </p:column>
+
+                                            <p:column style="text-align: right" headerText="Descuento" >
+                                                <h:outputText value="#{detalles.detalleComprobante.descuento}" />
+                                            </p:column>
+
+                                            <p:column style="text-align: right" headerText="V. Total" >
+                                                <h:outputText value="#{detalles.detalleComprobante.precioTotalSinImpuesto}" />
+                                            </p:column>
+
+                                            <p:column headerText="V. Impuestos" >
+                                                <p:commandLink title="Visualizar Impuestos"
+                                                               update=":form:pgListaImpuestos"
+                                                               oncomplete="PF('dialogListaImpuestosWV').show();"
+                                                               action="#{beanFactura.obtenerImpuestos()}">
+                                                    <p:graphicImage value="/imagenes/impuestos.png"  width="20px" height="20px"/>
+                                                    <f:setPropertyActionListener value="#{detalles}"
+                                                                                 target="#{beanFactura.detalleSeleccionado}"/>
+                                                </p:commandLink>
+                                            </p:column>
+
+                                            <p:column rendered="false"  headerText="Det. Adicional">
+                                                <p:commandLink title="Visualizar Detalles Adicionales"
+                                                               update=":form:pgListaDetalleAdicional"
+                                                               oncomplete="PF('dialogListaDetalleAdicionalDetalleWV').show();"
+                                                               action="#{beanFactura.obtenerDetallesAdicionales()}">
+                                                    <h:graphicImage value="/imagenes/detalles.png"  width="20px" height="20px"/>
+                                                    <f:setPropertyActionListener value="#{detalles}"
+                                                                                 target="#{beanFactura.detalleSeleccionado}"/>
+                                                </p:commandLink>
+                                            </p:column>
+
+
+                                            <p:column headerText="Editar" styleClass="FontBold Fs12"  class="TexAlCenter" >
+
+                                                <p:commandButton 
+                                                    title="Editar Detalle"
+                                                    action="#{beanFactura.verificarEdicionDetalle()}"
+                                                    update=":form-edicion-detalle:pg-edicion-detalle :form-edicion-detalle:pgListaDetalleAdicionalDialog2 :form-edicion-detalle:pgListaImpuestos"
+                                                    icon="fa fa fw fa-edit"
+                                                    >                                    
+                                                    <f:setPropertyActionListener value="#{detalles}"
+                                                                                 target="#{beanFactura.detalleSeleccionado}"/>
+                                                </p:commandButton>
+                                            </p:column>
+                                            <p:column headerText="Eliminar" >
+                                                <p:commandLink id="btnEliminarDetalle"
+                                                               title="Eliminar Detalle"
+                                                               action="#{beanFactura.eliminarImpuesto()}"
+                                                               update=":form:tvFactura">
+                                                    <h:graphicImage value="/imagenes/eliminar.png"  width="20px" height="20px"/>
+                                                    <f:setPropertyActionListener value="#{detalles}"
+                                                                                 target="#{beanFactura.detalleSeleccionado}"/>
+                                                </p:commandLink>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:panelGrid>
+                                    <p:panelGrid class="MarAuto TexAlCenter" layout="grid" columns="2"  style="border: 0px none; background: none">
+                                        <p:panel>
+                                            <p:panelGrid class="MarAuto TexAlCenter" layout="grid" columns="2"  style="border: 0px none; background: none">
+                                                <h:outputLabel id="olSubTotal12"
+                                                               for="itSubTotal12"
+                                                               value="Subtotal 14%: "/>
+                                                <p:inputText style="text-align:right" id="itSubTotal12"
+                                                             readonly="true"
+                                                             value="#{beanFactura.subtotal12C}"
+                                                             >
+                                                    <f:convertNumber pattern="0.00" type="currency" locale="ec" />
+                                                </p:inputText>
+                                                <h:outputLabel id="olSubTotal0"
+                                                               for="itSubTotal0"
+                                                               value="Subtotal 0%: "/>
+                                                <p:inputText style="text-align:right" id="itSubTotal0"
+                                                             readonly="true"
+                                                             value="#{beanFactura.subtotal0C}"
+                                                             >
+                                                    <f:convertNumber pattern="0.00" type="currency" locale="ec" />
+                                                </p:inputText>
+                                                <h:outputLabel id="olSubTotalNoIva"
+                                                               for="itSubTotalNoIva"
+                                                               value="Subtotal No IVA: "/>
+                                                <p:inputText style="text-align:right" id="itSubTotalNoIva"
+                                                             readonly="true"
+                                                             value="#{beanFactura.subtotalNoIvaC}"
+                                                             >
+                                                    <f:convertNumber pattern="0.00" type="currency" locale="ec" />
+                                                </p:inputText>
+                                                <h:outputLabel id="olSubTotal"
+                                                               for="itSubTotal"
+                                                               value="Subtotal: " style="color: #0B0B61;"/>
+                                                <p:inputText style="text-align:right" id="itSubTotal"
+                                                             readonly="true"
+                                                             value="#{beanFactura.subtotalC}"
+                                                             >
+                                                    <f:convertNumber pattern="0.00" type="currency" locale="ec" />
+                                                </p:inputText>
+                                            </p:panelGrid>
+                                        </p:panel>
+
+                                        <p:panel>
+                                            <p:panelGrid class="MarAuto TexAlCenter" layout="grid" columns="2"  style="border: 0px none; background: none">
+                                                <h:outputLabel id="olTotalDescuento"
+                                                               for="itTotalDescuento"
+                                                               value="Total Descuento:"/>
+                                                <p:inputText style="text-align:right" id="itTotalDescuento"
+                                                             readonly="true"
+                                                             value="#{beanFactura.totalDescuentoComprobanteC}"
+                                                             >
+                                                    <f:convertNumber pattern="0.00" type="currency" locale="ec" />
+                                                </p:inputText>
+                                                <h:outputLabel rendered="false" id="olValorIce"
+                                                               for="itValorIce"
+                                                               value="ICE"/>
+                                                <p:inputText rendered="false" id="itValorIce"
+                                                             readonly="true"
+                                                             value="#{beanFactura.valorICEC}">
+                                                    <f:convertNumber pattern="0.00" type="currency" locale="ec" />
+                                                </p:inputText>
+                                                <h:outputLabel rendered="false" id="olPropina"
+                                                               for="itPropina"
+                                                               value="Propina:" style="color: #0B0B61;"/>
+                                                <p:inputText id="itPropina"
+                                                             rendered="false"
+                                                             readonly="true"
+                                                             value="#{beanFactura.propina}"
+                                                             >
+                                                    <f:convertNumber pattern="0.00" type="currency" locale="ec" />
+                                                    <p:ajax event="keyup" listener="#{beanFactura.calcularTotales()}" update="itValorTotal"/>
+                                                </p:inputText>
+                                                <h:outputLabel id="olImpuestos"
+                                                               for="itImpuestos"
+                                                               value="IVA (14%):"/>
+                                                <p:inputText style="text-align:right" id="itImpuestos"
+                                                             readonly="true"
+                                                             value="#{beanFactura.iva12C}"
+                                                             >
+                                                    <f:convertNumber pattern="0.00" type="currency" locale="ec" />
+                                                </p:inputText>
+                                            </p:panelGrid>
+                                        </p:panel>
+                                    </p:panelGrid>
+                                    <p:panel class="MarAuto TexAlCenter">
+                                        <h:outputLabel id="olValorTotal"
+                                                       for="itValorTotal"
+                                                       value="Importe Total: "
+                                                       style="color: #0B0B61; font-size:18px;"/>
+                                        <p:outputLabel id="itValorTotal"
+                                                       value=" #{beanFactura.valorTotalC}"
+                                                       style="font-size:18px;"
+                                                       >
+                                            <f:convertNumber pattern="0.00" type="currency" locale="ec" />
+                                        </p:outputLabel>
+                                    </p:panel>
+
+                                    <br/>
+                                    <p:panelGrid class="TexAlCenter Wid20 MarAuto" layout="grid" columns="2"
+                                                 style="border: 0px none; background: none">
+                                        <p:commandButton value="atrás" actionListener="#{beanFactura.atras()}" update=":form:tvFactura"/>
+                                        <p:commandButton value="siguiente" actionListener="#{beanFactura.validacionesDetallesFactura()}" update=":form:tvFactura"/>
+
+                                    </p:panelGrid>
+
+
+                                    <p:dialog id="dialogDetalleAdicional3"
+
+                                              header="Productos"
+                                              widgetVar="dialogDetalleAdicionalWV3"
+                                              draggable="true"
+                                              resizable="false"
+                                              closable="true"
+                                              style=" max-height: 500px; max-width: 800px; overflow-y: scroll;"
+                                              modal="true">
+                                        <h:panelGrid id="pg-nuevo-cliente2" columns="1"  style="border:0px none;background: none">
+                                            <p:messages id="mensajesInfAdic3" showDetail="true" autoUpdate="true" closable="true" />
+                                            <p:dataTable id="dt-productos" value="#{beanFactura.productosbusqueda}" 
+                                                         var="productos" rows="5" paginator="true" rowsPerPageTemplate="5,10,15"
+                                                         selectionMode="single" paginatorPosition="bottom"  selection="#{beanFactura.productoSeleccionado}"
+                                                         reflow="true" 
+                                                         rowKey="#{productos.idproducto}" widgetVar="wv-productos">
+                                                <p:ajax event="rowSelect" listener="#{beanFactura.onRowSelect}" />
+                                                <p:ajax event="rowUnselect" listener="#{beanFactura.onRowUnselect}" />
+                                                <p:column style="text-align:center" width="120" filterBy="#{productos.codigoProducto}" headerText="Codigo Producto">
+                                                    <h:outputText value="#{productos.codigoProducto}"/>
+                                                </p:column>
+                                                <p:column style="text-align:center" width="120" filterBy="#{productos.descripcion}"  filterMatchMode="contains" headerText="Descripcion" >
+                                                    <h:outputText value="#{productos.descripcion}"/>
+                                                </p:column>
+
+
+
+                                            </p:dataTable>
+                                        </h:panelGrid>
+
+                                        <h:panelGrid columns="2" style="margin-left: auto; margin-right: auto;" >
+                                            <p:commandButton value="Seleccionar" update="detallesF :form:tvFactura"  actionListener="#{beanFactura.llenarProducto()}"  />
+                                            <p:commandButton id="btnCancelarRegistroDetalleAdicional3"
+                                                             value="Cancelar"
+                                                             onclick="PF('dialogDetalleAdicionalWV3').hide();"
+                                                             />
+                                        </h:panelGrid>
+                                    </p:dialog>
+
+
+                                </p:panel>
+
+                            </p:tab>
+                            <p:tab id="tabInfoAdicional"
+                                   titleStyle="font-size: 14px"
+                                   title="Información Adicional" disabled="#{!beanFactura.tab4}">
+
+
+                                <p:panel id="detallesAd" class="MarAuto TexAlCenter"
+                                         style="border: 0px none; background: none">
+                                    <h:panelGrid columns="1" style="margin-left: auto; margin-right: auto;" >
+                                        <p:spacer height="10" />
+
+                                    </h:panelGrid>
+                                    <p:panel style="margin-left: auto; margin-right: auto;" >
+
+                                        <p:outputLabel   value="secuencial: #{beanFactura.secuencial.puntoEmisionSecuencial}-#{beanFactura.secuencial.codigoEstablecimientoSecuencial}-#{beanFactura.obtenerSecuencialActivoFactura(beanFactura.secuencial.secuencialFacturaSecuencial)}" 
+                                                         style="font-weight: bold; color: #0B0B61;" />    
+                                        <p:panelGrid rendered="false" columns="1" layout="grid" class="MarAuto TexAlCenter"  style="border: 0px none; background: none">
+                                            <p:outputLabel value="Secuencial Activo: " for="som-Secuenciales" styleClass="FontBold Fs16 hardblue"/>
+
+                                            <p:selectOneMenu style="width:160px" id="som-Secuenciales" value="#{beanFactura.codigoSecuencialSeleccionado}" effect="drop" >
+                                                <f:selectItems  value="#{beanFactura.secuenciales}" 
+                                                                var="secuencial"
+
+                                                                itemLabel="#{secuencial.puntoEmisionSecuencial}-#{secuencial.codigoEstablecimientoSecuencial}-#{beanFactura.obtenerSecuencialActivoFactura(secuencial.secuencialFacturaSecuencial)}"
+                                                                itemValue="#{secuencial.idSecuencial}"/>
+                                            </p:selectOneMenu>
+                                        </p:panelGrid>
+                                    </p:panel>
+                                    <h:panelGrid  columns="2" style="margin-left: auto; margin-right: auto;" >
+                                        <p:outputLabel value="¿Desea agregar un correo adicional a la factura?"/>
+                                        <p:selectBooleanCheckbox  id="sbcInfoAdicional"
+                                                                  value="#{beanFactura.infoAdicional}">
+                                            <p:ajax event="change"
+                                                    update="detallesAd" listener="#{beanFactura.verificarInfoAdicional()}"/>
+                                        </p:selectBooleanCheckbox>
+                                    </h:panelGrid>
+
+                                    <p:panel class="Container80 MaxWid500 TexAlCenter white-back Fnone MarAuto BordRad10" rendered="#{beanFactura.infoAdicional}">
+                                        <h:panelGrid columns="1" class="MarAuto TexAlLeft" rendered="#{beanFactura.infoAdicional}">
+                                            <p:outputLabel rendered="false" value="* Solo se pueden agregar 15 campos de Información Adicional por Comprobante."
+                                                           style="font-weight: bold"/>
+                                            <p:outputLabel rendered="false" value="* Para ingresar un mail se debe poner CORREO en nombre y el correo en valor."
+                                                           style="font-weight: bold"/>
+                                        </h:panelGrid>
+                                        <p:panelGrid id="pgInfoAdicional"
+                                                     rendered="#{beanFactura.infoAdicional}"
+                                                     layout="grid"
+                                                     columns="2"
+                                                     class="MarAuto TexAlCenter">
+                                            <h:outputLabel id="olNombreInfoAdicional"
+                                                           value="CORREO: "
+                                                           style="color: #0B0B61; margin-left:180px;"/>
+                                            <p:inputText id="itaValorInfoAdicional"
+                                                         style="margin-right:200px;"
+                                                         maxlength="300"
+                                                         autocomplete="off"
+                                                         value="#{beanFactura.valorInfoAdicional}"/>
+                                        </p:panelGrid>
+                                        <p:spacer height="10px"/>
+                                        <h:panelGrid columns="1" style="margin-left: auto; margin-right: auto;" rendered="#{beanFactura.infoAdicional}">
+                                            <p:commandButton id="btnAgregarInfoAdicional"
+                                                             value="Agregar Correo Adicional"
+                                                             actionListener="#{beanFactura.ingresarInformacionAdicional()}"
+                                                             update="tablaInformacionAdicionales :form:mensajes pgInfoAdicional"/>
+                                        </h:panelGrid>
+                                        <p:spacer height="8" />
+                                        <h:panelGrid columns="1" 
+                                                     style="margin-left: auto; margin-right: auto;" 
+                                                     rendered="#{beanFactura.infoAdicional}">
+                                            <p:dataTable id="tablaInformacionAdicionales"
+                                                         emptyMessage="No se han encontrado registros"
+                                                         rendered="#{beanFactura.infoAdicional}"
+                                                         value="#{beanFactura.listaInfoAdicional}"
+                                                         reflow="true"
+                                                         var="infoAdicional"
+                                                         style="text-align: center; margin: 0 auto;"> 
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Nombre" />
+                                                    </f:facet>
+                                                    <h:outputText value="#{infoAdicional.nombre}" title="#{infoAdicional.nombre}" />
+                                                </p:column>
+                                                <p:column >
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Valor" />
+                                                    </f:facet>
+                                                    <h:outputText value="#{infoAdicional.valor}" title="#{infoAdicional.valor}" />
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Eliminar"/>
+                                                    </f:facet>
+                                                    <p:commandLink title="Eliminar Información Adicional"
+                                                                   update="tablaInformacionAdicionales"
+                                                                   action="#{beanFactura.eliminarInfoAdicional()}">
+                                                        <h:graphicImage value="/imagenes/eliminar.png"  width="30px" height="25px"/>
+                                                        <f:setPropertyActionListener value="#{infoAdicional}"
+                                                                                     target="#{beanFactura.infoAdicionalSeleccionada}"/>
+                                                    </p:commandLink>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </h:panelGrid>
+                                        <p:spacer height="8" />
+
+                                    </p:panel>
+
+                                    <p:panel class="Container80 MaxWid500 TexAlCenter white-back Fnone MarAuto BordRad10">
+                                        <h:panelGrid   columns="2" style="margin: 0 auto;">
+                                            <h:outputText value="Visualizar  pdf" styleClass="FontBold Fs16 hardblue" />
+                                            <p:panelGrid id="pg-firma-autorizacion2" columns="1" layout="grid" style="border:0px none;background:none" class="MarAuto TexAlCenter">
+                                                <h:commandLink id="clVerPDF"
+                                                               title="Visualizar Comprobante"
+                                                               target="_blank"
+                                                               actionListener="#{beanFactura.generarRIDE()}"
+
+                                                               >
+                                                    <p:graphicImage value="/imagenes/pdf_icon.png"  width="50px" height="50px" />
+                                                </h:commandLink>
+
+                                            </p:panelGrid>
+                                            <h:outputText value="Autorizar SRI" styleClass="FontBold Fs16 hardblue"></h:outputText>
+                                            <p:panelGrid id="pg-firma-autorizacion" columns="1" layout="grid" style="border:0px none;background:none" class="MarAuto TexAlCenter">
+
+                                                <p:commandLink id="cl-firma-autorizacion" 
+                                                               oncomplete="PF('confirmacionFirmaAutorizacion').show();"
+
+                                                               >
+                                                    <h:graphicImage value="/imagenes/firmar.png"   width="50px" height="50px" />
+
+                                                </p:commandLink>
+                                            </p:panelGrid>
+
+
+                                        </h:panelGrid>
+                                    </p:panel>
+                                </p:panel>
+                                <br/>
+                                <p:panelGrid class="TexAlCenter Wid20 MarAuto" layout="grid" columns="1"
+                                             style="border: 0px none; background: none">
+                                    <p:commandButton value="atrás" actionListener="#{beanFactura.atras()}" update=":form:tvFactura"/>
+                                </p:panelGrid>
+
+                            </p:tab>
+                        </p:tabView>
+
+
+                        <p:dialog id="dialogListaDetalleAdicionalDetalle"
+                                  header="Información Adicional del Detalle"
+                                  widgetVar="dialogListaDetalleAdicionalDetalleWV"
+                                  resizable="false"
+                                  modal="true">
+                            <h:panelGrid id="pgListaDetalleAdicional"
+                                         columns="2"
+                                         cellpadding="4"
+                                         style='margin: 0 auto;'
+                                         class="Container80 MaxWid500 TexAlCenter white-back Fnone MarAuto BordRad10">
+                                <p:dataTable id="tablaListaDetalleAdicional"
+                                             value="#{beanFactura.listaDetallesAdicionales}"
+                                             var="detallesA"
+                                             emptyMessage="No existe Información Adicional."
+                                             style="text-align: center;">
+                                    <p:column headerText="Nombre" style="width: 100px;">
+                                        <h:outputText value="#{detallesA.nombre}" />
+                                    </p:column>
+                                    <p:column headerText="Valor" style="width: 100px;">
+                                        <h:outputText value="#{detallesA.valor}" />
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGrid>
+                        </p:dialog>
+
+                        <p:dialog id="dialogDetalleAdicional"
+                                  header="Información Adicional"
+                                  widgetVar="dialogDetalleAdicionalWV"
+                                  draggable="true"
+                                  resizable="false"
+                                  closable="true"
+                                  modal="true">
+                            <h:panelGrid columns="1" style="margin-left: auto; margin-right: auto; text-align: center;" >
+                                <p:messages id="mensajesInfAdic" showDetail="true" autoUpdate="true" closable="true" />
+                                <p:outputLabel value="Solo se pueden agregar 3 campos de Información Adicional por Detalle."
+                                               style="font-weight: bold; font-size: 15px;" />
+                            </h:panelGrid>
+                            <h:panelGrid id="pgInsertarDetalleAdicional"
+                                         style="margin-left: auto; margin-right: auto; font-size: 15px;"
+                                         columns="2"
+                                         cellpadding="4">
+                                <h:outputLabel id="olNombreDetalleAdicional"
+                                               value="Nombre Campo:"
+                                               for="itNombreDetalleAdicional"
+                                               style="color: #0B0B61;" />
+                                <p:inputText id="itNombreDetalleAdicional"
+                                             autocomplete="off"
+                                             maxlength="199"
+                                             value="#{beanFactura.nombreInfoAdicionalDetalle}"/>
+                                <h:outputLabel id="olValorDetalleAdicional"
+                                               value="Valor Campo:"
+                                               for="itValorDetalleAdicional"
+                                               style="color: #0B0B61;"/>
+                                <p:inputText id="itValorDetalleAdicional"
+                                             maxlength="17"
+                                             autocomplete="off"
+                                             value="#{beanFactura.valorInfoAdicionalDetalle}"/>
+                            </h:panelGrid>
+
+                            <h:panelGrid columns="2" style="margin-left: auto; margin-right: auto;" >
+                                <p:commandButton id="btnRegistrarDetalleAdicional"
+                                                 actionListener="#{beanFactura.ingresarDetalleAdicional()}"
+                                                 value="Agregar"
+                                                 update="dialogDetalleAdicional :form:tvFactura:detallesF :form:tvFactura">
+                                </p:commandButton>
+                                <p:commandButton id="btnCancelarRegistroDetalleAdicional"
+                                                 value="Cancelar"
+                                                 onclick="PF('dialogDetalleAdicionalWV').hide();"
+                                                 />
+                            </h:panelGrid>
+                        </p:dialog>
+
+
+                        <p:dialog id="dialogDetalleAdicional2"
+                                  style="text-align:center"
+                                  header="Cliente No Registrado"
+                                  widgetVar="dialogDetalleAdicionalWV2"
+                                  draggable="true"
+                                  resizable="false"
+                                  closable="true"
+                                  modal="true">
+                            <h:panelGrid columns="1" style="margin-left: auto; margin-right: auto; text-align: center;" >
+                                <p:messages id="mensajesInfAdic2" showDetail="true" autoUpdate="true" closable="true" />
+
+                            </h:panelGrid>
+
+                            <h:panelGrid columns="2" style="margin-left: auto; margin-right: auto;" >
+                                <p:commandButton value="Ingresar Cliente" onclick="PF('dialogDetalleAdicionalWV2').hide()();" update=":form-nuevo-cliente:pg-nuevo-cliente" actionListener="#{beanAdministracionClientes.abrirDialogoNuevo()}"/>
+
+                                <p:commandButton id="btnCancelarRegistroDetalleAdicional2"
+                                                 value="Cancelar"
+                                                 onclick="PF('dialogDetalleAdicionalWV2').hide();"
+                                                 />
+                            </h:panelGrid>
+                        </p:dialog>
+
+                        <p:dialog id="dialogListaImpuestos"
+                                  header="Impuestos del Detalle"
+                                  widgetVar="dialogListaImpuestosWV"
+                                  resizable="false"
+                                  modal="true">
+                            <p:panelGrid id="pgListaImpuestos" layout="grid" columns="1"
+                                         class="Container80 MaxWid500 TexAlCenter white-back Fnone MarAuto BordRad10">
+                                <p:dataTable id="tablaListaImpuestos"
+                                             value="#{beanFactura.listaImpuestoDetalle}"
+                                             var="impuestos"
+                                             emptyMessage="El detalle no tiene impuestos."
+                                             >
+                                    <p:column headerText="Código">
+                                        <h:outputText value="#{impuestos.codigoPorcentaje}" />
+                                    </p:column>
+                                    <p:column headerText="Porcentaje">
+                                        <h:outputText value="#{impuestos.tarifa}" >
+                                            <f:convertNumber pattern="0.00" type="percent" locale="ec" />
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Base Imponible">
+                                        <h:outputText value="#{impuestos.baseImponible}" >
+                                            <f:convertNumber pattern="0.00" type="currency" locale="ec" />
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Total Impuesto">
+                                        <h:outputText value="#{impuestos.valor}" >
+                                            <f:convertNumber pattern="0.00" type="currency" locale="ec" />
+                                        </h:outputText>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:panelGrid>
+                        </p:dialog>
+                    </div>
+                </h:form>
+
+                <h:form id="form-mensaje-autorizacion">
+                    <p:dialog header="MENSAJE AUTORIZACIÓN" widgetVar="mensajeAutorizacion" fitViewport="true"  draggable="false" resizable="false" modal="true" closable="false">
+                        <p:panelGrid id="pg-mensaje-autorizacion" columns="1" layout="grid" style="border:0px none;background:none" class="MarAuto TexAlCenter">
+                            <h:outputText value="MENSAJE: #{beanFacturaReembolsoSimple.mensajeProceso}" styleClass="FontBold Fs16 hardblue"/>
+                            <p:commandButton value="Aceptar" icon="fa fa fw fa-check" iconPos="right" onclick="PF('mensajeAutorizacion').hide();" 
+                                             update=":form" actionListener="#{beanFacturaReembolsoSimple.recargarPagina()}"/>
+                        </p:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <h:form id="form-confirma-firma-autorizacion">
+                    <p:dialog header="Confirmación" widgetVar="confirmacionFirmaAutorizacion" fitViewport="true"  draggable="false" resizable="false" modal="true">
+                        <p:panelGrid id="pg-confirma-firma-autorizacion" columns="1" layout="grid" style="border:0px none;background:none" class="TexAlCenter MarAuto">
+                            <h:outputText value="¿Desea continuar con la FIRMA Y AUTORIZACIÓN CON EL SRI del comprobante electrónico?"/>   
+                        </p:panelGrid>
+                        <h:panelGrid columns="2" class="TexAlCenter MarAuto">
+                            <p:commandButton id="cb-firma-autorizacion" value="Sí" onclick="PF('confirmacionFirmaAutorizacion').hide();" actionListener="#{beanFactura.firmarYAutorizar()}" update=":form-mensaje-autorizacion:pg-mensaje-autorizacion :bien:pg-mensaje-autorizacion1 :mal:pg-mensaje-autorizacion2" icon="fa fa fw fa-check" iconPos="right" />
+                            <p:commandButton value="No" onclick="PF('confirmacionFirmaAutorizacion').hide();" icon="fa fa fw fa-close" iconPos="right" />
+                        </h:panelGrid>
+                        <p:blockUI block="facturatodo" trigger="cb-firma-autorizacion" />
+                    </p:dialog>
+                </h:form>
+                <h:form id="bien">
+                    <p:dialog header="MENSAJE AUTORIZACIÓN" widgetVar="autorizadoNoautorizado" fitViewport="true"  draggable="false" resizable="false" modal="true" closable="false">
+                        <p:panelGrid id="pg-mensaje-autorizacion1" columns="1" layout="grid" style="border:0px none;background:none" class="MarAuto TexAlCenter">
+                            <h:outputText value="MENSAJE: #{beanFactura.mensajeResultado}" styleClass="FontBold Fs16 hardblue"/>
+                            <p:commandButton value="ACEPTAR" actionListener="#{beanFactura.direccionamiento()}"/>
+                        </p:panelGrid>
+                        <p:blockUI block="facturatodo"  />
+                    </p:dialog>
+                </h:form>
+                <h:form id="mal">
+                    <p:dialog header="MENSAJE AUTORIZACIÓN" widgetVar="noenviado" fitViewport="true"  draggable="false" resizable="false" modal="true" closable="false">
+                        <p:panelGrid id="pg-mensaje-autorizacion2" columns="1" layout="grid" style="border:0px none;background:none" class="MarAuto TexAlCenter">
+                            <h:outputText value="MENSAJE: #{beanFactura.mensajeResultado}" styleClass="FontBold Fs16 hardblue"/>
+                            <p:commandButton value="ACEPTAR" actionListener="#{beanFactura.direccionamiento()}" onclick="PF('noenviado').hide();"/>
+                        </p:panelGrid>
+                    </p:dialog>
+                </h:form>
+
+                <h:form id="form-edicion-detalle">
+                    <p:dialog header="Actualizar detalle" widgetVar="detalle-cantidades" fitViewport="true"  draggable="true" width="700" height="300" style="overflow-y: scroll;"  resizable="false" modal="true">
+                        <p:panelGrid id="pg-edicion-detalle" columns="2" layout="grid" style="border:0px none;background:none" >
+                            <h:outputText  value="Descripción:" styleClass="FontBold Fs12 hardblue" />
+                            <p:outputLabel value="#{beanFactura.detalleSeleccionado.detalleComprobante.descripcion}"/>
+                            <p:inplace rendered="false"  saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanFactura.detalleSeleccionado.detalleComprobante.descripcion}" >
+                                <p:ajax event="save" update=":form:tvFactura form:tvFactura:tablaDetalles" listener="#{beanFactura.actualizarDescripcion()}" />
+                                <p:inputText
+                                    readonly="true"   value="#{beanFactura.edicionDescripcion}" maxlength="300"/>
+                            </p:inplace>
+
+                            <h:outputText value="Precio unitario:" styleClass="FontBold Fs12 hardblue"/>
+                            <p:outputLabel value="#{beanFactura.detalleSeleccionado.detalleComprobante.precioUnitario}"/>
+                            <p:inplace rendered="false" saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanFactura.detalleSeleccionado.detalleComprobante.precioUnitario}" >
+                                <p:ajax event="save" update=":form:tvFactura ot-ptsi form:tvFactura:tablaDetalles tablaListaImpuestos" listener="#{beanFactura.actualizarPrecioUnitario()}" />
+                                <p:inputText
+                                    value="#{beanFactura.edicionPrecioUnitario}" converterMessage="Debe ser un número."/>
+                            </p:inplace>
+                            <h:outputText value="Cantidad:" styleClass="FontBold Fs12 hardblue" />
+                            <p:inplace saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanFactura.detalleSeleccionado.detalleComprobante.cantidad}" >
+                                <p:ajax event="save" update=" :form:tvFactura ot-ptsi form:tvFactura:tablaDetalles tablaListaImpuestos" listener="#{beanFactura.actualizarCantidad()}" />
+                                <p:inputText
+                                    value="#{beanFactura.edicionCantidad}" onkeypress="return soloNumeros(event);"  converterMessage="Debe ser un número."/>
+                            </p:inplace>
+
+                            <h:outputText rendered="false" value="Descuento en Dolares:" styleClass="FontBold Fs12 hardblue"/>
+                            <p:inplace rendered="false" saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanFactura.detalleSeleccionado.detalleComprobante.descuento}" >
+                                <p:ajax event="save" update=" :form:tvFactura ot-ptsi form:tvFactura:tablaDetalles tablaListaImpuestos" listener="#{beanFactura.actualizarDescuento()}" />
+                                <p:inputText
+                                    value="#{beanFactura.edicionDescuento}" converterMessage="Debe ser un número."/>
+                            </p:inplace>
+                            <h:outputText value="Precio total sin impuestos:" styleClass="FontBold Fs12 hardblue"/>
+                            <h:outputText id="ot-ptsi" value="#{beanFactura.detalleSeleccionado.detalleComprobante.precioTotalSinImpuesto}" />
+                        </p:panelGrid>
+                        <h:outputText rendered="false" value="Detalles Adicionales" styleClass="FontBold Fs12 hardblue"/>
+                        <h:panelGrid rendered="false"  columns="1" style="margin-left: auto; margin-right: auto; text-align: center;" >
+                            <p:messages id="mensajesInfAdic2" showDetail="true" autoUpdate="true" closable="true" />
+                            <p:outputLabel styleClass="FontBold Fs12 hardblue" value="Solo se pueden agregar 3 campos de Información Adicional por Detalle."
+                                           />
+                        </h:panelGrid>
+                        <h:panelGrid rendered="false"  id="pgInsertarDetalleAdicional2"
+                                     style="margin-left: auto; margin-right: auto; font-size: 15px;"
+                                     columns="2"
+                                     cellpadding="4">
+                            <h:outputLabel id="olNombreDetalleAdicional2"
+                                           value="Nombre Campo:"
+                                           for="itNombreDetalleAdicional2"
+                                           styleClass="FontBold Fs12 hardblue"/>
+                            <p:inputText id="itNombreDetalleAdicional2"
+                                         autocomplete="off"
+                                         maxlength="199"
+                                         value="#{beanFactura.nombreInfoAdicionalDetalle}">
+                                <p:ajax event="click" listener="#{beanFactura.borrarBusqueda()}" update="itNombreDetalleAdicional2"/>
+                            </p:inputText>
+                            <h:outputLabel id="olValorDetalleAdicional2" 
+                                           value="Valor Campo:"
+                                           for="itValorDetalleAdicional2"
+                                           styleClass="FontBold Fs12 hardblue"/>
+                            <p:inputText id="itValorDetalleAdicional2"
+                                         maxlength="199"
+                                         autocomplete="off"
+                                         value="#{beanFactura.valorInfoAdicionalDetalle}">
+                                <p:ajax event="click" listener="#{beanFactura.borrarBusqueda2()}" update="itValorDetalleAdicional2"/>
+                            </p:inputText>
+                        </h:panelGrid>
+
+                        <h:panelGrid rendered="false"  columns="2" style="margin-left: auto; margin-right: auto;" >
+                            <p:commandButton id="btnRegistrarDetalleAdicional2"
+                                             actionListener="#{beanFactura.ingresarDetalleAdicional2()}"
+                                             value="Agregar" 
+
+                                             update=" :form-edicion-detalle:pgListaDetalleAdicionalDialog2   :form:tvFactura:tablaDetalles">
+                            </p:commandButton>
+
+                        </h:panelGrid>
+
+                        <p:panelGrid rendered="false"  id="pgListaDetalleAdicionalDialog2" layout="grid" columns="1" class="MarAuto MaxWid650" >
+                            <p:dataTable id="tablaListaDetalleAdicionalDialog2"
+                                         editable="true"
+                                         value="#{beanFactura.detalleSeleccionado.detalleComprobante.detallesAdicionales}"
+                                         var="detallesA"
+                                         rowKey="#{detallesA.nombre}"
+                                         emptyMessage="No existe Información Adicional."
+                                         >
+                                <p:ajax event="rowEdit" listener="#{beanFactura.onRowEdit}" update="form:tvFactura:tablaDetalles tablaListaDetalleAdicionalDialog2 " />
+
+
+                                <p:column headerText="Nombre" style="width: 100px; color: #0B0B61;">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{detallesA.nombre}" /></f:facet>
+                                        <f:facet name="input"><p:inputText id="modelInput2" value="#{detallesA.nombre}" style="width:96%"/></f:facet>
+                                    </p:cellEditor>
+
+
+                                </p:column>
+                                <p:column headerText="Valor" style="width: 100px; color: #0B0B61;">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{detallesA.valor}" /></f:facet>
+                                        <f:facet name="input"><p:inputText id="modelInput" value="#{detallesA.valor}" style="width:96%"/></f:facet>
+                                    </p:cellEditor>
+
+
+                                </p:column>
+
+                                <p:column headerText="Editar" style="width:32px">
+                                    <p:rowEditor />
+                                </p:column>
+                                <p:column headerText="Eliminar" style="width: 100px; color: #0B0B61;">
+                                    <p:commandLink  action="#{beanFactura.eliminarInfoAdicional2()}" title="Eliminar Información Adicional"
+                                                    update=" :form-edicion-detalle:pgListaDetalleAdicionalDialog2   :form:tvFactura:tablaDetalles">
+
+                                        <h:graphicImage value="/imagenes/eliminar.png"  width="30px" height="25px"/>
+                                        <f:setPropertyActionListener value="#{detallesA}"
+                                                                     target="#{beanFactura.infoAdicionalSeleccionada}"/>
+                                    </p:commandLink>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panelGrid>
+                        <h:outputText value="Impuestos Aplicables" styleClass="FontBold Fs12 hardblue"/>
+                        <p:panelGrid id="pgListaImpuestos"  layout="grid" columns="1" class="MarAuto MaxWid600">
+                            <p:dataTable id="tablaListaImpuestos"
+                                         value="#{beanFactura.detalleSeleccionado.detalleComprobante.impuestos}"
+                                         editable="true"
+                                         var="impuestos"
+                                         emptyMessage="El detalle no tiene impuestos."
+
+                                         >
+                                <p:ajax event="rowEdit" listener="#{beanFactura.onRowEdit2}"  update=":form:tvFactura form:tvFactura:tablaDetalles tablaListaImpuestos " >
+
+
+                                </p:ajax>
+
+
+
+                                <p:column headerText="Tipo" style="width:200px;" >
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{impuestos.codigo eq '2'?'IVA':impuestos.codigo eq '3'?'ICE':'IRBPNR'}" /></f:facet>
+                                        <f:facet name="input">
+                                            <p:selectOneMenu rendered="#{impuestos.codigo eq '2'}" value="#{impuestos.codigo}"  style="width:180px">
+                                                <f:selectItems  value="#{beanFactura.listaTarifaImpuestoIVA}" itemDescription="#{tarifaImpuestoIce.descripcionTarifaImpuesto}" 
+                                                                var="tarifaImpuestoIva"
+                                                                itemLabel="#{tarifaImpuestoIva.codigoTarifaImpuesto} - #{tarifaImpuestoIva.descripcionTarifaImpuestoCorto}"
+                                                                itemValue="#{tarifaImpuestoIva.codigoTarifaImpuesto}" >
+
+                                                </f:selectItems>
+
+                                            </p:selectOneMenu>
+                                            <h:selectOneMenu rendered="#{impuestos.codigo eq '3'}" value="#{impuestos.codigo}" style="width:100%">
+                                                <f:selectItems value="#{beanFactura.listaTarifaImpuestoICE}" itemDescription="#{tarifaImpuestoIce2.descripcionTarifaImpuesto}" 
+                                                               var="tarifaImpuestoIva2"
+                                                               itemLabel="#{tarifaImpuestoIva2.codigoTarifaImpuesto} - #{tarifaImpuestoIva2.descripcionTarifaImpuestoCorto}"
+                                                               itemValue="#{tarifaImpuestoIva2.codigoTarifaImpuesto}" >
+
+                                                </f:selectItems>
+
+                                            </h:selectOneMenu>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+
+
+                                <p:column headerText="Código">
+                                    <h:outputText value="#{impuestos.codigoPorcentaje}" />
+                                </p:column>
+                                <p:column headerText="Porcentaje">
+                                    <h:outputText value="#{impuestos.tarifa}" >
+                                        <f:convertNumber pattern="0.00" type="percent" locale="ec" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Base Imponible">
+                                    <h:outputText value="#{impuestos.baseImponible}" >
+                                        <f:convertNumber pattern="0.00" type="currency" locale="ec" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Total Impuesto">
+                                    <h:outputText value="#{impuestos.valor}" >
+                                        <f:convertNumber pattern="0.00" type="currency" locale="ec" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Editar" style="width:32px">
+
+                                    <p:rowEditor />
+
+
+                                </p:column>
+                            </p:dataTable>
+                        </p:panelGrid>
+
+
+                        <p:panelGrid  columns="1" layout="grid" style="border:0px none;background:none" class="TexAlCenter MarAuto MaxWid500">
+
+                            <p:commandButton value="Cerrar" oncomplete="PF('detalle-cantidades').hide();" icon="fa fa fw fa-close" iconPos="right"/>
+                        </p:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <h:form id="form-nuevo-cliente">
+                    <p:dialog fitViewport="true" modal="true" class="MarAuto MaxWid500" header="Nuevo cliente"   widgetVar="wv-nuevo-cliente" draggable="true" resizable="false" style=" max-height: 500px; max-width: 500px; overflow-y: scroll;">
+                        <p:panel class="TexAlCenter white-back Fnone MarAuto BordRad10" style="margin-top: 0px !important;">
+                            <p:outputLabel  value="Tipo de Identificación del Cliente:"  style="font-weight: bold; color: #0B0B61;"/>
+                            <p:selectOneRadio layout="grid" columns="3" class="MarAuto" id="somIdentificacion" value="#{beanAdministracionClientes.tipoIdentificacion}">
+                                <f:selectItem itemLabel="Cédula" itemValue="5" />
+                                <f:selectItem itemLabel="RUC" itemValue="4" />
+                                <f:selectItem itemLabel="Pasaporte" itemValue="6" />
+                            </p:selectOneRadio>
+                        </p:panel>
+                        <p:panelGrid id="pg-nuevo-cliente" columns="2" layout="grid" style="border:0px none;background: none">
+                            <h:outputLabel value="Identificación:" for="it-ruc"/>
+                            <p:inputText id="it-ruc" maxlength="13" value="#{beanAdministracionClientes.ruc}" placeholder="Identificación Cliente"/>
+                            <h:outputLabel value="Razón Social/Nombres :" for="it-nombre"/>
+                            <p:inputText id="it-nombre" maxlength="100" value="#{beanAdministracionClientes.nombre}" placeholder="Nombre"/>
+                            <h:outputLabel value="Teléfono:" for="it-telefono"/>
+                            <p:inputText id="it-telefono" maxlength="15" value="#{beanAdministracionClientes.telefono}" placeholder="Teléfono"/>
+                            <h:outputLabel value="Dirección:" for="it-direccion"/>
+                            <p:inputText id="it-direccion" maxlength="300" value="#{beanAdministracionClientes.direccion}" placeholder="Dirección"/>
+                            <h:outputLabel value="Correo:" for="it-correo"/>
+                            <p:inputText id="it-correo" maxlength="60" value="#{beanAdministracionClientes.correo}" placeholder="Correo"/>
+                            <h:outputLabel value="Correo adicional" for="it-correo-adicional"/>
+                            <p:inputText id="it-correo-adicional" maxlength="60" value="#{beanAdministracionClientes.correoAdicional}" placeholder="Correo adicional"/>
+                        </p:panelGrid>
+                        <p:messages id="m-mensajes-nuevo" showDetail="true" autoUpdate="true" closable="true" />
+                        <p:panel class="TexAlCenter MarAuto" style="margin-top: 0px !important;border:0px none;background: none">
+                            <p:commandButton id="pilas"  value="Agregar" action="#{beanFactura.cargarReceptores()}"  actionListener="#{beanAdministracionClientes.insertarCliente()}" 
+                                             icon="fa fa fw fa-check"
+                                             />
+                            <p:commandButton id="pilas2"
+                                             value="Cerrar"
+                                             onclick="PF('dialogDetalleAdicionalWV2').hide()();"
+                                             actionListener="#{beanAdministracionClientes.cerrarDatos()}"
+                                             />
+                        </p:panel>
+                        <p:blockUI block="facturatodo" trigger="pilas pilas2" />
+                    </p:dialog>
+                </h:form>
+
+
+
+
+            </p:panel>
+        </div>
+    </ui:define>
+
+</ui:composition>

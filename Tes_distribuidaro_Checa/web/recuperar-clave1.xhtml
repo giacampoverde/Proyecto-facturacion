@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Distribuidora Checa</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+        <link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/resources/imagenes-proyecto/favicon.ico"/>
+        <h:outputScript name="js/login.js" library="sentinel-layout" />
+        <h:outputStylesheet name="css/font-icon-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/sentinel-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/core-layout.css" library="sentinel-layout" />
+    </h:head>
+    <h:body class="white-back fontRegular login-back">
+        <h:form id="f-recuperar-clave">
+            <div class="Container80 MaxWid500 Fnone MarAuto TexAlCenter PaddingTopPercent3">
+                <a id="recuperar-clave">
+                    <span class="Fs20 FontBold Fleft"><span class="softgray">Facturación Electrónica</span></span>
+                </a>
+            </div>
+            <div class="Container70 MaxWid500 white-back Fnone MarAuto BordRad10" id="mensaje-confirmacion">
+                <div class="Container100">
+                    <div class="TexAlCenter Animated05 TabBtn">Recuperación de Clave</div>
+                </div>
+                <div class="Container90 Fnone MarAuto TexAlCenter TabContent" id="TAB1">
+                    <p:messages showDetail="true" autoUpdate="true" closable="true"/>
+                    <div class="EmptyBox20"/>
+                    <p:outputLabel value="Se ha enviado información a su correo electrónico. Revíselo y siga con el proceso de Restablecer Clave."/>
+                    <div class="EmptyBox30"/>
+                    <p:commandButton action="login.xhtml" value="Aceptar" style="Fs16"/>
+                </div>
+            </div>
+        </h:form>
+    </h:body>
+</html>
+

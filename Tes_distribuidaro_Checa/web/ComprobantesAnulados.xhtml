@@ -1,0 +1,169 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <style type="text/css">
+            .ui-panel {
+                margin-top:20px
+            }
+        </style>
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+
+        <h3 class="hardblue TexAlCenter">Comprobantes Electrónicos Anulados</h3>
+        <p:panel id="panelanulado">
+            <p:messages id="m-mensajes" showDetail="true" autoUpdate="true" closable="true" />
+            <h:form id="form-comprobantes-anulados">
+                <p:panel id="panelClaveAccesoAnulado" 
+                         header="Guardado de Comprobantes Anulados" >
+
+                    <p:panelGrid columns="3" layout="grid" style="border:0px none;background:none" class="TexAlCenter MarAuto">
+                        <h:outputText value="Ingrese la clave De Acceso" styleClass="FontBold Fs14 hardblue"></h:outputText>  
+                        <p:inputText 
+                            value="#{beanComprobantesAnulados.claveAcceso}"
+                            title="Clave de Acceso del comprobante anulado"
+                            maxlength="49" 
+                            size="53"
+                            />                                 
+
+                        <p:commandButton 
+
+                            actionListener="#{beanComprobantesAnulados.mostrarconfimacion()}"
+                            update=":form-comprobantes-anulados"
+                            value="Guardar Comprobante Anulado"/> 
+
+                    </p:panelGrid>
+
+                </p:panel>
+                <p:panel>
+                    <h:outputText value="Búsquedas:" styleClass="FontBold Fs14 hardblue"/> 
+                    <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none" class="Wid70 TexAlCenter MarAuto">
+                        <h:outputText value="Fecha Emisión:" styleClass="FontBold Fs14 hardblue"/>                
+                        <p:selectOneMenu id="som-fechas" value="#{beanComprobantesAnulados.seleccionPeriodoTiempo}" effect="drop" >
+                            <f:selectItem itemLabel="Todos" itemValue="1" />
+                            <f:selectItem itemLabel="Hoy" itemValue="2" />
+                            <f:selectItem itemLabel="Últimos 7 días" itemValue="3" />  
+                            <f:selectItem itemLabel="Último mes" itemValue="4" />  
+                            <f:selectItem itemLabel="Últimos 6 meses" itemValue="5" />   
+                            <f:selectItem itemLabel="Periodo" itemValue="6" />
+                            <p:ajax event="valueChange" listener="#{beanComprobantesAnulados.abrirDialogRangoFechas()}" update=":form-periodo-fechas:pg-periodo-fechas"/>
+                        </p:selectOneMenu>
+                        <h:outputText value="Secuencial:" styleClass="FontBold Fs14 hardblue"></h:outputText>  
+                        <p:inputText id="it-secuencial-busqueda" value="#{beanComprobantesAnulados.secuencialBusqueda}" maxlength="9"/>
+                        <h:outputText value="Receptor (RUC/Cédula/Pasaporte):" styleClass="FontBold Fs14 hardblue"/>  
+                        <p:inputText id="it-receptor-busqueda" value="#{beanComprobantesAnulados.rucReceptorBusqueda}" maxlength="50"/>
+                        <h:outputText value="Tipo:" styleClass="FontBold Fs14 hardblue"/>  
+                        <p:selectOneMenu id="som-tipo" value="#{beanComprobantesAnulados.tipoDocumento}">
+                            <f:selectItem itemLabel="Seleccione" itemValue="-1" />
+                            <f:selectItem itemLabel="Factura" itemValue="01" />
+                            <f:selectItem itemLabel="Nota de Crédito" itemValue="04" />
+                            <f:selectItem itemLabel="Nota de Débito" itemValue="05" />                           
+                            <f:selectItem itemLabel="Comprobante de Retención" itemValue="07" />
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none" class="Wid45">
+                        <p:commandButton value="Buscar" update=":form-comprobantes-anulados:dt-comprobantes-anulados" actionListener="#{beanComprobantesAnulados.buscarComprobantesAnulados()}" onclick="PF('wv-dt-comprobantes-anulados').getPaginator().setPage(0);"/>
+
+                        <p:commandButton value="Recargar" update=":form-comprobantes-anulados:dt-comprobantes-anulados it-secuencial-busqueda it-receptor-busqueda som-fechas som-tipo" actionListener="#{beanComprobantesAnulados.reiniciarParametros()}" onclick="PF('wv-dt-comprobantes-anulados').getPaginator().setPage(0);"/>
+                    </p:panelGrid>
+                </p:panel>
+                <div class="EmptyBox10 "></div>
+                <p:panelGrid columns="1" layout="grid" style="border:0px none;background:none" class="TexAlRight">
+                    <p:commandLink ajax="false"  title="Descargar ZIP"                                               
+                                   action="#{beanComprobantesAnulados.bajarZIP()}">
+                        <h:graphicImage value="/imagenes/zip_icon.png"  width="50px" height="50px"/>
+
+                    </p:commandLink>
+                </p:panelGrid>
+                <p:dataTable id="dt-comprobantes-anulados" widgetVar="wv-dt-comprobantes-anulados" var="comprobante_electronico" value="#{beanComprobantesAnulados.comprobantesAnuladosLazy}" paginator="true" rows="5" emptyMessage="No hay registros." 
+                             paginatorPosition="bottom"
+                             rowsPerPageTemplate="5,10,15" lazy="true" reflow="true" rowKey="#{comprobante_electronico.idAsignacionComprobanteElectronico}" selection="#{beanComprobantesAnulados.comprobantesElectronicosSeleccionados}" scrollable="false" >
+
+                    <p:column headerText="Número" width="15%" class="scrollColumn">
+                        <h:outputText value="#{comprobante_electronico.comprobanteElectronico.codigoEstablecimientoComprobanteElectronico}-#{comprobante_electronico.comprobanteElectronico.puntoEmisionComprobanteElectronico}-#{comprobante_electronico.comprobanteElectronico.secuencialComprobanteElectronico}" />
+                    </p:column>
+
+                    <p:column headerText="Fecha Emisión" width="80">
+                        <h:outputText value="#{comprobante_electronico.comprobanteElectronico.fechaEmisionComprobanteElectronico}" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>
+
+                    </p:column>
+                    <p:column headerText="Fecha Autorización" width="20%" >
+                        <h:outputText value="#{comprobante_electronico.comprobanteElectronico.fechaAutorizacionComprobanteElectronico}" />
+                    </p:column>
+                    <p:column headerText="Receptor" width="20%" >
+                        <p:tooltip for="ot-receptor" class="FontBold Fs14"/>
+                        <h:outputText id="ot-receptor" value="#{comprobante_electronico.receptor.razonSocialReceptor}"/>
+                    </p:column>
+                    <p:column headerText="Tipo" width="80">
+                        <h:outputText value="#{comprobante_electronico.comprobanteElectronico.tipoComprobanteElectronico.nombreTipoComprobanteElectronico}" />
+                    </p:column>
+                    <p:column headerText="PDF" width="10%" class="TexAlCenter">
+                        <h:commandLink title="PDF"                                   
+                                       action="#{beanComprobantesAnulados.descargarRIDE()}" target="_blank">
+                            <h:graphicImage value="/imagenes/pdf_icon.png"  width="20px" height="25px"/>
+                            <f:setPropertyActionListener value="#{comprobante_electronico}"
+                                                         target="#{beanComprobantesAnulados.comprobanteElectronicoSeleccionado}"/>
+                        </h:commandLink>     
+                    </p:column>  
+                    <p:column headerText="XML" width="10%" class="TexAlCenter">
+                        <h:commandLink title="XML"                                               
+                                       action="#{beanComprobantesAnulados.descargarRespuestaXML()}" >
+                            <h:graphicImage value="/imagenes/xml.png"  width="20px" height="25px"/>
+                            <f:setPropertyActionListener value="#{comprobante_electronico}"
+                                                         target="#{beanComprobantesAnulados.comprobanteElectronicoSeleccionado}"/>
+                        </h:commandLink>
+                    </p:column>
+
+                    <p:column  selectionMode="multiple" width="10%" />
+                </p:dataTable>
+            </h:form>
+            <h:form id="form-confirma-firma-autorizacion">
+                <p:dialog header="Confirmación" widgetVar="confirmacionFirmaAutorizacion" fitViewport="true"  draggable="false" resizable="false" modal="true">
+                    <p:panelGrid id="pg-confirma-firma-autorizacion" columns="1" layout="grid" style="border:0px none;background:none" class="TexAlCenter MarAuto">
+                        <h:outputText value="¿Desea continuar con la ANULACION del comprobante electrónico?"/>   
+                    </p:panelGrid>
+                    <h:panelGrid columns="2" class="TexAlCenter MarAuto">
+                        <p:commandButton id="cb-firma-autorizacion" value="Sí" onclick="PF('confirmacionFirmaAutorizacion').hide();" action="#{beanComprobantesAnulados.actualizarComprobanteAnulado()}"  update=":form-comprobantes-anulados:dt-comprobantes-anulados" icon="fa fa fw fa-check" iconPos="right" />
+                        <p:commandButton value="No" onclick="PF('confirmacionFirmaAutorizacion').hide();" icon="fa fa fw fa-close" iconPos="right" />
+                    </h:panelGrid>
+                    <p:blockUI block="panelanulado" trigger="cb-firma-autorizacion" />
+                </p:dialog>
+            </h:form>
+            <h:form id="form-periodo-fechas">
+                <p:dialog modal="true" widgetVar="wv-periodo-fechas" draggable="false" resizable="false" fitViewport="true" maximizable="false" header="Periodo de fechas" closable="false">
+                    <h:panelGrid columns="1" id="pg-periodo-fechas">
+                        <p:tabView cache="false" dynamic="true">
+                            <p:tab title="Fecha inicial" >
+                                <p:panelGrid columns="1" layout="grid" style="border:0px none;background:none" class="TexAlCenter MarAuto">
+                                    <h:outputText id="ot-fecha-inicial" value="Fecha inicial: #{beanComprobantesAnulados.fechaFormateada(beanComprobantesAnulados.fechaInicial)}" styleClass="FontBold Fs12 hardblue" />
+                                    <p:calendar value="#{beanComprobantesAnulados.fechaInicial}" mode="inline" locale="es" >
+                                        <p:ajax event="dateSelect" update="ot-fecha-inicial" />
+                                    </p:calendar>
+
+                                </p:panelGrid>
+                            </p:tab>
+                            <p:tab title="Fecha final">
+                                <p:panelGrid columns="1" layout="grid" style="border:0px none;background:none" class="TexAlCenter MarAuto">
+                                    <h:outputText id="ot-fecha-final" value="Fecha final: #{beanComprobantesAnulados.fechaFormateada(beanComprobantesAnulados.fechaFinal)}" styleClass="FontBold Fs12 hardblue" />
+                                    <p:calendar value="#{beanComprobantesAnulados.fechaFinal}" mode="inline" locale="es" >
+                                        <p:ajax event="dateSelect" update="ot-fecha-final" />
+                                    </p:calendar>
+
+                                </p:panelGrid>
+                            </p:tab>
+                        </p:tabView>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="1" cellpadding="5" cellspacing="5" class="MarAuto">                        
+                        <p:commandButton value="Aceptar" actionListener="#{beanComprobantesAnulados.cerrarDialogRangoFechas()}" icon="fa fa fw fa-check" iconPos="right" update=":form-comprobantes-anulados:som-fechas" />
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+        </p:panel>
+    </ui:define>
+</ui:composition>

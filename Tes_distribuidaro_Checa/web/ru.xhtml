@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Facturar</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+        <link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/resources/imagenes-proyecto/favicon.ico"/>
+        <h:outputScript name="js/login.js" library="sentinel-layout" />
+        <h:outputStylesheet name="css/font-icon-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/sentinel-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/core-layout.css" library="sentinel-layout" />
+    </h:head>
+
+    <h:body class="fontRegular login-back white-back">
+        <h:form id="f-registro">  
+
+            <div class="Container80 MaxWid500 Fnone MarAuto TexAlCenter PaddingTopPercent3">
+                <a href="" id="login-logo">
+                    <!--h:graphicImage name="images/LOGO.svg" library="sentinel-layout"/-->
+
+                    <span class="Fs20 FontBold Fleft"><span class="softgray">Facturación Electrónica </span></span>
+                </a>
+
+                <div class="EmptyBox10"></div>
+            </div>
+
+            <!-- LOGIN BOX COVER START -->
+            <div class="Container80 MaxWid500 white-back Fnone MarAuto BordRad10" id="login-box">
+
+                <div class=" TexAlCenter Animated05 BoxSizeBorder TabBtn left TabBtnActiveLeft" role="1">
+                    <div class="Container80 Fnone MarAuto FontBold"><i class="icon-user-2"></i>Registro de Usuarios</div>
+                </div>
+
+                <p:panel id="pnlRegistro">
+                 
+                    <p:outputPanel id="opInfoUsuario"
+                                   style="margin-left: 15px;">
+                        <p:messages id="mensajes" showDetail="true" autoUpdate="true" closable="true" />
+                        <div class=" TexAlCenter">
+                            <p:outputLabel value="Los datos Obligatorios inician con (*)" styleClass="Container80 Fnone MarAuto Fs16"/>
+                        </div>
+
+                        <h:panelGrid id="pgRegistro" rendered="#{beanRegistro.esUsuario}" class="Container90 Fnone MarAuto TexAlCenter TabContent">
+                            <div class="Container90 Fnone MarAuto TexAlCenter TabContent" id="TAB1">
+                                <p:focus for="it-identificacion-usuario" />
+
+                                <p:inputText id="it-identificacion-usuario" value="#{beanRegistro.usuarioNuevo.identificacionUsuario}" placeholder="(*)Cédula/Pasaporte" styleClass="Container80 Fnone MarAuto Fs18"/>
+
+                                <p:inputText id="it-nombre-usuario" value="#{beanRegistro.usuarioNuevo.nombreUsuario}" placeholder="(*)Nombres" styleClass="Container80 Fnone MarAuto Fs18"/>
+
+                                <p:inputText id="it-apellido-usuario" value="#{beanRegistro.usuarioNuevo.apellidoUsuario}" placeholder="(*)Apellidos" styleClass="Container80 Fnone MarAuto Fs18"/>
+
+                                <p:inputText id="it-telefono-principal-usuario" value="#{beanRegistro.usuarioNuevo.telefonoPrincipalUsuario}" placeholder="(*)Teléfono Principal" styleClass="Container80 Fnone MarAuto Fs18"/>
+
+                                <p:inputText id="it-telefono-adicional-usuario" value="#{beanRegistro.usuarioNuevo.telefonoAdicionalUsuario}" placeholder="Teléfono Adicional" styleClass="Container80 Fnone MarAuto Fs18"/>
+
+                                <p:inputText id="it-correo-usuario" value="#{beanRegistro.usuarioNuevo.correoPrincipalUsuario}" placeholder="(*)Correo Principal" styleClass="Container80 Fnone MarAuto Fs18"/>
+
+                                <p:inputText id="it-correo-adicional-usuario" value="#{beanRegistro.usuarioNuevo.correoAdicionalUsuario}" placeholder="Correo Adicional" styleClass="Container80 Fnone MarAuto Fs18"/>
+
+                                <p:password id="it-clave-usuario" value="#{beanRegistro.usuarioNuevo.claveUsuarioAcceso}" placeholder="(*)Clave" styleClass="Container80 Fnone MarAuto Fs18" feedback="false"/>
+
+                                <p:password id="it-clave2-usuario" value="#{beanRegistro.confirmacionClave}" placeholder="(*)Repetir Clave" styleClass="Container80 Fnone MarAuto Fs18" feedback="false"/>
+
+                                <div class="EmptyBox30"></div>
+
+                                <p:commandButton id="btnRegistroU"  value="Registrarse" styleClass="Fs16" update="pgRegistro" actionListener="#{beanRegistro.registrarUsuario()}" >
+                                </p:commandButton>
+
+                                <!--p:commandLink value="Registrarse" action="#"/-->
+                                <div class="EmptyBox10"></div>
+
+                            </div>
+                        </h:panelGrid>
+
+                     
+                        <p:messages id="mensajes2" showDetail="true" autoUpdate="true" closable="true" />
+
+
+                        <div class="Animated05 BoxSizeBorder TabBtn left TabBtnActiveLeft" role="1">
+                            <div class="Container80 Fnone MarAuto"><i class="icon-reply"></i>
+                                <p:commandLink value="Regresar" action="#{beanDireccionamiento.direccionarLogin()}"/>
+                            </div>
+
+                        </div>
+
+
+                    </p:outputPanel>
+
+                </p:panel>
+
+                <p:blockUI block="pnlRegistro" trigger="btnRegistroU" />
+              
+
+
+
+            </div>
+        </h:form>
+        <!-- LOGIN BOX COVER END -->
+
+    </h:body>
+
+</html>

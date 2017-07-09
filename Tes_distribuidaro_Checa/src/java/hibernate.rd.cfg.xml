@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+    <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+    <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+    <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/discheca?zeroDateTimeBehavior=convertToNull</property>
+    <property name="hibernate.connection.username">root</property>
+    <property name="hibernate.connection.password">root</property>
+    <property name="hibernate.transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</property>
+    <property name="hibernate.current_session_context_class">thread</property>
+    <mapping resource="ec/discheca/modelo/Recurso.hbm.xml"/>
+    <mapping resource="ec/discheca/modelo/Secuencial.hbm.xml"/>
+    <mapping resource="ec/discheca/modelo/Detalleadicional.hbm.xml"/>
+    <mapping resource="ec/discheca/modelo/Detalle.hbm.xml"/>
+    <mapping resource="ec/discheca/modelo/TarifasImpuesto.hbm.xml"/>
+    <mapping resource="ec/discheca/modelo/Permiso.hbm.xml"/>
+    <mapping resource="ec/discheca/modelo/UsuarioAcceso.hbm.xml"/>
+    <mapping resource="ec/discheca/modelo/ComprobanteElectronicoPendiente.hbm.xml"/>
+    <mapping resource="ec/discheca/modelo/TipoImpuesto.hbm.xml"/>
+    <mapping resource="ec/discheca/modelo/Producto.hbm.xml"/>
+    <mapping resource="ec/discheca/modelo/Empresa.hbm.xml"/>
+    <mapping resource="ec/discheca/modelo/Auditoria.hbm.xml"/>
+    <mapping resource="ec/discheca/modelo/AsignacionComprobanteElectronico.hbm.xml"/>
+    <mapping resource="ec/discheca/modelo/TipoComprobanteElectronico.hbm.xml"/>
+    <mapping resource="ec/discheca/modelo/Certificado.hbm.xml"/>
+    <mapping resource="ec/discheca/modelo/Perfil.hbm.xml"/>
+    <mapping resource="ec/discheca/modelo/Receptor.hbm.xml"/>
+    <mapping resource="ec/discheca/modelo/Configuracion.hbm.xml"/>
+    <mapping resource="ec/discheca/modelo/ComprobanteElectronico.hbm.xml"/>
+  </session-factory>
+</hibernate-configuration>
