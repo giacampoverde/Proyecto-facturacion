@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated May 8, 2016 10:10:08 PM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="ec.discheca.modelo.Receptor" table="receptor" catalog="discheca">
+        <id name="idReceptor" type="java.lang.Integer">
+            <column name="idReceptor" />
+            <generator class="identity" />
+        </id>
+        <property name="rucReceptor" type="string">
+            <column name="rucReceptor" length="200" not-null="true" />
+        </property>
+        <property name="razonSocialReceptor" type="string">
+            <column name="razonSocialReceptor" length="200" not-null="true" />
+        </property>
+        <property name="telefono" type="string">
+            <column name="telefono" length="100" />
+        </property>
+        <property name="direccion" type="string">
+            <column name="direccion" length="300" />
+        </property>
+        <property name="correo" type="string">
+            <column name="correo" length="50" />
+        </property>
+        <property name="correoAdicional" type="string">
+            <column name="correoAdicional" length="50" />
+        </property>
+        <property name="estado" type="string">
+            <column name="estado" length="5" />
+        </property>
+        <set name="asignacionComprobanteElectronicos" table="asignacion_comprobante_electronico" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="receptor" not-null="true" />
+            </key>
+            <one-to-many class="ec.discheca.modelo.AsignacionComprobanteElectronico" />
+        </set>
+    </class>
+</hibernate-mapping>

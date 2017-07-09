@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated May 8, 2016 10:10:08 PM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="ec.discheca.modelo.TarifasImpuesto" table="tarifas_impuesto" catalog="discheca">
+        <id name="idtarifaImpuesto" type="java.lang.Integer">
+            <column name="idtarifaImpuesto" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="tipoImpuesto" class="ec.discheca.modelo.TipoImpuesto" fetch="select">
+            <column name="codigoTipoTarifaImpuesto" not-null="true" />
+        </many-to-one>
+        <property name="codigoTarifaImpuesto" type="string">
+            <column name="codigoTarifaImpuesto" length="50" not-null="true" />
+        </property>
+        <property name="descripcionTarifaImpuesto" type="string">
+            <column name="descripcionTarifaImpuesto" length="200" not-null="true" />
+        </property>
+        <property name="porcentajeTarifaImpuesto" type="string">
+            <column name="porcentajeTarifaImpuesto" length="100" not-null="true" />
+        </property>
+        <property name="variableTarifaImpuesto" type="boolean">
+            <column name="variableTarifaImpuesto" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

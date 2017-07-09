@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated May 8, 2016 10:10:08 PM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="ec.discheca.modelo.Auditoria" table="auditoria" catalog="discheca">
+        <id name="idauditoria" type="java.lang.Integer">
+            <column name="idauditoria" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="usuarioAcceso" class="ec.discheca.modelo.UsuarioAcceso" fetch="select">
+            <column name="usuario_acceso_idUsuario" not-null="true" />
+        </many-to-one>
+        <property name="mensajeTransaccion" type="string">
+            <column name="mensajeTransaccion" length="1000" />
+        </property>
+        <property name="fecha" type="date">
+            <column name="fecha" length="10" />
+        </property>
+        <property name="fechaHora" type="timestamp">
+            <column name="fechaHora" length="19" />
+        </property>
+    </class>
+</hibernate-mapping>

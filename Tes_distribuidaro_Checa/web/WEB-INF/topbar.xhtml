@@ -1,0 +1,42 @@
+<ui:composition 
+
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:jsf="http://xmlns.jcp.org/jsf"
+    xmlns:p="http://primefaces.org/ui">
+
+
+    <div id="layout-header" class="Unselectable fontRegular">
+        <a href="inicio.xhtml" id="layout-logo">
+            <h:graphicImage name="images/LOGO.svg" styleClass="Fleft" library="sentinel-layout"/>
+            <span class="Fs19 FontTitilliumSemiBoldItalic Fleft"><span class="softblue">Usuario: </span><span class="hardblue">#{beanSesionUsuario.nombreUsuario}</span></span>
+        </a>
+        <h:form>
+            <ul id="sm-topmenu" class="layout-header-widgets white Fs14">
+                <li class="Fleft BordRadHalf TexAlCenter"><i class="icon-user-male"></i>
+                    <ul class="layout-header-widgets-submenu BordRad5 shadows white Animated05">
+                        <li class="Animated05"><a class="white Unselectable"><i class="icon-user-male Fs26 OvHidden"></i><span class="Fs18">#{beanSesionUsuario.primerInfoUsuario}<br/></span></a></li>
+
+                        <li class="Animated05"><a jsf:actionListener="#{beanSesionUsuario.irPaginaInformacionUsuarioSesion()}" class="white Unselectable"><i class="icon-sliders"></i>Cuenta del usuario</a></li>
+                    </ul>
+                </li>
+
+                <li class="Fleft BordRadHalf TexAlCenter"><i class="icon-power"></i>
+                    <ul class="layout-header-widgets-submenu BordRad5 shadows white Animated05">
+                       
+                        <li class="Animated05"><a jsf:actionListener="#{beanSesionUsuario.cerrarSesion()}" class="white Unselectable"><i class="icon-logout"></i>Salir</a></li>
+                    </ul>
+                </li>
+
+            </ul>
+        </h:form>
+        <!-- NEVER REMOVE FOLLOWING 'UL' TAG ! BECAUSE THIS CONTAINS RESPONSIVE MODE HEADER MENU OPEN-CLOSE BUTTON -->
+        <ul id="sm-mobiletopmenu" class="layout-header-widgets white Fs14">
+            <li class="Fleft BordRadHalf TexAlCenter Animated05 DisplayOnResponsive"><i class="icon-th-1"></i></li>
+        </ul>
+        <!-- ****** -->
+    </div>
+
+</ui:composition>

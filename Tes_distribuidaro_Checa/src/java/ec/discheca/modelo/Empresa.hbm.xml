@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated May 8, 2016 10:10:08 PM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="ec.discheca.modelo.Empresa" table="empresa" catalog="discheca">
+        <id name="idEmpresa" type="string">
+            <column name="idEmpresa" length="13" />
+            <generator class="assigned" />
+        </id>
+        <property name="nombreUsuarioClienteEmpresa" type="string">
+            <column name="nombreUsuarioClienteEmpresa" length="200" not-null="true" />
+        </property>
+        <property name="claveUsuarioClienteEmpresa" type="string">
+            <column name="claveUsuarioClienteEmpresa" length="200" not-null="true" />
+        </property>
+        <property name="nombreComercialClienteEmpresa" type="string">
+            <column name="nombreComercialClienteEmpresa" length="200" />
+        </property>
+        <property name="razonSocialClienteEmpresa" type="string">
+            <column name="razonSocialClienteEmpresa" length="200" />
+        </property>
+        <property name="direccionClienteEmpresa" type="string">
+            <column name="direccionClienteEmpresa" length="200" />
+        </property>
+        <property name="correoPrincipalClienteEmpresa" type="string">
+            <column name="correoPrincipalClienteEmpresa" length="200" />
+        </property>
+        <property name="telefonoPrincipalClienteEmpresa" type="string">
+            <column name="telefonoPrincipalClienteEmpresa" length="200" />
+        </property>
+        <property name="obligadoContabilidadClienteEmpresa" type="java.lang.Boolean">
+            <column name="obligadoContabilidadClienteEmpresa" />
+        </property>
+        <property name="numeroResolucionClienteEmpresa" type="string">
+            <column name="numeroResolucionClienteEmpresa" length="200" />
+        </property>
+        <property name="logoClienteEmpresa" type="binary">
+            <column name="logoClienteEmpresa" />
+        </property>
+        <property name="fechaRegistroClienteEmpresa" type="timestamp">
+            <column name="fechaRegistroClienteEmpresa" length="19" />
+        </property>
+        <property name="estadoClienteEmpresa" type="java.lang.Boolean">
+            <column name="estadoClienteEmpresa" />
+        </property>
+        <set name="certificados" table="certificado" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="rucEmpresa" length="13" not-null="true" />
+            </key>
+            <one-to-many class="ec.discheca.modelo.Certificado" />
+        </set>
+        <set name="secuencials" table="secuencial" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="idEmpresa" length="13" not-null="true" />
+            </key>
+            <one-to-many class="ec.discheca.modelo.Secuencial" />
+        </set>
+    </class>
+</hibernate-mapping>

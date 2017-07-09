@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated May 8, 2016 10:10:08 PM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="ec.discheca.modelo.Producto" table="producto" catalog="discheca">
+        <id name="idproducto" type="java.lang.Integer">
+            <column name="idproducto" />
+            <generator class="identity" />
+        </id>
+        <property name="codigoProducto" type="string">
+            <column name="codigoProducto" length="25" />
+        </property>
+        <property name="descripcion" type="string">
+            <column name="descripcion" length="500" not-null="true" />
+        </property>
+        <property name="unidadMedida" type="string">
+            <column name="unidadMedida" length="45" />
+        </property>
+        <property name="cantidad" type="string">
+            <column name="cantidad" length="45" />
+        </property>
+        <property name="precioCosto" type="string">
+            <column name="precioCosto" length="13" />
+        </property>
+        <property name="porcentajeVenta" type="string">
+            <column name="porcentajeVenta" length="13" />
+        </property>
+        <property name="precioVenta" type="string">
+            <column name="precioVenta" length="13" not-null="true" />
+        </property>
+        <property name="porcentajeVentaDos" type="string">
+            <column name="porcentajeVentaDos" length="13" />
+        </property>
+        <property name="precioVentaDos" type="string">
+            <column name="precioVentaDos" length="13" not-null="true" />
+        </property>
+        <property name="estado" type="string">
+            <column name="estado" length="5" />
+        </property>
+        <set name="detalleadicionals" table="detalleadicional" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="producto" not-null="true" />
+            </key>
+            <one-to-many class="ec.discheca.modelo.Detalleadicional" />
+        </set>
+    </class>
+</hibernate-mapping>

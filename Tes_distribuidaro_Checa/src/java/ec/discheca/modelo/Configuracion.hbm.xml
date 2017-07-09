@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated May 8, 2016 10:10:08 PM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="ec.discheca.modelo.Configuracion" table="configuracion" catalog="discheca">
+        <id name="idConfiguracion" type="java.lang.Integer">
+            <column name="idConfiguracion" />
+            <generator class="identity" />
+        </id>
+        <property name="nombreConfiguracion" type="string">
+            <column name="nombreConfiguracion" length="200" not-null="true" />
+        </property>
+        <property name="valorConfiguracion" type="string">
+            <column name="valorConfiguracion" length="200" not-null="true" />
+        </property>
+        <property name="ambienteConfiguracion" type="string">
+            <column name="ambienteConfiguracion" length="2" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

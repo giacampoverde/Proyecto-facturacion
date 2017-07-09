@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated May 8, 2016 10:10:08 PM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="ec.discheca.modelo.ComprobanteElectronicoPendiente" table="comprobante_electronico_pendiente" catalog="discheca">
+        <id name="idComprobanteElectronicoPendiente" type="java.lang.Integer">
+            <column name="idComprobanteElectronicoPendiente" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="comprobanteElectronico" class="ec.discheca.modelo.ComprobanteElectronico" fetch="select">
+            <column name="emitidoComprobanteElectronicoPendiente" not-null="true" />
+        </many-to-one>
+        <property name="fechaEnvioComprobanteElectronicoPendiente" type="timestamp">
+            <column name="fechaEnvioComprobanteElectronicoPendiente" length="19" not-null="true" />
+        </property>
+        <property name="rutaComprobanteElectronicoPendiente" type="string">
+            <column name="rutaComprobanteElectronicoPendiente" length="250" not-null="true" />
+        </property>
+        <property name="mensajeComprobanteElectronicoPendiente" type="string">
+            <column name="mensajeComprobanteElectronicoPendiente" length="1000" not-null="true" />
+        </property>
+        <property name="estadoComprobanteElectronicoPendiente" type="string">
+            <column name="estadoComprobanteElectronicoPendiente" length="2" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

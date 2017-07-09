@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated May 8, 2016 10:10:08 PM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="ec.discheca.modelo.Certificado" table="certificado" catalog="discheca">
+        <id name="idCertificado" type="java.lang.Integer">
+            <column name="idCertificado" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="empresa" class="ec.discheca.modelo.Empresa" fetch="select">
+            <column name="rucEmpresa" length="13" not-null="true" />
+        </many-to-one>
+        <property name="rutaCertificado" type="string">
+            <column name="rutaCertificado" length="200" not-null="true" />
+        </property>
+        <property name="tipoCertificado" type="string">
+            <column name="tipoCertificado" length="2" not-null="true" />
+        </property>
+        <property name="estadoCertificado" type="string">
+            <column name="estadoCertificado" length="2" not-null="true" />
+        </property>
+        <property name="claveCertificado" type="string">
+            <column name="claveCertificado" length="200" not-null="true" />
+        </property>
+        <property name="numeroFirmasCertificado" type="string">
+            <column name="numeroFirmasCertificado" length="100" />
+        </property>
+        <property name="ambienteCertificado" type="string">
+            <column name="ambienteCertificado" length="1" not-null="true" />
+        </property>
+        <property name="fechaCreacionCertificado" type="timestamp">
+            <column name="fechaCreacionCertificado" length="19" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

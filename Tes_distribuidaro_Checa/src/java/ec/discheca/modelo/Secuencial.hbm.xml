@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated May 8, 2016 10:10:08 PM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="ec.discheca.modelo.Secuencial" table="secuencial" catalog="discheca">
+        <id name="idSecuencial" type="java.lang.Integer">
+            <column name="idSecuencial" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="empresa" class="ec.discheca.modelo.Empresa" fetch="select">
+            <column name="idEmpresa" length="13" not-null="true" />
+        </many-to-one>
+        <property name="secuencialFacturaSecuencial" type="string">
+            <column name="secuencialFacturaSecuencial" length="100" />
+        </property>
+        <property name="secuencialNotaCreditoSecuencial" type="string">
+            <column name="secuencialNotaCreditoSecuencial" length="100" />
+        </property>
+        <property name="secuencialNotaDebitoSecuencial" type="string">
+            <column name="secuencialNotaDebitoSecuencial" length="100" />
+        </property>
+        <property name="secuencialGuiaRemisionSecuencial" type="string">
+            <column name="secuencialGuiaRemisionSecuencial" length="100" />
+        </property>
+        <property name="secuencialRetencionSecuencial" type="string">
+            <column name="secuencialRetencionSecuencial" length="100" />
+        </property>
+        <property name="puntoEmisionSecuencial" type="string">
+            <column name="puntoEmisionSecuencial" length="3" />
+        </property>
+        <property name="codigoEstablecimientoSecuencial" type="string">
+            <column name="codigoEstablecimientoSecuencial" length="3" />
+        </property>
+        <property name="direccionSecuencial" type="string">
+            <column name="direccionSecuencial" length="200" />
+        </property>
+        <property name="estadoSecuencial" type="java.lang.Boolean">
+            <column name="estadoSecuencial" />
+        </property>
+        <property name="ambienteSecuencial" type="string">
+            <column name="ambienteSecuencial" length="2" />
+        </property>
+    </class>
+</hibernate-mapping>
