@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>     
+
+        <!-- Bootstrap -->
+        <link href="css/bootstrap.min.css" rel='stylesheet' type='text/css' />
+        <link href="css/bootstrap.css" rel='stylesheet' type='text/css' />
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
+    </h:head>
+    <ui:include  src="menu.xhtml" />
+    <body onload="dlg2.show()">
+
+        <div class="header_bg"><!-- start header -->
+            <div class="container">
+                <div class="row header">
+
+                    <!-- <nav class="navbar" role="navigation">-->
+                    <!--  <ui:include src="topbar.xhtml" />-->
+                    <!--  </nav>-->
+
+
+
+                    <h:form id="todo"   enctype="multipart/form-data">
+                                    <script>
+                            function soloNumeros(evt)
+                            {
+                                tecla = (document.all) ? evt.keyCode : evt.which;
+                                //Tecla de retroceso para borrar, siempre la permite
+                                if (tecla === 8)
+                                    return true;
+                                if (tecla == 46)
+                                    return true;
+                                // Patron de entrada, en este caso solo acepta letras
+                                patron = /\d/;
+
+                                tecla_final = String.fromCharCode(tecla);
+                                return patron.test(tecla_final);
+
+                                //Solo números patron = /\d/;
+
+                                //Números y letras patron = /\w/;
+
+                                //No acepta números patron = /\D/;
+
+                            }
+
+                        </script>
+                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                        <div  style="width:100%;background-color: #f9f2f4" class="main"><!-- start main -->
+
+                            <p:panel   style="background-color:white">
+
+                                <div  class="row contact"><!-- start contact -->	
+                                    <div class="col-md-5">
+                                        <div  class="contact-form">
+
+                                            <p:accordionPanel activeIndex="false"  multiple="true">                                            
+                                                <p:tab    title="Instructivo Carga Comprobantes">
+                                                    <p:panel style="background-color:#ebe9e9;width:100%">
+                                                        <div class="row contact">
+
+                                                            <p:column>
+
+                                                                <a class="navbar-brand" href="paginaInicial.xhtml"><p:outputLabel style="width:100%;font-size:12px" value="* Carga De Comprobante Por Clave De Acceso"></p:outputLabel></a>
+                                                                <a class="navbar-brand" href="paginaInicial.xhtml"><p:outputLabel style="width:100%;font-size:12px" value="* Carga De Comprobante Por Archivo .XML"></p:outputLabel></a>
+                                                                <a class="navbar-brand" href="paginaInicial.xhtml"><p:outputLabel style="width:100%;font-size:12px" value="* Carga Masiva De Comprobantes por  archivo .TXT"></p:outputLabel></a>
+                                                                <a class="navbar-brand" href="paginaInicial.xhtml"><p:outputLabel style="width:100%;font-size:12px" value="* Carga De Comprobante De Forma Manual"></p:outputLabel></a>
+                                                            </p:column>
+
+
+                                                        </div>
+                                                    </p:panel>
+                                                </p:tab>                                                  
+                                            </p:accordionPanel>
+
+
+                                        </div>
+                                        <p:spacer></p:spacer>
+                                    </div>	
+
+
+                                    <div class="col-md-7">
+                                        <div class="contact_info">
+                                            <!-- <h2 style="color:black;margin-top:2px;">Promoción</h2>-->
+                                            <div class="map">
+                                                <div  class="contact-form" style="background:#ebe9e9;">
+                                                    <div>
+                                                        <span>
+                                                            <h:panelGrid    columns="1" style="margin-left:auto ;width:100% ; margin-right: auto;">
+                                                                <h:panelGrid    columns="1" style="font-size:12px;width:100%;background-color:#85B2CB;" >
+                                                                    <h:outputText style="font-weight:bold" value="*Seccion A La Que Pertenece Su Factura" styleClass="FontBold Fs14 hardblue"/>   
+                                                                </h:panelGrid>
+                                                                <p:selectOneMenu style="width:100%" id="som-tipo" value="#{beanComprobantesRecibidos.seccion}">
+                                                                    <f:selectItem itemLabel="* Seleccione"  itemValue="0" />
+                                                                    <f:selectItem itemLabel="Vivienda" itemValue="VIVIENDA" />
+                                                                    <f:selectItem itemLabel="Educación" itemValue="EDUCACIÓN" />
+                                                                    <f:selectItem itemLabel="Alimentación" itemValue="ALIMENTACIÓN" />
+                                                                    <f:selectItem itemLabel="Vestimenta" itemValue="VESTIMENTA" />
+                                                                    <f:selectItem itemLabel="Salud" itemValue="5" />
+                                                                    <f:selectItem itemLabel="Otros" itemValue="OTROS" />
+                                                                    <p:ajax  listener="#{beanComprobantesRecibidos.realizaAccion()}" update="todo" />
+                                                                </p:selectOneMenu><br/>
+                                                                <h:panelGrid    columns="1" style="font-size:12px;width:100%;background-color:#85B2CB;" >
+                                                                    <h:outputText style="font-weight:bold" value="* Registro Facturas Electronicas" styleClass="FontBold Fs14 hardblue"/>   
+                                                                </h:panelGrid>
+                                                                <p:accordionPanel activeIndex="false"  multiple="true">
+                                                                    <p:ajax event="tabChange" listener="#{beanComprobantesRecibidos.mostrarMensaje()}"    />
+                                                                    <p:tab    title="Carga De Comprobantes Por Clave De Acceso">
+                                                                        <p:panel  style="background-color:#ebe9e9;">
+                                                                            <h:panelGrid  columns="1" style="margin-left: auto; margin-right: auto;font-size:12px;width:100%" >
+                                                                                <h:outputText value="Clave De Acceco (49 digitos)" styleClass="FontBold Fs14 hardblue"/>    
+                                                                                <p:inputText onkeypress="return soloNumeros(event);"  value="${beanComprobantesRecibidos.clave}"  style="width:100%" styleClass="FontBold Fs14 hardblue"/><br/>
+                                                                                <p:commandButton id="claveac" value="Insertar" update="todo" action="#{beanComprobantesRecibidos.cargarporClave()}"/>
+                                                                            </h:panelGrid>
+                                                                            <p:blockUI block="todo" trigger="claveac">
+                                                                                LOADING<br />
+                                                                                <p:graphicImage value="/imagenes/AjaxLoading.gif" 
+                                                                                                width="100%"
+                                                                                                height="100%"/>  
+                                                                            </p:blockUI>
+                                                                        </p:panel>
+
+                                                                    </p:tab>
+                                                                </p:accordionPanel>
+                                                                <p:dialog rendered="#{beanComprobantesRecibidos.apareceDialog}" header="Importante" widgetVar="dlg2" modal="true" width="300" height="240">
+                                                                    <h:outputText value="ESTIMADO CLIENTE, LE RECORDAMOS QUE POR POLITICAS DEL SRI, LOS COMPROBANTES ELECTRÓNICOS DEBEN SER ALMACENADOS ANTES DE CUMPLIR 90 DIAS DESPUES DE SU EMISION, SI SU COMPROBANTE PRESENTA PROBLEMAS  INTENTE CARGARLO POR XML O CARGA MANUAL." />
+                                                                    <br/>
+                                                                    <br/>
+                                                                    <h:panelGrid  style="width:80%;text-align:center" columns="2">
+                                                                        <h:outputText value="No Mostrar Mensaje: " />
+                                                                        <p:selectBooleanCheckbox value="#{beanComprobantesRecibidos.mensaje90}" />
+                                                                    </h:panelGrid>
+                                                                    <br/>
+                                                                    <h:panelGrid  style="width:100%;text-align:center" columns="1">
+                                                                        <p:commandButton value="Aceptar" action="#{beanComprobantesRecibidos.actualzarCerrar()}"/>
+                                                                    </h:panelGrid>
+
+                                                                </p:dialog>
+                                                                <p:accordionPanel activeIndex="false"  multiple="true">
+
+                                                                    <p:tab    title="Carga De Comprobantes Por .XML">
+                                                                        <p:panel  style="background-color:#ebe9e9;">
+                                                                            <h:panelGrid   columns="1" style="margin-left: 0; margin-right: auto;font-size:12px;" >
+                                                                                <h:outputText value="Archivo XML" styleClass="FontBold Fs14 hardblue"/>    
+
+                                                                                <h:form id="otromas"   enctype="multipart/form-data">
+                                                                                    <p:fileUpload label="Cargar"   id="valor" value="#{beanComprobantesRecibidos.file}" sizeLimit="100000000" mode="simple" skinSimple="true"/>
+
+                                                                                    <p:commandButton id="xml" value="Almacenar" ajax="false" actionListener="#{beanComprobantesRecibidos.cargaxml()}" />
+
+                                                                                </h:form>   
+
+
+
+                                                                            </h:panelGrid>
+
+
+
+
+
+
+                                                                          
+                                                                        </p:panel>
+
+                                                                    </p:tab>
+                                                                </p:accordionPanel>
+                                                                <p:accordionPanel activeIndex="false"  multiple="true">
+                                                                    <p:ajax event="tabChange" listener="#{beanComprobantesRecibidos.mostrarMensaje()}"  />
+                                                                    <p:tab    title="Carga Masiva De Comprobantes Por .TXT">
+
+                                                                        <p:panel  style="background-color:#ebe9e9;">
+                                                                            <h:panelGrid  columns="1" style="margin-left: auto; margin-right: auto;font-size:12px;" >
+                                                                                <h:outputText value="Archivo .TXT" styleClass="FontBold Fs14 hardblue"/>    
+                                                                                <p:fileUpload rendered="false" fileUploadListener="#{beanComprobantesRecibidos.cargatxtclavesAcceso}"
+                                                                                              allowTypes="/(\.|\/)(txt)$/" sizeLimit="100000000"
+                                                                                              uploadLabel="Subir"
+                                                                                              cancelLabel="Cancelar"
+
+                                                                                              label="Seleccionar"
+
+                                                                                              />
+
+
+
+
+
+                                                                            </h:panelGrid>
+                                                                            <p:fileUpload id="pr" style="width:100%" fileUploadListener="#{beanComprobantesRecibidos.cargatxtclavesAcceso2}" mode="advanced"
+                                                                                          update="todo" auto="true" sizeLimit="100000" allowTypes="/(\.|\/)(xml|Xml|XML)$/" />
+
+
+
+
+                                                                            <p:blockUI block="todo" trigger="pr">
+                                                                                LOADING<br />
+                                                                                <p:graphicImage value="/imagenes/AjaxLoading.gif" 
+                                                                                                width="100%"
+                                                                                                height="100%"/>  
+                                                                            </p:blockUI>
+
+
+                                                                            <p:fileUpload rendered="false" value="#{beanComprobantesRecibidos.txtfile}" allowTypes="/(\.|\/)(txt)$/" sizeLimit="100000000" mode="simple" skinSimple="true"/>
+
+                                                                            <p:commandButton id="txt" rendered="false" value="Almacenar" ajax="false" actionListener="#{beanComprobantesRecibidos.cargatxtclavesAcceso()}" />
+
+                                                                        </p:panel> 
+
+                                                                    </p:tab>
+                                                                </p:accordionPanel><br/>
+                                                                <h:panelGrid    columns="1" style="font-size:12px;width:100%;background-color:#85B2CB;" >
+                                                                    <h:outputText style="font-weight:bold" value="* Registro Facturas Manuales" styleClass="FontBold Fs14 hardblue"/>
+                                                                </h:panelGrid>
+                                                                <p:accordionPanel activeIndex="false"  multiple="true">
+                                                                    <p:tab    title="Carga Manual De Comprobantes">
+
+                                                                        <p:panel  style="background-color:#ebe9e9;">
+
+                                                                            <h:panelGrid    columns="1" style="font-size:12px;width:100%" >
+                                                                                <h:outputText value="Fecha" styleClass="FontBold Fs14 hardblue"/> 
+                                                                                <p:panel style="width:100%">
+                                                                                    <h:outputText value="Año: " /> 
+                                                                                    <h:inputText  style="width:19%" onkeypress="return soloNumeros(event);"  value="#{beanComprobantesRecibidos.ano}" styleClass="FontBold Fs14 hardblue"/> 
+                                                                                    <p:spacer width="3%"/>
+                                                                                    <h:outputText value="Mes: " /> 
+                                                                                    <h:inputText style="width:14%" onkeypress="return soloNumeros(event);"  value="#{beanComprobantesRecibidos.mes}" styleClass="FontBold Fs14 hardblue"/> 
+                                                                                    <p:spacer width="3%"/>
+                                                                                    <h:outputText value="Dia: " /> 
+                                                                                    <h:inputText style="width:14%" onkeypress="return soloNumeros(event);"  value="#{beanComprobantesRecibidos.dia}" styleClass="FontBold Fs14 hardblue"/> 
+                                                                                </p:panel> <br/>
+                                                                                <h:outputText value="Ruc Proveedor" styleClass="FontBold Fs14 hardblue"/>    
+                                                                                <h:inputText style="width:100%" onkeypress="return soloNumeros(event);"  value="#{beanComprobantesRecibidos.rucempresa}" styleClass="FontBold Fs14 hardblue"/><br/>  
+                                                                                <h:outputText value="Nombre Provedor" styleClass="FontBold Fs14 hardblue"/>    
+                                                                                <h:inputText style="width:100%" value="#{beanComprobantesRecibidos.nombreProvedor}" styleClass="FontBold Fs14 hardblue"/><br/>  
+                                                                                <h:outputText value="Valor Factura" styleClass="FontBold Fs14 hardblue"/>    
+                                                                                <h:inputText style="width:100%" onkeypress="return soloNumeros(event);"  value="#{beanComprobantesRecibidos.valorfactura}" styleClass="FontBold Fs14 hardblue"/> <br/> 
+                                                                                <h:outputText value="Detalle Factura" styleClass="FontBold Fs14 hardblue"/>    
+                                                                                <h:inputTextarea style="width:100%;border-color: #96A5AE;font-size:15px" value="#{beanComprobantesRecibidos.detalleFactua}" /><br/> 
+                                                                                <p:commandButton id="manual" ajax="false" actionListener="#{beanComprobantesRecibidos.guardarFacturaManual()}" value="Guardar"/>
+                                                                            </h:panelGrid>
+
+                                                                            <p:blockUI block="todo" trigger="manual">
+                                                                                LOADING<br />
+                                                                                <p:graphicImage value="/imagenes/AjaxLoading.gif" 
+                                                                                                width="100%"
+                                                                                                height="100%"/>  
+                                                                            </p:blockUI>
+
+
+                                                                        </p:panel> 
+
+                                                                    </p:tab>
+                                                                </p:accordionPanel>
+
+                                                            </h:panelGrid>
+
+                                                        </span>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>				
+
+                                    <div class="clearfix"></div>		
+                                </div> <!-- end contact -->
+                            </p:panel> 
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+      <ui:include  src="menu2.xhtml" />
+    </body>
+</html>

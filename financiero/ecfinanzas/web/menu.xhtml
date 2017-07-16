@@ -1,0 +1,77 @@
+<ui:composition 
+
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:jsf="http://xmlns.jcp.org/jsf"
+    xmlns:p="http://primefaces.org/ui">
+
+    <h:form >
+
+        
+        <h:panelGrid width="100%"  columns="1">
+             <p:panel  style="background-color: #85B2CB;width:100%;">
+        <a href="inicio.xhtml"><p:outputLabel style="color:black;font-size:20px;" value="Control Financiero Electrónico"/></a>
+        <!-- <h2 style="color:black;text-align:center ">Gestion Electronica De Gastos</h2>-->
+    </p:panel>
+                                             <!--   <div  class="contact-form" style="background:#ebe9e9;">
+                                                    <div>
+                                                     
+                                                            <p:panel rendered="true" style="background-color: #578096;width:100%">
+                                                                
+                                                                <p:graphicImage  
+                                                                    height="10%" width="30%" value="/imagenes/logoCinty.jpg"  class="img-responsive"/>
+                                                                  
+                                                        
+                                                           </p:panel>
+
+                                                    </div>
+
+                                                </div>-->
+    
+                 <p:outputLabel rendered="false" style="color:black;font-size:20px;" value="Control Financiero Electrónico"/>
+                <!-- <h2 style="color:black;text-align:center ">Gestion Electronica De Gastos</h2>-->
+            
+            <p:toolbar >
+                <f:facet name="left">
+                    <p:commandButton  id="btn-basic" value="Menu" type="button"/>
+
+                </f:facet>
+
+                <f:facet name="right">
+                    <p:commandButton id="btn-basic2" type="button" value="#{beanSesionUsuario.primerInfoUsuario}" icon="ui-icon-gear" />
+                </f:facet>
+            </p:toolbar><br/>
+
+
+        </h:panelGrid>
+        <p:overlayPanel    for="btn-basic"  widgetVar="pnl-basic" at="right" >
+
+            <h2>Opciones</h2>
+
+            <p:menu   model="#{beanMenu.model}" />
+
+        </p:overlayPanel>
+        <p:overlayPanel   for="btn-basic2"  widgetVar="pnl-basic2" at="right" >
+
+            <h1>Cuenta</h1>
+            <p:menu>
+                <p:menuitem value="Administrar Cuenta" action="#{beanSesionUsuario.irCuenta()}" />
+                <p:menuitem value="Cambiar Clave" action="#{beanSesionUsuario.irPaginacambioClave()}" />
+                <p:menuitem id="cerrar" value="Salir" action="#{beanSesionUsuario.cerrarSesion()}" />
+            </p:menu>
+
+        </p:overlayPanel>
+        <p:blockUI block="todo" trigger="cerrar">
+            LOADING<br />
+            <p:graphicImage value="/imagenes/AjaxLoading.gif" 
+                            width="100%"
+                            height="100%"/>  
+        </p:blockUI>
+    </h:form >
+
+
+
+
+</ui:composition>

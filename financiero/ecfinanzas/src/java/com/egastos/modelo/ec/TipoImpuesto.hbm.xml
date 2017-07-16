@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20/06/2017 21:43:10 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="com.egastos.modelo.ec.TipoImpuesto" table="tipo_impuesto" catalog="egastos" optimistic-lock="version">
+        <id name="idTipoImpuesto" type="java.lang.Integer">
+            <column name="idTipoImpuesto" />
+            <generator class="identity" />
+        </id>
+        <property name="impuesto" type="string">
+            <column name="impuesto" length="100" not-null="true" />
+        </property>
+        <set name="tarifasImpuestos" table="tarifas_impuesto" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="codigoTipoTarifaImpuesto" not-null="true" />
+            </key>
+            <one-to-many class="com.egastos.modelo.ec.TarifasImpuesto" />
+        </set>
+    </class>
+</hibernate-mapping>

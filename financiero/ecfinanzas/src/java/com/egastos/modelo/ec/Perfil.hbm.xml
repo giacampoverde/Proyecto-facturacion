@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20/06/2017 21:43:10 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="com.egastos.modelo.ec.Perfil" table="perfil" catalog="egastos" optimistic-lock="version">
+        <id name="idPerfil" type="java.lang.Integer">
+            <column name="idPerfil" />
+            <generator class="identity" />
+        </id>
+        <property name="nombrePerfil" type="string">
+            <column name="nombrePerfil" length="45" />
+        </property>
+        <property name="descripcionPerfil" type="string">
+            <column name="descripcionPerfil" length="45" />
+        </property>
+        <property name="estadoPerfil" type="java.lang.Boolean">
+            <column name="estadoPerfil" />
+        </property>
+        <set name="permisos" table="permiso" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="perfil" />
+            </key>
+            <one-to-many class="com.egastos.modelo.ec.Permiso" />
+        </set>
+        <set name="usuarioAccesos" table="usuario_acceso" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="perfil" not-null="true" />
+            </key>
+            <one-to-many class="com.egastos.modelo.ec.UsuarioAcceso" />
+        </set>
+    </class>
+</hibernate-mapping>

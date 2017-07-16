@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20/06/2017 21:43:10 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="com.egastos.modelo.ec.Auditoria" table="auditoria" catalog="egastos" optimistic-lock="version">
+        <id name="idauditoria" type="java.lang.Integer">
+            <column name="idauditoria" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="usuarioAcceso" class="com.egastos.modelo.ec.UsuarioAcceso" fetch="select">
+            <column name="usuario_acceso_idUsuario" not-null="true" />
+        </many-to-one>
+        <property name="mensajeTransaccion" type="string">
+            <column name="mensajeTransaccion" length="1000" />
+        </property>
+        <property name="fecha" type="date">
+            <column name="fecha" length="10" />
+        </property>
+        <property name="fechaHora" type="timestamp">
+            <column name="fechaHora" length="19" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+      >
+    <h:head>     
+
+        <!-- Bootstrap -->
+        <link href="css/bootstrap.min.css" rel='stylesheet' type='text/css' />
+        <link href="css/bootstrap.css" rel='stylesheet' type='text/css' />
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
+
+    </h:head>
+    <ui:include  src="menu.xhtml" />
+
+    <h:form id="todo"   enctype="multipart/form-data">
+        <script>
+            function soloNumeros(evt)
+            {
+                tecla = (document.all) ? evt.keyCode : evt.which;
+                //Tecla de retroceso para borrar, siempre la permite
+                if (tecla === 8)
+                    return true;
+                if (tecla == 46)
+                    return true;
+                // Patron de entrada, en este caso solo acepta letras
+                patron = /\d/;
+
+                tecla_final = String.fromCharCode(tecla);
+                return patron.test(tecla_final);
+
+                //Solo números patron = /\d/;
+
+                //Números y letras patron = /\w/;
+
+                //No acepta números patron = /\D/;
+
+            }
+
+        </script>
+
+        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+        <div  style="width:100%;background-color: #f9f2f4" class="main"><!-- start main -->
+
+            <p:panel style="background-color:white;">
+                <div  class="row contact"><!-- start contact -->	
+                    <div class="col-md-3">
+
+                        <div  class="contact-form">
+                            <p:accordionPanel  multiple="true">
+                                <p:tab    title="Buscar">
+                                    <p:panel id="busqued"  style="background-color:#ebe9e9;">
+                                        <h:panelGrid   columns="1"  style="margin-left: auto; margin-right: auto;border:0px none;background:none;width:90%" class="TexAlCenter MarAuto">
+                                            <!--analizar estado que valores van a estar en la base-->
+                                            <h:outputText value="Estado:" styleClass="FontBold Fs14 hardblue"/>  
+                                            <p:selectOneMenu style="width:100%" id="som-fechas2" value="#{beanGestionPagos.valorestado}" effect="drop" >
+                                                <f:selectItem itemLabel="Todos" itemValue="1" />
+                                                <f:selectItem itemLabel="Pendientes" itemValue="pendientes" />
+                                                <f:selectItem itemLabel="Revisión" itemValue="revision" />  
+                                                <f:selectItem itemLabel="Pagado" itemValue="pagado" />  
+                                     
+                                            </p:selectOneMenu>
+                                        </h:panelGrid>
+                                        <h:panelGrid   columns="1"  style="margin-left: auto; margin-right: auto;border:0px none;background:none;width:90%" class="TexAlCenter MarAuto">
+
+                                            <h:outputText value="Valor:" styleClass="FontBold Fs14 hardblue"/>  
+                                            <p:selectOneMenu style="width:100%" id="som-fechas5" value="#{beanGestionPagos.opcionValores}" effect="drop" >
+                                                <f:selectItem itemLabel="Todos" itemValue="1" />
+                                                <f:selectItem itemLabel="De 0 a $10" itemValue="2" />
+                                                <f:selectItem itemLabel="De $10 a $50" itemValue="4" />  
+                                                <f:selectItem itemLabel="Mayor a $50" itemValue="5" />  
+                                                <f:selectItem itemLabel="Rango" itemValue="6"/> 
+                                                <p:ajax event="valueChange" listener="#{beanGestionPagos.abrirValores()}" update="valores"/>
+                                            </p:selectOneMenu>
+                                        </h:panelGrid>
+                                        <h:panelGrid id="valores"  columns="1"  style="margin-left: auto; margin-right: auto;border:0px none;background:none;width:80%" class="TexAlCenter MarAuto">
+                                            <p:panelGrid  rendered="#{beanGestionPagos.apareceValores}"   columns="1" layout="grid" style="border:0px none;background:none;width:100%" class="TexAlCenter MarAuto">
+                                                <h:outputText  value="Desde:" styleClass="FontBold Fs14 hardblue"/>  
+                                                <h:inputText onkeypress="return soloNumeros(event);" id="ot-valorI" value="#{beanGestionPagos.valorInicial}" style="width:100%" styleClass="FontBold Fs12 hardblue" />
+                                                <h:outputText value="Hasta:" styleClass="FontBold Fs14 hardblue"/>  
+                                                <h:inputText onkeypress="return soloNumeros(event);" id="ot-valorF" value="#{beanGestionPagos.valorFinal}" style="width:100%" styleClass="FontBold Fs12 hardblue" />
+                                            </p:panelGrid><br/>
+                                        </h:panelGrid>
+                                        <h:panelGrid   columns="1"  style="margin-left: auto; margin-right: auto;border:0px none;background:none;width:80%" class="TexAlCenter MarAuto">
+
+                                            <h:outputText value="Fecha De Pago:" styleClass="FontBold Fs14 hardblue"/>  
+                                            <p:selectOneMenu style="width:100%" id="som-fechas" value="#{beanGestionPagos.seleccionPeriodoTiempo}" effect="drop" >
+                                                <f:selectItem itemLabel="Todos" itemValue="1" />
+                                                <f:selectItem itemLabel="Hoy" itemValue="2" />
+                                                <f:selectItem itemLabel="Último mes" itemValue="4" />  
+                                                <f:selectItem itemLabel="Periodo" itemValue="6"/> 
+                                                <p:ajax event="valueChange" listener="#{beanGestionPagos.abrirDialogRangoFechas()}" update="fechass"/>
+                                            </p:selectOneMenu>
+
+                                        </h:panelGrid>
+                                        <h:panelGrid id="fechass" columns="1" style="margin-left: auto; margin-right: auto;" >
+
+                                            <p:panelGrid   rendered="#{beanGestionPagos.apareceRago}" columns="1" layout="grid" style="border:0px none;background:none;width:100%" class="TexAlCenter MarAuto">
+                                                <h:outputText value="Desde:" styleClass="FontBold Fs14 hardblue"/>  
+                                                <h:inputText id="ot-fecha-inicial" value="#{beanGestionPagos.fechaInicialS}" style="width:100%" styleClass="FontBold Fs12 hardblue" />
+                                                <h:outputText value="Hasta:" styleClass="FontBold Fs14 hardblue"/>  
+                                                <h:inputText id="ot-fecha-final" value="#{beanGestionPagos.fechaFinalS}" style="width:100%" styleClass="FontBold Fs12 hardblue" />
+                                            </p:panelGrid><br/>
+                                            <h:outputText value="Cedula o Ruc:" styleClass="FontBold Fs14 hardblue"/>  
+                                            <p:inputText id="it-secuencial-busqueda2" style="width:100%" value="#{beanGestionPagos.nombreEmpresa}" /><br/>
+
+                                            <p:commandButton id="busc" value="Buscar" update=":todo:dt-comprobantes-recibidos-autorizados" actionListener="#{beanGestionPagos.cargarTablaPagos()}" onclick="PF('wv-dt-emitidos-autorizados').getPaginator().setPage(0);"/><br/>
+
+                                        </h:panelGrid>
+                                        <p:blockUI block="busqued" trigger="busc">
+                                            LOADING<br />
+                                            <p:graphicImage value="/imagenes/AjaxLoading.gif" 
+                                                            width="100%"
+                                                            height="100%"/>  
+                                        </p:blockUI>
+                                    </p:panel>
+                                </p:tab>
+                            </p:accordionPanel>
+
+
+
+                        </div>
+                        <p:spacer></p:spacer>
+                    </div>	
+
+
+                    <div class="col-md-9">
+                        <div class="contact_info">
+                            <!-- <h2 style="color:black;margin-top:2px;">Promoción</h2>-->
+                            <div class="map">
+                                <div class="contact-form" style="background:#ebe9e9;">
+                                    <div>
+                                        <span>
+                                            <h:panelGrid    columns="1" style="margin-left:auto ;width:100% ; margin-right: auto;">
+                                                <p:panel  style="background-color:#ebe9e9;">
+                                                    <p:dataTable id="dt-comprobantes-recibidos-autorizados" widgetVar="wv-dt-emitidos-autorizados" var="pagos" selectionMode="single" value="#{beanGestionPagos.pagosLazy}" paginator="true" rows="5" emptyMessage="No hay registros" 
+                                                                 paginatorPosition="bottom"
+                                                                 rowsPerPageTemplate="5,10,15" lazy="true" reflow="true" rowKey="#{pagos.idpagos}" selection="#{beanGestionPagos.pagoSeleccionado}" scrollable="false" >
+                                                        <p:column style="font-weight: bold" headerText="Cedula" width="11%" >
+
+                                                            <h:outputText style="font-weight: lighter"  id="ot-emisor2"  value="#{pagos.usuarioAcceso.identificacionUsuario}"/>
+                                                        </p:column>
+                                                        <p:column style="font-weight: bold" headerText="Nombre" width="11%" >
+
+                                                            <h:outputText style="font-weight: lighter"  id="ot-emisor"  value="#{pagos.usuarioAcceso.nombreUsuario}"/>
+                                                        </p:column>
+
+                                                        <p:column style="font-weight: bold" headerText="Cuenta Cliente" width="11%" >
+
+                                                            <h:outputText style="font-weight: lighter" value="#{pagos.numeroCuentaOrigen}" />
+
+                                                        </p:column>
+
+                                                        <p:column style="font-weight: bold" headerText="Cuenta Empresa" width="11%">
+                                                            <h:outputText style="font-weight: lighter" value="#{pagos.numeroCuenta}" />
+                                                        </p:column>
+                                                        <p:column style="font-weight: bold" headerText="Fecha Pago" width="11%">
+                                                            <h:outputText style="font-weight: lighter" value="#{pagos.fechaPago}" >
+                                                                <f:convertDateTime pattern="yyyy/MM/dd" />
+                                                            </h:outputText>
+                                                        </p:column>
+                                                        <p:column style="font-weight: bold" headerText="Fecha Caducidad" width="11%">
+                                                            <h:outputText style="font-weight: lighter" value="#{pagos.fechacaduca}" >
+                                                                <f:convertDateTime pattern="yyyy/MM/dd" />
+                                                            </h:outputText>
+                                                        </p:column>
+                                                        <p:column style="font-weight: bold" headerText="Plan" width="10%">
+                                                            <h:outputText style="font-weight: lighter" value="#{pagos.planespago.meses} Meses" />
+                                                        </p:column>
+                                                        <p:column rendered="true" headerText="Valor" width="7%" class="scrollColumn">
+                                                            <h:outputText style="font-weight: lighter" value="$#{pagos.valorPago}" />
+                                                        </p:column>
+                                                        <p:column style="font-weight: bold" headerText="transferencia" width="11%">
+                                                            <h:outputText style="font-weight: lighter" value="#{pagos.numeroTransferencia}" />
+                                                        </p:column>
+                                                        <p:column style="font-weight: bold" headerText="Estado" width="11%">
+                                                            <h:outputText style="font-weight: lighter" value="#{pagos.estadopago}" />
+                                                        </p:column>
+
+
+                                                    </p:dataTable>
+
+                                                </p:panel>
+                                                <p:panel  style="text-align:center ">
+                                                 
+                                                    <p:commandButton  value="Cambio Estado Pago" actionListener="#{beanGestionPagos.cambiarestadoPagado}" update=":todo:dt-comprobantes-recibidos-autorizados" >
+                                                        <p:confirm header="Confirmacion De Pagos" message="Confirmar Pago?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+
+                                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                    </p:confirmDialog>
+                                                </p:panel>
+                                            </h:panelGrid>
+
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>				
+
+                    <div class="clearfix"></div>		
+                </div> <!-- end contact -->
+            </p:panel> 
+        </div>
+    </h:form>
+    <body>
+
+        <div class="header_bg"><!-- start header -->
+            <div class="container">
+                <div class="row header">
+
+
+                    <!--<ui:include  src="menu.xhtml" />-->
+
+
+
+
+
+                </div>
+            </div>
+        </div>
+   <ui:include  src="menu2.xhtml" />
+    </body>
+</html>

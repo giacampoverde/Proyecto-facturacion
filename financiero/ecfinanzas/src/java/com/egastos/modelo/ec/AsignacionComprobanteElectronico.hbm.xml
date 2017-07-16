@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20/06/2017 21:43:10 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="com.egastos.modelo.ec.AsignacionComprobanteElectronico" table="asignacion_comprobante_electronico" catalog="egastos" optimistic-lock="version">
+        <id name="idAsignacionComprobanteElectronico" type="java.lang.Integer">
+            <column name="idAsignacionComprobanteElectronico" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="comprobanteElectronico" class="com.egastos.modelo.ec.ComprobanteElectronico" fetch="select">
+            <column name="emitidoAsignacionComprobanteElectronico" not-null="true" />
+        </many-to-one>
+        <many-to-one name="receptor" class="com.egastos.modelo.ec.Receptor" fetch="select">
+            <column name="receptor" not-null="true" />
+        </many-to-one>
+        <property name="vistoReceptorAsignacionComprobanteElectronico" type="java.lang.Boolean">
+            <column name="vistoReceptorAsignacionComprobanteElectronico" />
+        </property>
+    </class>
+</hibernate-mapping>

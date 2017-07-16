@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20/06/2017 21:43:10 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="com.egastos.modelo.ec.ComprobanteElectronico" table="comprobante_electronico" catalog="egastos" optimistic-lock="version">
+        <id name="idComprobanteElectronico" type="java.lang.Integer">
+            <column name="idComprobanteElectronico" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="tipoComprobanteElectronico" class="com.egastos.modelo.ec.TipoComprobanteElectronico" fetch="select">
+            <column name="tipoComprobanteElectronico" not-null="true" />
+        </many-to-one>
+        <property name="claveAccesoComprobanteElectronico" type="string">
+            <column name="claveAccesoComprobanteElectronico" length="49" not-null="true" />
+        </property>
+        <property name="codigoEstablecimientoComprobanteElectronico" type="string">
+            <column name="codigoEstablecimientoComprobanteElectronico" length="3" not-null="true" />
+        </property>
+        <property name="puntoEmisionComprobanteElectronico" type="string">
+            <column name="puntoEmisionComprobanteElectronico" length="3" not-null="true" />
+        </property>
+        <property name="secuencialComprobanteElectronico" type="string">
+            <column name="secuencialComprobanteElectronico" length="9" not-null="true" />
+        </property>
+        <property name="numeroAutorizacionComprobanteElectronico" type="string">
+            <column name="numeroAutorizacionComprobanteElectronico" length="49" />
+        </property>
+        <property name="rucEmisorComprobanteElectronico" type="string">
+            <column name="rucEmisorComprobanteElectronico" length="13" not-null="true" />
+        </property>
+        <property name="nombreComercialEmisorComprobanteElectronico" type="string">
+            <column name="nombreComercialEmisorComprobanteElectronico" length="200" not-null="true" />
+        </property>
+        <property name="razonSocialEmisorComprobanteElectronico" type="string">
+            <column name="razonSocialEmisorComprobanteElectronico" length="200" not-null="true" />
+        </property>
+        <property name="ambienteComprobanteElectronico" type="string">
+            <column name="ambienteComprobanteElectronico" length="2" not-null="true" />
+        </property>
+        <property name="estadoComprobanteElectronico" type="string">
+            <column name="estadoComprobanteElectronico" length="2" not-null="true" />
+        </property>
+        <property name="mensajeComprobanteElectronico" type="string">
+            <column name="mensajeComprobanteElectronico" length="1000" not-null="true" />
+        </property>
+        <property name="fechaEmisionComprobanteElectronico" type="date">
+            <column name="fechaEmisionComprobanteElectronico" length="10" not-null="true" />
+        </property>
+        <property name="fechaAutorizacionComprobanteElectronico" type="timestamp">
+            <column name="fechaAutorizacionComprobanteElectronico" length="19" />
+        </property>
+        <property name="valorTotalFacturaComprobanteElectronico" type="java.lang.Double">
+            <column name="valorTotalFacturaComprobanteElectronico" precision="22" scale="0" />
+        </property>
+        <property name="archivoRespuestaSricomprobanteElectronico" type="binary">
+            <column name="archivoRespuestaSRIComprobanteElectronico" />
+        </property>
+        <property name="comprobanteFirmadoComprobanteElectronico" type="binary">
+            <column name="comprobanteFirmadoComprobanteElectronico" />
+        </property>
+        <property name="notificadoCorreo" type="java.lang.Boolean">
+            <column name="notificadoCorreo" />
+        </property>
+        <property name="vistoEmisorComprobanteElectronico" type="java.lang.Boolean">
+            <column name="vistoEmisorComprobanteElectronico" />
+        </property>
+        <property name="tipoPagoComprobanteElectronico" type="string">
+            <column name="tipoPagoComprobanteElectronico" length="2" />
+        </property>
+        <property name="numeroDocumentoTransferencia" type="string">
+            <column name="numeroDocumentoTransferencia" length="100" />
+        </property>
+        <property name="seccion" type="string">
+            <column name="seccion" length="100" />
+        </property>
+        <set name="comprobanteElectronicoPendientes" table="comprobante_electronico_pendiente" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="emitidoComprobanteElectronicoPendiente" not-null="true" />
+            </key>
+            <one-to-many class="com.egastos.modelo.ec.ComprobanteElectronicoPendiente" />
+        </set>
+        <set name="asignacionComprobanteElectronicos" table="asignacion_comprobante_electronico" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="emitidoAsignacionComprobanteElectronico" not-null="true" />
+            </key>
+            <one-to-many class="com.egastos.modelo.ec.AsignacionComprobanteElectronico" />
+        </set>
+        <set name="detalles" table="detalle" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="comprobanteElectronico" not-null="true" />
+            </key>
+            <one-to-many class="com.egastos.modelo.ec.Detalle" />
+        </set>
+    </class>
+</hibernate-mapping>

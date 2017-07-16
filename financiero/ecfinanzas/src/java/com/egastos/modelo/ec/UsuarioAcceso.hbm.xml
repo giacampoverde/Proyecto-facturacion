@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20/06/2017 21:43:10 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="com.egastos.modelo.ec.UsuarioAcceso" table="usuario_acceso" catalog="egastos" optimistic-lock="version">
+        <id name="idUsuario" type="java.lang.Integer">
+            <column name="idUsuario" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="perfil" class="com.egastos.modelo.ec.Perfil" fetch="select">
+            <column name="perfil" not-null="true" />
+        </many-to-one>
+        <property name="identificacionUsuario" type="string">
+            <column name="identificacionUsuario" length="13" />
+        </property>
+        <property name="nombreUsuarioAcceso" type="string">
+            <column name="nombreUsuarioAcceso" length="200" />
+        </property>
+        <property name="claveUsuarioAcceso" type="string">
+            <column name="claveUsuarioAcceso" length="200" />
+        </property>
+        <property name="nombreUsuario" type="string">
+            <column name="nombreUsuario" length="200" />
+        </property>
+        <property name="apellidoUsuario" type="string">
+            <column name="apellidoUsuario" length="200" />
+        </property>
+        <property name="telefonoPrincipalUsuario" type="string">
+            <column name="telefonoPrincipalUsuario" length="200" />
+        </property>
+        <property name="telefonoAdicionalUsuario" type="string">
+            <column name="telefonoAdicionalUsuario" length="200" />
+        </property>
+        <property name="correoPrincipalUsuario" type="string">
+            <column name="correoPrincipalUsuario" length="200" />
+        </property>
+        <property name="correoAdicionalUsuario" type="string">
+            <column name="correoAdicionalUsuario" length="200" />
+        </property>
+        <property name="fechaRegistroUsuario" type="timestamp">
+            <column name="fechaRegistroUsuario" length="19" />
+        </property>
+        <property name="estadoUsuario" type="string">
+            <column name="estadoUsuario" length="2">
+                <comment>1 ACTIVO 3 CAMBIO CLAVE 2 DESACTIVADO 4 PAGOVENCIDO</comment>
+            </column>
+        </property>
+        <property name="detalleInformacionUsuario" type="string">
+            <column name="detalleInformacionUsuario" length="400" />
+        </property>
+        <property name="visitas" type="java.lang.Integer">
+            <column name="visitas" />
+        </property>
+        <property name="mensajeOpcional" type="string">
+            <column name="mensajeOpcional" length="1" />
+        </property>
+        <set name="pagoses" table="pagos" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="idUsuario" not-null="true" />
+            </key>
+            <one-to-many class="com.egastos.modelo.ec.Pagos" />
+        </set>
+        <set name="auditorias" table="auditoria" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="usuario_acceso_idUsuario" not-null="true" />
+            </key>
+            <one-to-many class="com.egastos.modelo.ec.Auditoria" />
+        </set>
+    </class>
+</hibernate-mapping>

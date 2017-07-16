@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>     
+
+        <!-- Bootstrap -->
+        <link href="css/bootstrap.min.css" rel='stylesheet' type='text/css' />
+        <link href="css/bootstrap.css" rel='stylesheet' type='text/css' />
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
+    </h:head>
+    <p:panel  style="background-color: #85B2CB;width:100%;">
+        <p:outputLabel style="color:black;font-size:20px;" value="Control Financiero Electrónico"/>
+        <!-- <h2 style="color:black;text-align:center ">Gestion Electronica De Gastos</h2>-->
+    </p:panel>
+    <body>
+        <div class="header_bg"><!-- start header -->
+            <div class="container">
+                <div  class="row header">
+
+
+                    <h:form id="todo" style="margin-top:2px;"  enctype="multipart/form-data">
+                              <script>
+                            function soloNumeros(evt)
+                            {
+                                tecla = (document.all) ? evt.keyCode : evt.which;
+                                //Tecla de retroceso para borrar, siempre la permite
+                                if (tecla === 8)
+                                    return true;
+                                if (tecla == 46)
+                                    return true;
+                                // Patron de entrada, en este caso solo acepta letras
+                                patron = /\d/;
+
+                                tecla_final = String.fromCharCode(tecla);
+                                return patron.test(tecla_final);
+
+                                //Solo números patron = /\d/;
+
+                                //Números y letras patron = /\w/;
+
+                                //No acepta números patron = /\D/;
+
+                            }
+
+                        </script>
+                        <p:ajaxStatus rendered="false" style="position:fixed;right:10px;bottom:10px">  
+                            <f:facet name="start">  
+                                <p:graphicImage value="/imagenes/ajax-loader.gif" 
+                                                width="100"
+                                                height="100"/>  
+                            </f:facet>  
+                            <f:facet name="complete">  
+                                <h:outputText value="" />  
+                            </f:facet>  
+                        </p:ajaxStatus> 
+                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                        <div  style="width:100%;background-color: #f9f2f4" class="main"><!-- start main -->
+                            <p:panel  style="background-color:#ebe9e9;">
+
+                                <div  class="row contact"><!-- start contact -->	
+                                    <div class="col-md-2">
+                                        <div class="contact-form">
+
+
+                                        </div>
+                                    </div>	
+                                    <div class="col-md-8">
+                                        <div class="contact_info">
+                                            <!-- <h2 style="color:black;margin-top:2px;">Promoción</h2>-->
+                                            <div class="map">
+                                                <div class="contact-form" style="background:#ebe9e9;">
+                                                    <div>
+                                                        <span>
+
+
+                                                            <h:panelGrid id="dataTable"   columns="1" style="margin-left:auto ;width:100% ; margin-right: auto;text-align: ">
+                                                            <p:panel style="text-align:center" id="pnlRegistro">
+                                                                <div class="TexAlCenter MarAuto Container90 Fnone TabContent" id="TAB1">
+
+                                                                    <div class="EmptyBox5"/>
+                                                                    <p:outputLabel value="Los datos Obligatorios inician con (*)" style="font-size:18px;" />
+                                                                    <div class="EmptyBox5"/>
+                                                                     <p:inputText  style="width:80%" onkeypress="return soloNumeros(event);"   id="it-identificacion-usuario" value="#{beanRegistro.usuarioNuevo.identificacionUsuario}" styleClass="Container80 Fnone MarAuto Fs18" placeholder="(*)Cédula/Pasaporte" />
+                                                                    <br/>
+                                                                    <br/>
+                                                                    <p:inputText  style="width:80%"  id="it-nombre-usuario" value="#{beanRegistro.usuarioNuevo.nombreUsuario}" styleClass="Container80 Fnone MarAuto Fs18" placeholder="(*)Nombres"/>
+                                                                   <br/>
+                                                                    <br/>
+                                                                     <p:inputText  style="width:80%" id="it-apellido-usuario" value="#{beanRegistro.usuarioNuevo.apellidoUsuario}" styleClass="Container80 Fnone MarAuto Fs18" placeholder="(*)Apellidos" />
+                                                                     <br/>
+                                                                    <br/>
+                                                                     <p:inputText  style="width:80%" onkeypress="return soloNumeros(event);"  id="it-telefono-principal-usuario" value="#{beanRegistro.usuarioNuevo.telefonoPrincipalUsuario}" styleClass="Container80 Fnone MarAuto Fs18" placeholder="(*)Teléfono Principal" />
+                                                                       <br/>
+                                                                    <br/> 
+                                                                     <p:inputText  style="width:80%" onkeypress="return soloNumeros(event);" id="it-telefono-adicional-usuario" value="#{beanRegistro.usuarioNuevo.telefonoAdicionalUsuario}" placeholder="Teléfono Adicional" />
+                                                                    <br/>
+                                                                        <br/>
+                                                                    <p:inputText  style="width:80%" id="it-correo-usuario" value="#{beanRegistro.usuarioNuevo.correoPrincipalUsuario}" placeholder="(*)Correo Principal" />
+                                                                    <br/>
+                                                                        <br/>
+                                                                    <p:inputText  style="width:80%" id="it-correo-adicional-usuario" value="#{beanRegistro.usuarioNuevo.correoAdicionalUsuario}" placeholder="Correo Adicional" /><br/><br/>
+                                                                                                                                             
+                                                                      <p:outputLabel value="Clave De Usuario" style="font-size:18px;"  styleClass="Container80 Fnone MarAuto Fs16"/><br/>
+                                                                    <p:password id="it-clave-usuario" style="width:80%" value="#{beanRegistro.usuarioNuevo.claveUsuarioAcceso}" placeholder="(*)Clave" />
+                                                                     <br/>
+                                                                      <br/>  
+                                                                    <p:password id="it-clave2-usuario" style="width:80%" value="#{beanRegistro.confirmacionClave}" placeholder="(*)Repetir Clave" />
+
+                                                                     <div class="EmptyBox10"/><br/>
+                                                                     <p:commandButton id="btnRegistroU" style="width:80%"   value="Registrarse"  actionListener="#{beanRegistro.registrarUsuario()}" >
+                                                                    </p:commandButton>
+                                                                    
+                                                                    <div class="EmptyBox10"/>
+                                                                    <div class="Animated05 BoxSizeBorder TabBtn left TabBtnActiveLeft" role="1">
+                                                                        <div class="Container80 Fnone MarAuto TexAlCenter"><i class="icon-reply"></i>
+                                                                            <br/>
+                                                                            <p:commandLink style="color: #1578c9;text-decoration: underline;font-size:16px" value="Regresar" action="#{beanDireccionamiento.direccionarLogin()}"/>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                           <p:blockUI block="pnlRegistro" trigger="btnRegistroU">
+                                                                        LOADING<br />
+                                                                        <p:graphicImage value="/imagenes/AjaxLoading.gif" 
+                                                                                        width="100%"
+                                                                                        height="100%"/>  
+                                                                    </p:blockUI>
+                                                            </p:panel>
+                                                                </h:panelGrid>
+                                                        </span>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>				
+
+                                    <div class="clearfix"></div>		
+                                </div> <!-- end contact -->
+                            </p:panel> 
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+      <ui:include  src="menu2.xhtml" />
+    </body>
+</html>

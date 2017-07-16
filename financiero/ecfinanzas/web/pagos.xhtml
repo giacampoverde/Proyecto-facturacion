@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>     
+
+        <!-- Bootstrap -->
+        <link href="css/bootstrap.min.css" rel='stylesheet' type='text/css' />
+        <link href="css/bootstrap.css" rel='stylesheet' type='text/css' />
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
+    </h:head>
+    <p:panel  style="background-color: #85B2CB;width:100%;">
+       <a href="login.xhtml"><p:outputLabel style="color:black;font-size:20px;" value="Control Financiero Electrónico"/></a>
+        <!-- <h2 style="color:black;text-align:center ">Gestion Electronica De Gastos</h2>-->
+    </p:panel>
+    <body>
+        <div class="header_bg"><!-- start header -->
+            <div class="container">
+                <div  class="row header">
+
+
+                    <h:form id="todo" style="margin-top:2px;"  enctype="multipart/form-data">
+                           <script>
+                            function soloNumeros(evt)
+                            {
+                                tecla = (document.all) ? evt.keyCode : evt.which;
+                                //Tecla de retroceso para borrar, siempre la permite
+                                if (tecla === 8)
+                                    return true;
+                                if (tecla == 46)
+                                    return true;
+                                // Patron de entrada, en este caso solo acepta letras
+                                patron = /\d/;
+
+                                tecla_final = String.fromCharCode(tecla);
+                                return patron.test(tecla_final);
+
+                                //Solo números patron = /\d/;
+
+                                //Números y letras patron = /\w/;
+
+                                //No acepta números patron = /\D/;
+
+                            }
+
+                        </script>
+
+                        <p:ajaxStatus  rendered="false" style="position:fixed;right:10px;bottom:10px">  
+                            <f:facet name="start">  
+                                <p:graphicImage value="/imagenes/ajax-loader.gif" 
+                                                width="100"
+                                                height="100"/>  
+                            </f:facet>  
+                            <f:facet name="complete">  
+                                <h:outputText value="" />  
+                            </f:facet>  
+                        </p:ajaxStatus> 
+                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                        <div  style="width:100%;background-color: #f9f2f4" class="main"><!-- start main -->
+                            <p:panel   style="background-color:white">
+
+                                <div  class="row contact"><!-- start contact -->	
+                                    <div class="col-md-2">
+
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="contact-form">
+
+                                            <h:panelGrid id="dataTable"   columns="1" style="margin-left:auto ;width:100% ; margin-right: auto;text-align: ">
+                                                <h:panelGrid id="dataTable4"   columns="1" style="margin-left:auto ;width:100% ; margin-right: auto;text-align:center ">
+                                                    <h5><h:outputLabel style="font-size:21px;text-align:center" value="PROCESO DE REGISTRO DE PAGO"/></h5> 
+                                                </h:panelGrid>
+
+                                                <p:panel   style="background-color: #ebe9e9;">
+
+                                                    <div class="row contact">
+                                                        <div class="col-md-13">
+                                                            <p:column>
+
+
+                                                                <h1 class="hardblue TexAlCenter" style="font-size:20px;">Seleccione el plan por el cual relizó el pago</h1  >
+                                                                <p:selectOneMenu id="car" style="width:100%" effect="drop" value="#{beanProcesoPagos.planId}">
+                                                                    <f:selectItem itemLabel="Plan" itemValue="" />
+                                                                    <f:selectItems var="val" itemLabel="#{val.meses} MESES--$#{val.valor}" itemValue="#{val.idPlanesPago}" value="#{beanProcesoPagos.planesPago}" />
+                                                                </p:selectOneMenu><br/>
+                                                                <h1 class="hardblue TexAlCenter" style="font-size:20px;">Seleccione la cuenta a la cual pago</h1>
+
+                                                                <p:selectOneMenu style="width:100%" id="som-fechas" value="#{beanProcesoPagos.cuentaSeleccionada}"  effect="drop" >
+                                                                    <f:selectItem  itemLabel="cuenta" itemValue=" " />
+                                                                    <f:selectItem itemLabel="PICHINCHA-#{beanProcesoPagos.cuentaP}" itemValue="#{beanProcesoPagos.cuentaP}" />
+                                                                    <f:selectItem itemLabel="PRODUBANCO-#{beanProcesoPagos.cuenta2}" itemValue="#{beanProcesoPagos.cuenta2}" />  
+                                                                    <f:selectItem itemLabel="INTERNACIONAL-#{beanProcesoPagos.cuenta3}" itemValue="#{beanProcesoPagos.cuenta3}"/> <br/>
+
+                                                                </p:selectOneMenu><br/>
+
+                                                                <h1 class="hardblue TexAlCenter" style="font-size:20px;">Cuenta cliente de la cual se realizo el pago</h1>
+                                                                <p:inputText id="it-secuencial-" onkeypress="return soloNumeros(event);"  style="width:100%" value="#{beanProcesoPagos.numeroCuentaCliente2}" /><br/>
+                                                                <br/>
+                                                                <h1 class="hardblue TexAlCenter" style="font-size:20px;">Numero transferencia (Opcional)</h1>
+                                                                <p:inputText id="it-secuencial-busqueda4" onkeypress="return soloNumeros(event);" style="width:100%" value="#{beanProcesoPagos.numeroTransferencia}" /><br/>
+                                                                <br/>
+                                                                <h1 class="hardblue TexAlCenter" style="font-size:20px;">Imagen transferencia</h1>
+                                                                <p:accordionPanel  activeIndex="false" multiple="true">
+                                                                    <p:tab    title="(OPCIONAL)">
+                                                                        <p:panel  style="background-color:#ebe9e9;">
+                                                                            <h:panelGrid   columns="1" style="margin-left: auto; margin-right: auto;font-size:12px;" >
+                                                                                <h:outputText value="Archivo .png" styleClass="FontBold Fs14 hardblue"/>    
+                                                                            
+
+
+
+                                                                            </h:panelGrid>
+                                                                            <h:form id="otromas" enctype="multipart/form-data">
+                                                                                <p:fileUpload id="valor" value="#{beanProcesoPagos.file}" sizeLimit="100000000" mode="simple" skinSimple="true"/>
+
+                                                                                <p:commandButton id="xml" value="Almacenar" ajax="false" actionListener="#{beanProcesoPagos.foto()}" />
+                                                                                <p:blockUI block="todo" trigger="xml" >
+                                                                                    LOADING<br />
+                                                                                    <p:graphicImage value="/imagenes/AjaxLoading.gif" 
+                                                                                                    width="100%"
+                                                                                                    height="100%"/>  
+
+                                                                                </p:blockUI>           
+                                                                            </h:form>   
+
+                                                                        </p:panel>
+
+                                                                    </p:tab>
+                                                                </p:accordionPanel><br/>
+                                                                <p:commandButton style="width:100%;font-size:20px;" ajax="false" actionListener="#{beanProcesoPagos.registrarPago()}" value="REGSITRAR PAGO"/>
+                                                            </p:column>
+                                                        </div>
+
+                                                    </div>
+                                                </p:panel>
+
+                                            </h:panelGrid>
+                                        </div>
+                                    </div>	
+                                    <div class="col-md-3">
+                                        <div class="contact_info">
+                                            <!-- <h2 style="color:black;margin-top:2px;">Promoción</h2>-->
+                                            <div class="map">
+                                                <div class="contact-form" style="background:#ebe9e9;">
+                                                    <div>
+                                                        <span>
+
+
+                                                        </span>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>				
+
+                                    <div class="clearfix"></div>		
+                                </div> <!-- end contact -->
+
+                            </p:panel> 
+                        </div>
+
+
+                    </h:form>
+                </div>
+            </div>
+        </div>
+         <ui:include  src="menu2.xhtml" />
+    </body>
+</html>

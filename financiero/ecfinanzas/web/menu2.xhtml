@@ -1,0 +1,54 @@
+<ui:composition 
+
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:jsf="http://xmlns.jcp.org/jsf"
+    xmlns:p="http://primefaces.org/ui">
+
+    <h:form >
+
+        
+        <h:panelGrid style="width:100%;height:100%"  columns="1">
+
+                           
+           
+                  
+                          <p:panel   style="background-color: #85B2CB;width:100%;height:88%">
+                    <div class="col-md-5">
+                        <div class="soc_icons">
+                            <ul class="list-unstyled">
+
+                                <li><a class="icon1" href="#"></a></li>
+                                <li><a class="icon2" href="#"></a></li>
+                                <li><a class="icon3" href="#"></a></li>
+                            </ul>	
+                        </div>
+                    </div>
+                                 </p:panel>
+
+            
+           
+                  
+                         
+                <p:outputLabel id="cerrar" rendered="false" style="color:black;font-size:20px;" value="Control Financiero Electrónico"/>
+                <!-- <h2 style="color:black;text-align:center ">Gestion Electronica De Gastos</h2>-->
+         
+    
+
+
+        </h:panelGrid>
+
+        <p:blockUI block="todo" trigger="cerrar">
+            LOADING<br />
+            <p:graphicImage value="/imagenes/AjaxLoading.gif" 
+                            width="100%"
+                            height="100%"/>  
+        </p:blockUI>
+    </h:form >
+
+
+
+
+</ui:composition>

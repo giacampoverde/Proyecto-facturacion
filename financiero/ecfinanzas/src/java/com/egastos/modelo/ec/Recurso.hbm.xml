@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20/06/2017 21:43:10 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="com.egastos.modelo.ec.Recurso" table="recurso" catalog="egastos" optimistic-lock="version">
+        <id name="idRecurso" type="java.lang.Integer">
+            <column name="idRecurso" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="recurso" class="com.egastos.modelo.ec.Recurso" fetch="select">
+            <column name="padreRecurso" />
+        </many-to-one>
+        <property name="nombreRecurso" type="string">
+            <column name="nombreRecurso" length="100" />
+        </property>
+        <property name="descripcionRecurso" type="string">
+            <column name="descripcionRecurso" length="100" />
+        </property>
+        <property name="pestaniaRecurso" type="java.lang.Boolean">
+            <column name="pestaniaRecurso" />
+        </property>
+        <property name="paginaRecurso" type="string">
+            <column name="paginaRecurso" length="100" />
+        </property>
+        <property name="perfilRecurso" type="string">
+            <column name="perfilRecurso" length="45" />
+        </property>
+        <set name="permisos" table="permiso" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="recurso" />
+            </key>
+            <one-to-many class="com.egastos.modelo.ec.Permiso" />
+        </set>
+        <set name="recursos" table="recurso" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="padreRecurso" />
+            </key>
+            <one-to-many class="com.egastos.modelo.ec.Recurso" />
+        </set>
+    </class>
+</hibernate-mapping>

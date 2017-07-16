@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20/06/2017 21:43:10 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="com.egastos.modelo.ec.Planespago" table="planespago" catalog="egastos" optimistic-lock="version">
+        <id name="idPlanesPago" type="java.lang.Integer">
+            <column name="idPlanesPago" />
+            <generator class="identity" />
+        </id>
+        <property name="valor" type="java.lang.Double">
+            <column name="valor" precision="22" scale="0" />
+        </property>
+        <property name="meses" type="java.lang.Integer">
+            <column name="meses" />
+        </property>
+        <set name="pagoses" table="pagos" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="idPlanesPago" not-null="true" />
+            </key>
+            <one-to-many class="com.egastos.modelo.ec.Pagos" />
+        </set>
+    </class>
+</hibernate-mapping>

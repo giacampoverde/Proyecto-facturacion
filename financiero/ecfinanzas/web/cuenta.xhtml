@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>     
+
+        <!-- Bootstrap -->
+        <link href="css/bootstrap.min.css" rel='stylesheet' type='text/css' />
+        <link href="css/bootstrap.css" rel='stylesheet' type='text/css' />
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
+    </h:head>
+    <ui:include  src="menu.xhtml" />
+    <body>
+        <div class="header_bg"><!-- start header -->
+            <div class="container">
+                <div  class="row header">
+
+
+
+                    <h:form id="todo" style="margin-top:2px;"  enctype="multipart/form-data">
+                        <p:ajaxStatus rendered="false" style="position:fixed;right:10px;bottom:10px">  
+                            <f:facet name="start">  
+                                <p:graphicImage value="/imagenes/ajax-loader.gif" 
+                                                width="100"
+                                                height="100"/>  
+                            </f:facet>  
+                            <f:facet name="complete">  
+                                <h:outputText value="" />  
+                            </f:facet>  
+                        </p:ajaxStatus> 
+                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                        <div  style="width:100%;background-color: #f9f2f4" class="main"><!-- start main -->
+                            <p:panel  style="background-color:white">
+
+                                <div  class="row contact"><!-- start contact -->	
+                                    <div class="col-md-3">
+                                        <div class="contact-form">
+
+
+                                        </div>
+                                    </div>	
+                                    <div class="col-md-7">
+                                        <div class="contact_info">
+                                            <!-- <h2 style="color:black;margin-top:2px;">Promoción</h2>-->
+                                            <div class="map">
+                                                <div class="contact-form" style="background:#ebe9e9;">
+                                                    <div>
+                                                        <span>
+                                                            <p:panel  style="background-color:#ebe9e9;">
+                                                                <p:panelGrid columns="2" layout="grid"  class="TexAlLeft">
+
+                                                                    <h:outputText value="Nombre usuario:" styleClass="FontBold"/>
+                                                                    <h:outputText styleClass="FontBold" value="#{beanAdministracionCuenta.usuarioAcceso.nombreUsuarioAcceso}"/>
+                                                                    <h:outputText value="Nombre:" styleClass="FontBold"/>
+                                                                    <p:inplace id="nom1"  saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionCuenta.usuarioAcceso.nombreUsuario}">
+                                                                        <p:ajax event="save" listener="#{beanAdministracionCuenta.validarNombre()}" />
+                                                                        <p:inputText maxlength="30"
+                                                                                     value="#{beanAdministracionCuenta.nombre}" />
+                                                                    </p:inplace>
+                                                                    <h:outputText rendered="false" value="Apellido:" styleClass="FontBold"/>
+                                                                    <p:inplace rendered="false" saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionCuenta.usuarioAcceso.apellidoUsuario}" >
+                                                                        <p:ajax event="save" listener="#{beanAdministracionCuenta.validarApellido()}" />
+                                                                        <p:inputText maxlength="30"
+                                                                                     value="#{beanAdministracionCuenta.apellido}" />
+                                                                    </p:inplace>
+
+                                                                    <h:outputText value="Correo principal:" styleClass="FontBold"/>
+                                                                    <p:inplace id="cor2"  saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionCuenta.usuarioAcceso.correoPrincipalUsuario}" >
+                                                                        <p:ajax event="save" listener="#{beanAdministracionCuenta.validarCorreoPrincipal()}" />
+                                                                        <p:inputText maxlength="30"
+                                                                                     value="#{beanAdministracionCuenta.correoPrincipal}" />
+                                                                    </p:inplace>
+
+                                                                    <h:outputText value="Correo adicional:" styleClass="FontBold"/>
+                                                                    <p:inplace id="cor1"  saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionCuenta.correoAdicional}" >
+                                                                        <p:ajax event="save" listener="#{beanAdministracionCuenta.validarCorreoAdicional()}" />
+                                                                        <p:inputText maxlength="30"
+                                                                                     value="#{beanAdministracionCuenta.correoAdicional}" />
+                                                                    </p:inplace>
+
+                                                                    <h:outputText value="Teléfono principal:" styleClass="FontBold"/>
+                                                                    <p:inplace id="tel2"  saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionCuenta.usuarioAcceso.telefonoPrincipalUsuario}" >
+                                                                        <p:ajax event="save" listener="#{beanAdministracionCuenta.validarTelefonoPrincipal()}" />
+                                                                        <p:inputText maxlength="20"
+                                                                                     value="#{beanAdministracionCuenta.telefonoPrincipal}" />
+                                                                    </p:inplace>
+
+                                                                    <h:outputText value="Teléfono adicional:" styleClass="FontBold"/>
+                                                                    <p:inplace id="tel"  saveLabel="Aceptar" cancelLabel="Cancelar" editor="true" emptyLabel="#{beanAdministracionCuenta.telefonoAdicional}" >
+                                                                        <p:ajax  event="save" listener="#{beanAdministracionCuenta.validarTelefonoAdicional()}" />
+                                                                        <p:inputText maxlength="20"
+                                                                                     value="#{beanAdministracionCuenta.telefonoAdicional}" />
+                                                                    </p:inplace>
+                                                                </p:panelGrid>
+                                                            </p:panel>
+                                                            <p:blockUI block="todo" trigger="tel tel2 nom1 cor1 cor2">
+                                                                LOADING<br />
+                                                                <p:graphicImage value="/imagenes/AjaxLoading.gif" 
+                                                                                width="100%"
+                                                                                height="100%"/>  
+                                                            </p:blockUI>
+                                                        </span>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>				
+
+                                    <div class="clearfix"></div>		
+                                </div> <!-- end contact -->
+                            </p:panel> 
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+      <ui:include  src="menu2.xhtml" />
+    </body>
+</html>

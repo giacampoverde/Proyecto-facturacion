@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20/06/2017 21:43:10 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="com.egastos.modelo.ec.TipoComprobanteElectronico" table="tipo_comprobante_electronico" catalog="egastos" optimistic-lock="version">
+        <id name="idTipoComprobanteElectronico" type="java.lang.Integer">
+            <column name="idTipoComprobanteElectronico" />
+            <generator class="identity" />
+        </id>
+        <property name="codigoTipoComprobanteElectronico" type="string">
+            <column name="codigoTipoComprobanteElectronico" length="2" not-null="true" />
+        </property>
+        <property name="nombreTipoComprobanteElectronico" type="string">
+            <column name="nombreTipoComprobanteElectronico" length="100" not-null="true" />
+        </property>
+        <set name="comprobanteElectronicos" table="comprobante_electronico" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="tipoComprobanteElectronico" not-null="true" />
+            </key>
+            <one-to-many class="com.egastos.modelo.ec.ComprobanteElectronico" />
+        </set>
+    </class>
+</hibernate-mapping>

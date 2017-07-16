@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20/06/2017 21:43:10 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="com.egastos.modelo.ec.Codigosverificacion" table="codigosverificacion" catalog="egastos" optimistic-lock="version">
+        <id name="idcodigosVerificacion" type="java.lang.Integer">
+            <column name="idcodigosVerificacion" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="pagos" class="com.egastos.modelo.ec.Pagos" fetch="select">
+            <column name="idpagos" not-null="true" />
+        </many-to-one>
+        <property name="codigoVerifcacion" type="string">
+            <column name="codigoVerifcacion" length="45" />
+        </property>
+        <property name="estado" type="string">
+            <column name="estado" length="2" />
+        </property>
+    </class>
+</hibernate-mapping>

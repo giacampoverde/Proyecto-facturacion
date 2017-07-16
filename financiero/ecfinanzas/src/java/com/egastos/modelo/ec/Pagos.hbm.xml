@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20/06/2017 21:43:10 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="com.egastos.modelo.ec.Pagos" table="pagos" catalog="egastos" optimistic-lock="version">
+        <id name="idpagos" type="java.lang.Integer">
+            <column name="idpagos" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="planespago" class="com.egastos.modelo.ec.Planespago" fetch="select">
+            <column name="idPlanesPago" not-null="true" />
+        </many-to-one>
+        <many-to-one name="usuarioAcceso" class="com.egastos.modelo.ec.UsuarioAcceso" fetch="select">
+            <column name="idUsuario" not-null="true" />
+        </many-to-one>
+        <property name="valorPago" type="java.lang.Double">
+            <column name="valorPago" precision="22" scale="0" />
+        </property>
+        <property name="numeroCuenta" type="string">
+            <column name="numeroCuenta" length="45" />
+        </property>
+        <property name="estadopago" type="string">
+            <column name="estadopago" length="45" />
+        </property>
+        <property name="fechaPago" type="timestamp">
+            <column name="fechaPago" length="19" />
+        </property>
+        <property name="fechaValidacion" type="timestamp">
+            <column name="fechaValidacion" length="19" />
+        </property>
+        <property name="imagenTransferencia" type="string">
+            <column name="imagenTransferencia" length="200" />
+        </property>
+        <property name="numeroAdicional" type="string">
+            <column name="numeroAdicional" length="45" />
+        </property>
+        <property name="correoAdicional" type="string">
+            <column name="correoAdicional" length="45" />
+        </property>
+        <property name="fechacaduca" type="timestamp">
+            <column name="fechacaduca" length="19" />
+        </property>
+        <property name="numeroCuentaOrigen" type="string">
+            <column name="numeroCuentaOrigen" length="45" />
+        </property>
+        <property name="numeroTransferencia" type="string">
+            <column name="numeroTransferencia" length="45" />
+        </property>
+        <set name="codigosverificacions" table="codigosverificacion" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="idpagos" not-null="true" />
+            </key>
+            <one-to-many class="com.egastos.modelo.ec.Codigosverificacion" />
+        </set>
+    </class>
+</hibernate-mapping>

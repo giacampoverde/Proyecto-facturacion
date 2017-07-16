@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20/06/2017 21:43:10 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="com.egastos.modelo.ec.Permiso" table="permiso" catalog="egastos" optimistic-lock="version">
+        <id name="idPermiso" type="java.lang.Integer">
+            <column name="idPermiso" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="perfil" class="com.egastos.modelo.ec.Perfil" fetch="select">
+            <column name="perfil" />
+        </many-to-one>
+        <many-to-one name="recurso" class="com.egastos.modelo.ec.Recurso" fetch="select">
+            <column name="recurso" />
+        </many-to-one>
+    </class>
+</hibernate-mapping>

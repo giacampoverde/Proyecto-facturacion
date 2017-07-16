@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>     
+
+        <!-- Bootstrap -->
+        <link href="css/bootstrap.min.css" rel='stylesheet' type='text/css' />
+        <link href="css/bootstrap.css" rel='stylesheet' type='text/css' />
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+         <link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
+    </h:head>
+      <ui:include  src="menu.xhtml" />
+    <body>
+
+        <div class="header_bg"><!-- start header -->
+            <div class="container">
+                <div class="row header">
+                   
+                    <!-- <nav class="navbar" role="navigation">-->
+                    <!--  <ui:include src="topbar.xhtml" />-->
+                    <!--  </nav>-->
+               
+
+
+                    <h:form id="todo"   enctype="multipart/form-data">
+                                <script>
+                            function soloNumeros(evt)
+                            {
+                                tecla = (document.all) ? evt.keyCode : evt.which;
+                                //Tecla de retroceso para borrar, siempre la permite
+                                if (tecla === 8)
+                                    return true;
+                                if (tecla == 46)
+                                    return true;
+                                // Patron de entrada, en este caso solo acepta letras
+                                patron = /\d/;
+
+                                tecla_final = String.fromCharCode(tecla);
+                                return patron.test(tecla_final);
+
+                                //Solo números patron = /\d/;
+
+                                //Números y letras patron = /\w/;
+
+                                //No acepta números patron = /\D/;
+
+                            }
+
+                        </script>
+                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                        <div  style="width:100%;background-color: #f9f2f4" class="main"><!-- start main -->
+
+                            <p:panel  style="background-color:white">
+
+                                <div  class="row contact"><!-- start contact -->	
+                                    <div class="col-md-4">
+                                        <div  class="contact-form">
+
+                                            <p:accordionPanel multiple="true">                                            
+                                                <p:tab    title="Filtros De Busqueda">
+                                                    <p:panel  style="background-color:#ebe9e9;">
+                                                        <h:panelGrid   columns="1"  style="margin-left: auto; margin-right: auto;border:0px none;background:none;width:90%" class="TexAlCenter MarAuto">
+
+                                                            <h:outputText value="Valor:" styleClass="FontBold Fs14 hardblue"/>  
+                                                            <p:selectOneMenu style="width:100%" id="som-fechas2" value="#{beanReportes.opcionValores}" effect="drop" >
+                                                                <f:selectItem itemLabel="Todos" itemValue="1" />
+                                                                <f:selectItem itemLabel="De 0 a $100" itemValue="2" />
+                                                                <f:selectItem itemLabel="De $100 a $500" itemValue="4" />  
+                                                                <f:selectItem itemLabel="Mayor a $500" itemValue="5" />  
+                                                                <f:selectItem itemLabel="Rango" itemValue="6"/> 
+                                                                <p:ajax event="valueChange" listener="#{beanReportes.abrirValores()}" update="valores"/>
+                                                            </p:selectOneMenu>
+                                                        </h:panelGrid>
+                                                        <h:panelGrid id="valores"  columns="1"  style="margin-left: auto; margin-right: auto;border:0px none;background:none;width:80%" class="TexAlCenter MarAuto">
+                                                            <p:panelGrid  rendered="#{beanReportes.apareceValores}"   columns="1" layout="grid" style="border:0px none;background:none;width:100%" class="TexAlCenter MarAuto">
+                                                                <h:outputText  value="Desde:" styleClass="FontBold Fs14 hardblue"/>  
+                                                                <h:inputText onkeypress="return soloNumeros(event);" id="ot-valorI" value="#{beanReportes.valorInicial}" style="width:100%" styleClass="FontBold Fs12 hardblue" />
+                                                                <h:outputText value="Hasta:" styleClass="FontBold Fs14 hardblue"/>  
+                                                                <h:inputText onkeypress="return soloNumeros(event);" id="ot-valorF" value="#{beanReportes.valorFinal}" style="width:100%" styleClass="FontBold Fs12 hardblue" />
+                                                            </p:panelGrid><br/>
+                                                        </h:panelGrid>
+                                                        <h:panelGrid   columns="1"  style="margin-left: auto; margin-right: auto;border:0px none;background:none;width:80%" class="TexAlCenter MarAuto">
+                                                            <h:outputText value="Fecha:" styleClass="FontBold Fs14 hardblue"/>  
+                                                            <p:selectOneMenu style="width:100%" id="som-fechas" value="#{beanReportes.seleccionPeriodoTiempo}" effect="drop" >
+                                                                <f:selectItem itemLabel="Todos" itemValue="1" />
+                                                                <f:selectItem itemLabel="Hoy" itemValue="2" />
+                                                                <f:selectItem itemLabel="Último mes" itemValue="4" />  
+                                                                <f:selectItem itemLabel="Periodo" itemValue="6"/> 
+                                                                <p:ajax event="valueChange" listener="#{beanReportes.abrirDialogRangoFechas()}" update="fechass"/>
+                                                            </p:selectOneMenu>
+
+                                                        </h:panelGrid>
+                                                        <h:panelGrid id="fechass" columns="1" style="margin-left: auto; margin-right: auto;" >
+
+                                                            <p:panelGrid   rendered="#{beanReportes.apareceRago}" columns="1" layout="grid" style="border:0px none;background:none;width:100%" class="TexAlCenter MarAuto">
+                                                                <h:outputText value="Desde:" styleClass="FontBold Fs14 hardblue"/>  
+                                                                <h:inputText id="ot-fecha-inicial" value="#{beanReportes.fechaInicialS}" style="width:100%" styleClass="FontBold Fs12 hardblue" />
+                                                                <h:outputText value="Hasta:" styleClass="FontBold Fs14 hardblue"/>  
+                                                                <h:inputText id="ot-fecha-final" value="#{beanReportes.fechaFinalS}" style="width:100%" styleClass="FontBold Fs12 hardblue" />
+                                                            </p:panelGrid><br/>
+
+                                                        </h:panelGrid>
+                                                    </p:panel>
+
+               
+                                                </p:tab>                                                  
+                                            </p:accordionPanel>
+
+
+                                        </div>
+                                        <p:spacer></p:spacer>
+                                    </div>	
+
+
+                                    <div class="col-md-8">
+                                        <div class="contact_info">
+                                            <!-- <h2 style="color:black;margin-top:2px;">Promoción</h2>-->
+                                            <div class="map">
+                                                <div class="contact-form" style="background:#ebe9e9;">
+                                                    <div>
+                                                        <span>
+                                                            <h:panelGrid    columns="1" style="margin-left:auto ;width:100% ; margin-right: auto;">
+                                                                <p:accordionPanel activeIndex="false"  multiple="true">
+                                                                    <p:tab    title="Reportes Totales">
+                                                                        <p:panel  style="background-color:#ebe9e9;">
+                                                                            <h:panelGrid  columns="1" style="margin-left: auto; margin-right: auto;font-size:12px;" >
+                                                                                <p:commandButton ajax="false" value="Generar Reporte"  action="#{beanReportes.generarReporte(1)}"/>
+                                                                                <h:commandLink rendered="false" title="PDF"                                   
+                                                                                           action="#{beanReportes.generarReporte(1)}" target="_blank">
+                                                                                <h:graphicImage value="/imagenes/pdf_icon.png"  width="20px" height="25px"/>
+                               
+                                                                            </h:commandLink> 
+                                                                            </h:panelGrid>
+                                                                        </p:panel>
+                                                                    </p:tab>
+                                                                </p:accordionPanel>
+                                                                <p:accordionPanel activeIndex="false"  multiple="true">
+                                                                    <p:tab    title="Reportes Por Empresa">
+                                                                        <p:panel  style="background-color:#ebe9e9;">
+                                                                            <h:panelGrid  columns="1" style="margin-left: auto; margin-right: auto;font-size:12px;" >
+                                                                                <h:outputText value="Busqueda Empresa" styleClass="FontBold Fs14 hardblue"/>  
+                                                                                <p:panel style="width:100%">
+                                                                                    <p:inputText value="#{beanReportes.rucEmpresa}" onkeypress="return soloNumeros(event);"  placeholder="RUC" style="width:60%" styleClass="FontBold Fs14 hardblue"/>
+                                                                                    <p:commandButton id="bus"  value="Buscar" action="#{beanReportes.verempresa()}"  update="vale"/>
+                                                                                    <br/>
+                                                                                    <p:outputLabel style="margin-top:10px" id="vale" value="#{beanReportes.detalleEmpresa}"/>
+                                                                                 </p:panel>
+                                                                                <p:commandButton value="Generar Reporte" ajax="false" action="#{beanReportes.generarReporte(3)}"/>
+                                                                            </h:panelGrid>
+                                                                              <p:blockUI block="todo" trigger="bus">
+                                                                                LOADING<br />
+                                                                                <p:graphicImage value="/imagenes/AjaxLoading.gif" 
+                                                                                                width="100%"
+                                                                                                height="100%"/>  
+                                                                            </p:blockUI>
+                                                                        </p:panel>
+                                                                    </p:tab>
+                                                                </p:accordionPanel>
+                                                                      <p:accordionPanel activeIndex="false"  multiple="true">
+                                                                    <p:tab    title="Reportes Por Secciones">
+                                                                        <p:panel  style="background-color:#ebe9e9;">
+                                                                            <h:panelGrid  columns="1" style="margin-left: auto; margin-right: auto;font-size:12px;" >
+                                                                                <p:commandButton ajax="false" value="Generar Reporte"  action="#{beanReportes.generarReporte(2)}"/>
+                                                                                <h:commandLink rendered="false" title="PDF"                                   
+                                                                                           action="#{beanReportes.generarReporte(2)}" target="_blank">
+                                                                                <h:graphicImage value="/imagenes/pdf_icon.png"  width="20px" height="25px"/>
+                               
+                                                                            </h:commandLink> 
+                                                                            </h:panelGrid>
+                                                                        </p:panel>
+                                                                    </p:tab>
+                                                                </p:accordionPanel>
+
+
+                                                            </h:panelGrid>
+
+                                                        </span>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>				
+
+                                    <div class="clearfix"></div>		
+                                </div> <!-- end contact -->
+                            </p:panel> 
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+      <ui:include  src="menu2.xhtml" />
+    </body>
+</html>
