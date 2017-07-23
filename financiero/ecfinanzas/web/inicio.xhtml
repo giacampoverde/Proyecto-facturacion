@@ -69,7 +69,7 @@ and open the template in the editor.
                                     <div class="col-md-4">
 
                                         <div  class="contact-form">
-                                            <p:accordionPanel  multiple="true">
+                                            <p:accordionPanel activeIndex="false" multiple="true">
                                                 <p:tab    title="Buscar">
                                                     <p:panel id="busqued"  style="background-color:#ebe9e9;">
                                                         <h:panelGrid   columns="1"  style="margin-left: auto; margin-right: auto;border:0px none;background:none;width:90%" class="TexAlCenter MarAuto">
@@ -100,7 +100,7 @@ and open the template in the editor.
                                                                 <f:selectItem itemLabel="Nota de Crédito" itemValue="04" />
                                                                 <f:selectItem itemLabel="Retención" itemValue="07" />
                                                             </p:selectOneMenu>
-                                                            <h:outputText value="Fecha Emisión:" styleClass="FontBold Fs14 hardblue"/>  
+                                                            <h:outputText value="Fecha:" styleClass="FontBold Fs14 hardblue"/>  
                                                             <p:selectOneMenu style="width:100%" id="som-fechas" value="#{beanComprobantesRecibidos.seleccionPeriodoTiempo}" effect="drop" >
                                                                 <f:selectItem itemLabel="Todos" itemValue="1" />
                                                                 <f:selectItem itemLabel="Hoy" itemValue="2" />
@@ -135,7 +135,6 @@ and open the template in the editor.
                                                     </p:panel>
                                                 </p:tab>
                                             </p:accordionPanel>
-                                         
 
 
 
@@ -174,14 +173,14 @@ and open the template in the editor.
                                                                         <p:column style="font-weight: bold" headerText="Tipo" width="8%">
                                                                             <h:outputText style="font-weight: lighter" value="#{comprobante_electronico.comprobanteElectronico.tipoComprobanteElectronico.nombreTipoComprobanteElectronico}" />
                                                                         </p:column>
-                                                                        <p:column style="font-weight: bold" headerText="Valor" width="8%">
+                                                                        <p:column style="font-weight: bold" headerText="valor" width="8%">
                                                                             <h:outputText style="font-weight: lighter" value="#{comprobante_electronico.comprobanteElectronico.valorTotalFacturaComprobanteElectronico}" />
                                                                         </p:column>
                                                                         <p:column style="font-weight: bold" headerText="PDF" width="5%" class="TexAlCenter">
 
                                                                             <h:commandLink  title="PDF"    rendered="#{!(comprobante_electronico.comprobanteElectronico.archivoRespuestaSricomprobanteElectronico==null)}"                               
                                                                                             action="#{beanComprobantesRecibidos.descargarRIDE()}" target="_blank">
-                                                                                <h:graphicImage value="/imagenes/pdf_icon.png"  width="20px" height="25px"/>
+                                                                                <h:graphicImage value="/imagenes/PDFIcon.png"  width="20px" height="25px"/>
                                                                                 <f:setPropertyActionListener value="#{comprobante_electronico}"
                                                                                                              target="#{beanComprobantesRecibidos.comprobanteElectronicoSeleccionado}"/>
                                                                             </h:commandLink>   
@@ -195,7 +194,7 @@ and open the template in the editor.
                                                                         <p:column style="font-weight: bold" headerText="XML" width="5%" class="TexAlCenter">
                                                                             <h:commandLink title="XML" rendered="#{!(comprobante_electronico.comprobanteElectronico.archivoRespuestaSricomprobanteElectronico==null)}"                                              
                                                                                            action="#{beanComprobantesRecibidos.descargarRespuestaXML()}" >
-                                                                                <h:graphicImage value="/imagenes/xml.png"  width="20px" height="25px"/>
+                                                                                <h:graphicImage value="/imagenes/XMLIcon.png"  width="20px" height="25px"/>
                                                                                 <f:setPropertyActionListener value="#{comprobante_electronico}"
                                                                                                              target="#{beanComprobantesRecibidos.comprobanteElectronicoSeleccionado}"/>
                                                                             </h:commandLink>
@@ -242,10 +241,22 @@ and open the template in the editor.
                 </div>
             </div>
         </div>
-       <!--578096 start footer_btm 85B2CB -->
-           
-             <ui:include  src="menu2.xhtml" />
-         
-       
+        <div style="background-color: #85B2CB" class="footer_btm"><!-- start footer_btm -->
+            <div >
+                <div class="row  footer1">
+                    <div class="col-md-5">
+                        <div class="soc_icons">
+                            <ul class="list-unstyled">
+
+                                <li><a class="icon1" href="#"></a></li>
+                                <li><a class="icon2" href="#"></a></li>
+                                <li><a class="icon3" href="#"></a></li>
+                            </ul>	
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </body>
 </html>

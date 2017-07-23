@@ -30,7 +30,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -58,9 +57,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hibernate.Session;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultUploadedFile;
@@ -114,19 +110,9 @@ public class BeanComprobantesRecibidos implements Serializable {
     private UploadedFile txtfile;
     private boolean apareceDialog;
     private boolean mensaje90;
-    private boolean estadoindex;
-    private  UsuarioAcceso us;
 
     public boolean isMensaje90() {
         return mensaje90;
-    }
-
-    public boolean isEstadoindex() {
-        return estadoindex;
-    }
-
-    public void setEstadoindex(boolean estadoindex) {
-        this.estadoindex = estadoindex;
     }
 
     public void setMensaje90(boolean mensaje90) {
@@ -149,6 +135,7 @@ public class BeanComprobantesRecibidos implements Serializable {
         this.txtfile = txtfile;
     }
 
+    
     public UploadedFile getFile() {
         return file;
     }
@@ -156,7 +143,7 @@ public class BeanComprobantesRecibidos implements Serializable {
     public void setFile(UploadedFile file) {
         this.file = file;
     }
-
+    
     public String getNombreProvedor() {
         return nombreProvedor;
     }
@@ -321,24 +308,23 @@ public class BeanComprobantesRecibidos implements Serializable {
      * Creates a new instance of BeanComprobantesRecibidos
      */
     public BeanComprobantesRecibidos() {
-        estadoindex = true;
         ControlSesion ms = new ControlSesion();
-        if (!ms.obtenerEstadoSesionUsuario()) {
+            if (!ms.obtenerEstadoSesionUsuario()) {
 
-            BeanDireccionamiento nosesion = new BeanDireccionamiento();
-            nosesion.direccionarLogin();
-        }
-        apareceDialog = false;
+                BeanDireccionamiento nosesion=new BeanDireccionamiento();
+                nosesion.direccionarLogin();
+            }
+        apareceDialog=false;
         try {
             seccion = "0";
             ControlSesion sesion = new ControlSesion();
-
-            DAOUsuarioAcceso usuarioda = new DAOUsuarioAcceso();
-             us = usuarioda.obtenerUsuarioAccesoPorId(Integer.parseInt(sesion.obtenerIdUsuarioSesionActiva()));
-            if (us != null) {
-                if (us.getMensajeOpcional().equals("1")) {
-                    apareceDialog = true;
-                }
+            
+            DAOUsuarioAcceso usuarioda=new DAOUsuarioAcceso();
+            UsuarioAcceso us=usuarioda.obtenerUsuarioAccesoPorId(Integer.parseInt(sesion.obtenerIdUsuarioSesionActiva()));
+            if(us!=null){
+             if(us.getMensajeOpcional().equals("1")){
+                apareceDialog=true;
+            }
             }
 //            guardarLogRegistros("Acceso al modulo  Comprobantes Recibidos");
             cargarTablaComprobantesRecibidosAutorizados();
@@ -347,33 +333,32 @@ public class BeanComprobantesRecibidos implements Serializable {
         }
 
     }
-
-    public void actualzarCerrar() {
+     public void actualzarCerrar(){
         try {
-            if (mensaje90) {
-                ControlSesion control = new ControlSesion();
-                control.obtenerIdUsuarioSesionActiva();
-                DAOUsuarioAcceso usuarioAc = new DAOUsuarioAcceso();
-                usuarioAc.actualizarEstaMensaje(Integer.parseInt(control.obtenerIdUsuarioSesionActiva()), "2");
-                apareceDialog = false;
-                RequestContext.getCurrentInstance().execute("PF('dlg2').hide();");
-            } else {
-                RequestContext.getCurrentInstance().execute("PF('dlg2').hide();");
+            if(mensaje90){
+            ControlSesion control=new ControlSesion();
+            control.obtenerIdUsuarioSesionActiva();
+            DAOUsuarioAcceso usuarioAc=new DAOUsuarioAcceso();
+            usuarioAc.actualizarEstaMensaje(Integer.parseInt(control.obtenerIdUsuarioSesionActiva()),"2");
+            apareceDialog=false;
+            RequestContext.getCurrentInstance().execute("PF('dlg2').hide();");
+            }else{
+            RequestContext.getCurrentInstance().execute("PF('dlg2').hide();");
             }
-
-//          MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "MOSTRAR MENSAJE DE QUE SE DEBE ALMACENAR ANTES DE CUMPLIR 3 MESES .");
+            
+//          MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "MOSTRAR MENSAJE DE QUE SE DEBE ALMACENAR ANTES DE CUMPLIR 3 MESES .");
         } catch (Exception ex) {
             Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
-    public void mostrarMensaje() {
-        if (apareceDialog) {
-            RequestContext.getCurrentInstance().execute("PF('dlg2').show();");
+    
+    public void mostrarMensaje(){
+        if(apareceDialog){
+        RequestContext.getCurrentInstance().execute("PF('dlg2').show();");
         }
-//          MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "MOSTRAR MENSAJE DE QUE SE DEBE ALMACENAR ANTES DE CUMPLIR 3 MESES .");
+//          MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "MOSTRAR MENSAJE DE QUE SE DEBE ALMACENAR ANTES DE CUMPLIR 3 MESES .");
     }
-
+    
 //@PostConstruct
 //    public void init() {
 //    
@@ -432,14 +417,9 @@ public class BeanComprobantesRecibidos implements Serializable {
                                             DAOTipoComprobanteElectronico daotipo = new DAOTipoComprobanteElectronico();
                                             ComprobanteElectronico respuestaguarado = a.guardarComprobanteElectronico("", "", "", "", "", nombreProvedor, nombreProvedor, rucempresa, "1", "1", detalleFactua, fecha, new Date(), "" + valorfactura, daotipo.obtenerTipoComprobanteElectronicoPorCodigo("01"), null, null, seccion);
                                             DAOReceptor recep = new DAOReceptor();
-                                            Receptor r = recep.obtenerReceptorPorIdentificacion(ms.obtenerRUCEmpresaSesionActiva());
-                                            if (r == null) {
-                                                DAOUsuarioAcceso usuario=new DAOUsuarioAcceso();
-                                                r = recep.guardarReceptor(us.getIdentificacionUsuario(),us.getNombreUsuario()+" "+us.getApellidoUsuario());
-                                            }
-                                            AsignacionComprobanteElectronico respu = b.guardarAsignacionComprobanteElectronico(respuestaguarado, r);
+                                            AsignacionComprobanteElectronico respu = b.guardarAsignacionComprobanteElectronico(respuestaguarado, recep.obtenerReceptorPorIdentificacion(ms.obtenerRUCEmpresaSesionActiva()));
                                             if (respu != null) {
-                                                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_INFO, "Almacenado Correctamente.");
+                                                MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_INFO, "Almacenado Correctamente.");
                                                 nombreProvedor = "";
                                                 rucempresa = "";
                                                 valorfactura = 0.0;
@@ -449,37 +429,37 @@ public class BeanComprobantesRecibidos implements Serializable {
                                                 mes = 0;
                                                 dia = 0;
                                             } else {
-                                                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "No se pudo Almacenado .");
+                                                MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "No se pudo Almacenado .");
                                             }
                                         } catch (Exception ex) {
                                             Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.SEVERE, null, ex);
                                         }
 
                                     } else {
-                                        MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Ingrese el nombre de proveedor.");
+                                        MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Ingrese el nombre de proveedor.");
                                     }
                                 } else {
-                                    MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "El detalle debe contener minimo 12 caracteres.");
+                                    MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "El detalle debe contener minimo 12 caracteres.");
                                 }
 
                             } else {
-                                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Ingrese el detalle de la factura.");
+                                MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Ingrese el detalle de la factura.");
                             }
                         } else {
-                            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "El valor de la factura debe ser mayor a cero.");
+                            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "El valor de la factura debe ser mayor a cero.");
                         }
 
                     } else {
-                        MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "El ruc de la empresa no puede estar vacio.");
+                        MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "El ruc de la empresa no puede estar vacio.");
                     }
                 } else {
-                    MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "El dia no puede ser mayor a 31 ni menor a 0.");
+                    MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "El dia no puede ser mayor a 31 ni menor a 0.");
                 }
             } else {
-                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "El mes no peude ser mayor a 12 ni menor a 0.");
+                MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "El mes no peude ser mayor a 12 ni menor a 0.");
             }
         } else {
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Por favor seleccione una sección para el  comprobante.");
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Por favor seleccione una sección para el  comprobante.");
         }
     }
 
@@ -492,29 +472,31 @@ public class BeanComprobantesRecibidos implements Serializable {
                     if (clave.length() == 49) {
                         ComprobanteElectronico respuestacomprobante = daocomrpobante.obtenerComprobatePorCA(clave);
                         if (respuestacomprobante != null) {
-                            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_INFO, "El comprobante ya se ecuentra almacenado.");
+                            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_INFO, "El comprobante ya se ecuentra almacenado.");
                         } else {
                             respuestaAlprocesar = ProcesoAlmacenamientoClaveAcceso(clave, seccion);
                             if (respuestaAlprocesar) {
-                                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_INFO, "Almacenado correctamente.");
+                                MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_INFO, "Almacenado correctamente.");
                                 clave = "";
                             } else {
-                                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Sri no responde ,le recordamos que sus facturas solo pueden ser almacenas hasta 90 dias despues de su emisión");
+                                MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Sri no responde ,le recordamos que sus facturas solo pueden ser almacenas hasta 90 dias despues de su emisión");
                             }
                         }
                     } else {
-                        MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "La clave de acceso debe contener 49 digitos.");
+                        MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "La clave de acceso debe contener 49 digitos.");
                     }
                 } else {
-                    MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Ingrese una clave de acceso.");
+                    MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Ingrese una clave de acceso.");
                 }
             } catch (Exception ex) {
                 Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Por favor seleccione una sección para el comprobante.");
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Por favor seleccione una sección para el comprobante.");
         }
     }
+
+
 
     public void lecturaArchivoTxt() {
         try {
@@ -553,12 +535,12 @@ public class BeanComprobantesRecibidos implements Serializable {
             }
             if (lineastxt.size() > 0) {
                 if (contadorclavesAcceso == lineastxt.size()) {
-                    MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_INFO, "Archivo Procesado exitosamente.");
+                    MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_INFO, "Archivo Procesado exitosamente.");
                 } else {
-                    MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "No se proceso todo el contenido del txt.");
+                    MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "No se proceso todo el contenido del txt.");
                 }
             } else {
-                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "El Archivo esta vacio.");
+                MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "El Archivo esta vacio.");
             }
         } catch (Exception ex) {
             Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.SEVERE, null, ex);
@@ -608,193 +590,157 @@ public class BeanComprobantesRecibidos implements Serializable {
         }
         return clavesAcceso;
     }
-
-    public void cargaxml() {
-        Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.INFO, "Lectura De Xml.");
+    public void cargaxml()  {
         if (!seccion.equals("0")) {
-            if (!file.getFileName().equals("")) {
-                if (file.getFileName().substring((file.getFileName().length() - 3), file.getFileName().length()).equals("xml")
-                        || file.getFileName().substring((file.getFileName().length() - 3), file.getFileName().length()).equals("XML")
-                        || file.getFileName().substring((file.getFileName().length() - 3), file.getFileName().length()).equals("Xml")) {
-                    try {
-                        Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.INFO, "Archivo Valido.");
-                        Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.INFO, file.getFileName());
-//                        txtContactos = new File("/opt/xml/xmldescarga.xml");
-//                        txtContactos = new File("C:\\xml.xml");
-                        txtContactos = new File(Valores.VALOR_DIRECTORIO_CREACION_XMLS + "xml.xml");
-                        Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.INFO, "txt Contactos creado.");
-                        FileOutputStream fos = new FileOutputStream(txtContactos);
-                        Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.INFO, "FileOutputStream.");
-                        fos.write(file.getContents());
-                        Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.INFO, "file.getContents()");
-                        fos.flush();
-                        Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.INFO, "flush");
-                        fos.close();
-                        Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.INFO, "close");
-                        lecturaxml(file.getContents());
-                        file = new DefaultUploadedFile();
-                    } catch (IOException ex) {
-                        Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.INFO, "Error file");
-                    }
-                } else {
-                    file = new DefaultUploadedFile();
-                    MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Formato de archivo incorrecto");
-                }
-
-            } else {
-                file = new DefaultUploadedFile();
-                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "No ha cargador un archivo xml.");
+                if(!file.getFileName().equals("")){
+                    if(file.getFileName().substring((file.getFileName().length()-3),file.getFileName().length()).equals("xml")
+                      ||file.getFileName().substring((file.getFileName().length()-3),file.getFileName().length()).equals("XML")
+                      ||file.getFileName().substring((file.getFileName().length()-3),file.getFileName().length()).equals("Xml")){
+            try {
+                txtContactos = new File(file.getFileName());
+                FileOutputStream fos = new FileOutputStream(txtContactos);
+                fos.write(file.getContents());
+                fos.flush();
+                fos.close();
+                lecturaxml(file.getContents());
+                 file=new DefaultUploadedFile();
+            } catch (IOException ex) {
             }
+                    }else{
+                         file=new DefaultUploadedFile();
+           MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Formato de archivo incorrecto");    
+                    }
+            
         } else {
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Por favor seleccione una sección para el comprobante.");
+                     file=new DefaultUploadedFile();
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "No ha cargador un archivo xml.");
+        }
+                   } else {
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Por favor seleccione una sección para el comprobante.");
         }
     }
-
-    public void realizaAccion() {
+    public void realizaAccion(){
         System.out.println(seccion);
     }
-
-    public void cargaxml2(FileUploadEvent a) {
+    public void cargaxml2(FileUploadEvent a)  {
         if (!seccion.equals("0")) {
-            if (!a.getFile().getFileName().equals("")) {
-                if (a.getFile().getFileName().substring((a.getFile().getFileName().length() - 3), a.getFile().getFileName().length()).equals("xml")
-                        || a.getFile().getFileName().substring((a.getFile().getFileName().length() - 3), a.getFile().getFileName().length()).equals("XML")
-                        || a.getFile().getFileName().substring((a.getFile().getFileName().length() - 3), a.getFile().getFileName().length()).equals("Xml")) {
-                    try {
-                        txtContactos = new File(a.getFile().getFileName());
-                        FileOutputStream fos = new FileOutputStream(txtContactos);
-                        fos.write(a.getFile().getContents());
-                        fos.flush();
-                        fos.close();
-                        lecturaxml(a.getFile().getContents());
+                if(!a.getFile().getFileName().equals("")){
+                    if(a.getFile().getFileName().substring((a.getFile().getFileName().length()-3),a.getFile().getFileName().length()).equals("xml")
+                      ||a.getFile().getFileName().substring((a.getFile().getFileName().length()-3),a.getFile().getFileName().length()).equals("XML")
+                      ||a.getFile().getFileName().substring((a.getFile().getFileName().length()-3),a.getFile().getFileName().length()).equals("Xml")){
+            try {
+                txtContactos = new File(a.getFile().getFileName());
+                FileOutputStream fos = new FileOutputStream(txtContactos);
+                fos.write(a.getFile().getContents());
+                fos.flush();
+                fos.close();
+                lecturaxml(a.getFile().getContents());
 //                 file=new DefaultUploadedFile();
-                    } catch (IOException ex) {
-                    }
-                } else {
-                    file = new DefaultUploadedFile();
-                    MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Formato de archivo incorrecto");
-                }
-
-            } else {
-                file = new DefaultUploadedFile();
-                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "No ha cargador un archivo xml.");
+            } catch (IOException ex) {
             }
+                    }else{
+                         file=new DefaultUploadedFile();
+           MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Formato de archivo incorrecto");    
+                    }
+            
         } else {
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Por favor seleccione una sección para el comprobante.");
+                     file=new DefaultUploadedFile();
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "No ha cargador un archivo xml.");
+        }
+   } else {
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Por favor seleccione una sección para el comprobante.");
         }
     }
-
-    public void cargatxtclavesAcceso2(FileUploadEvent a) {
-        if (!seccion.equals("0")) {
-            if (!a.getFile().getFileName().equals("")) {
-                if (a.getFile().getFileName().substring((a.getFile().getFileName().length() - 3), a.getFile().getFileName().length()).equals("txt")
-                        || a.getFile().getFileName().substring((a.getFile().getFileName().length() - 3), a.getFile().getFileName().length()).equals("TXT")
-                        || a.getFile().getFileName().substring((a.getFile().getFileName().length() - 3), a.getFile().getFileName().length()).equals("Txt")) {
-                    try {
-
-                        txtContactos = new File(a.getFile().getFileName());
-                        FileOutputStream fos = new FileOutputStream(txtContactos);
-                        fos.write(a.getFile().getContents());
-                        fos.flush();
-                        fos.close();
-                        lecturaArchivoTxt();
+    
+    
+            public void cargatxtclavesAcceso2(FileUploadEvent a)  {
+       if (!seccion.equals("0")) {
+ if(!a.getFile().getFileName().equals("")){
+     if(a.getFile().getFileName().substring((a.getFile().getFileName().length()-3),a.getFile().getFileName().length()).equals("txt")
+                      ||a.getFile().getFileName().substring((a.getFile().getFileName().length()-3),a.getFile().getFileName().length()).equals("TXT")
+                      ||a.getFile().getFileName().substring((a.getFile().getFileName().length()-3),a.getFile().getFileName().length()).equals("Txt")){
+            try {
+                
+                txtContactos = new File(a.getFile().getFileName());
+                FileOutputStream fos = new FileOutputStream(txtContactos);
+                fos.write(a.getFile().getContents());
+                fos.flush();
+                fos.close();
+                lecturaArchivoTxt();
 //                a.getFile()=new DefaultUploadedFile();
-                    } catch (IOException ex) {
+            } catch (IOException ex) {
+            }
+             }else{
+           MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Formato de archivo incorrecto"); 
+            txtfile=new DefaultUploadedFile();
                     }
-                } else {
-                    MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Formato de archivo incorrecto");
-                    txtfile = new DefaultUploadedFile();
-                }
-
-            } else {
-                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "No ha cargador un archivo txt.");
-                txtfile = new DefaultUploadedFile();
-            }
+            
         } else {
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Por favor seleccione una sección para el comprobante.");
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "No ha cargador un archivo txt.");
+             txtfile=new DefaultUploadedFile();
+        }
+   } else {
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Por favor seleccione una sección para el comprobante.");
         }
     }
-
-    public void cargatxtclavesAcceso() {
+    
+    
+        public void cargatxtclavesAcceso()  {
 //        if (!seccion.equals("0")) {
-        if (!txtfile.getFileName().equals("")) {
-            if (txtfile.getFileName().substring((file.getFileName().length() - 3), file.getFileName().length()).equals("txt")
-                    || txtfile.getFileName().substring((file.getFileName().length() - 3), file.getFileName().length()).equals("TXT")
-                    || txtfile.getFileName().substring((file.getFileName().length() - 3), file.getFileName().length()).equals("Txt")) {
-                try {
-
-                    txtContactos = new File(txtfile.getFileName());
-                    FileOutputStream fos = new FileOutputStream(txtContactos);
-                    fos.write(txtfile.getContents());
-                    fos.flush();
-                    fos.close();
-                    lecturaArchivoTxt();
-                    txtfile = new DefaultUploadedFile();
-                } catch (IOException ex) {
-                }
-            } else {
-                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Formato de archivo incorrecto");
-                txtfile = new DefaultUploadedFile();
+ if(!txtfile.getFileName().equals("")){
+     if(txtfile.getFileName().substring((file.getFileName().length()-3),file.getFileName().length()).equals("txt")
+                      ||txtfile.getFileName().substring((file.getFileName().length()-3),file.getFileName().length()).equals("TXT")
+                      ||txtfile.getFileName().substring((file.getFileName().length()-3),file.getFileName().length()).equals("Txt")){
+            try {
+                
+                txtContactos = new File(txtfile.getFileName());
+                FileOutputStream fos = new FileOutputStream(txtContactos);
+                fos.write(txtfile.getContents());
+                fos.flush();
+                fos.close();
+                lecturaArchivoTxt();
+                txtfile=new DefaultUploadedFile();
+            } catch (IOException ex) {
             }
-
+             }else{
+           MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Formato de archivo incorrecto"); 
+            txtfile=new DefaultUploadedFile();
+                    }
+            
         } else {
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "No ha cargador un archivo txt.");
-            txtfile = new DefaultUploadedFile();
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "No ha cargador un archivo txt.");
+             txtfile=new DefaultUploadedFile();
         }
 
     }
-
-    public void pruebaarchivar(FileUploadEvent event) throws FileNotFoundException, IOException {
-
-        byte[] respu = TransformadorArchivos.byteCompr2(event.getFile().getContents(), Valores.VALOR_DIRECTORIO_CREACION_XMLS + RandomStringUtils.randomAlphanumeric(10).concat(".xml"));
-        txtContactos = new File("C:\\" + event.getFile().getFileName());
-        FileOutputStream fos = new FileOutputStream(txtContactos);
-        fos.write(respu);
-        fos.flush();
-        fos.close();
-
+    
+    public void pruebaarchivar(FileUploadEvent event) throws FileNotFoundException, IOException{
+              
+         byte[] respu = TransformadorArchivos.byteCompr2(event.getFile().getContents(), Valores.VALOR_DIRECTORIO_CREACION_XMLS + RandomStringUtils.randomAlphanumeric(10).concat(".xml")); 
+          txtContactos = new File("C:\\"+event.getFile().getFileName());
+                FileOutputStream fos = new FileOutputStream(txtContactos);
+                fos.write(respu);
+                fos.flush();
+                fos.close();
+         
     }
-
     public void lecturaxml(byte[] evento) {
-        boolean guardado = false;
-        elementos elem = null;
-        Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.INFO, "Lectura De Xml Evento.");
         String claveDeAcceso = "";
         boolean respuestaAlprocesar = false;
         claveDeAcceso = validarClaveAccesoNombre(txtContactos.getName());
-
         if (claveDeAcceso.equals("")) {
-            elem = obtenervarios(evento);
-            claveDeAcceso = elem.getClaveAcceso();
-            if (claveDeAcceso != null && !claveDeAcceso.equals("")) {
-                Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.INFO, "Lectura De Clave De Acceso.");
-                try {
-                    DAOComprobanteElectronico dao_comprobante_electronico = new DAOComprobanteElectronico();
-                    ComprobanteElectronico ce = dao_comprobante_electronico.obtenerComprobatePorCA(claveDeAcceso);
-                    if (ce == null) {
-                        respuestaAlprocesar = ProcesoAlmacenamientoClaveAcceso(claveDeAcceso, seccion);
-                    } else {
-                        guardado = true;
-                        MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_INFO, "El comprobante ya se ecuentra almacenado.");
-                    }
-                } catch (Exception ex) {
-                    Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.SEVERE, null, ex);
-                }
+            claveDeAcceso = obtenerclaveDeAccesoXml(evento);
+            if ( claveDeAcceso!=null&&!claveDeAcceso.equals("")) {
+                respuestaAlprocesar = ProcesoAlmacenamientoClaveAcceso(claveDeAcceso, seccion);
             }
         } else {
             respuestaAlprocesar = ProcesoAlmacenamientoClaveAcceso(claveDeAcceso, seccion);
         }
         if (respuestaAlprocesar) {
-
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_INFO, "Almacenado Correctamente.");
+           
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_INFO, "Almacenado Correctamente.");
         } else {
-            if (evento != null && !guardado) {
-                boolean respuesta = arvhivos(evento, elem);
-                if (respuesta) {
-                    MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_INFO, "Almacenado Correctamente.");
-                } else {
-                    MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Sri no responde ,por favor intente mas tarde o guarde su comprobante en la opción manual.");
-                }
+            if (evento != null) {
                 try {
 //                    DAOAsignacionComprobanteElectronico b = new DAOAsignacionComprobanteElectronico();
 //                     DAOComprobanteElectronico a = new DAOComprobanteElectronico();
@@ -809,100 +755,8 @@ public class BeanComprobantesRecibidos implements Serializable {
                     Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-//            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Sri no responde ,le recordamos que sus facturas solo pueden ser almacenas hasta 90 dias despues de su emisión");
+         MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Sri no responde ,le recordamos que sus facturas solo pueden ser almacenas hasta 90 dias despues de su emisión");
         }
-    }
-
-    public boolean arvhivos(byte[] archivoss, elementos ele) {
-        boolean respuesta = false;
-        try {
-            FileOutputStream fos = new FileOutputStream(Valores.VALOR_DIRECTORIO_CREACION_XMLS + "2606201701179001691900121221040000808930161031718.xml");
-            fos.write(archivoss);
-            fos.close();
-            SAXBuilder builder = new SAXBuilder();
-            File xmlFile = new File(Valores.VALOR_DIRECTORIO_CREACION_XMLS + "2606201701179001691900121221040000808930161031718.xml");
-            try {
-                //Se crea el documento a traves del archivo
-                org.jdom.Document document = (org.jdom.Document) builder.build(xmlFile);
-
-                //Se obtiene la raiz 'tables'
-                Element rootNode = document.getRootElement();
-
-                //Se obtiene la lista de hijos de la raiz 'tables'
-                List list = rootNode.getChildren("comprobante");
-
-                //Se recorre la lista de hijos de 'tables'
-                for (int i = 0; i < list.size(); i++) {
-                    //Se obtiene el elemento 'tabla'
-                    Element tabla = (Element) list.get(i);
-
-//            System.out.println(tabla.getValue());
-                    respuesta = crearArchivo(tabla.getValue(), archivoss, ele);
-
-                }
-            } catch (IOException io) {
-                System.out.println(io.getMessage());
-            } catch (JDOMException jdomex) {
-                System.out.println(jdomex.getMessage());
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return respuesta;
-    }
-
-    public boolean crearArchivo(String lista, byte[] respuesta, elementos ele) {
-        boolean respuestacompro = false;
-        FileWriter flwriter = null;
-        try {
-            //crea el flujo para escribir en el archivo
-            flwriter = new FileWriter(Valores.VALOR_DIRECTORIO_CREACION_XMLS + "xmltxt.xml");
-            //crea un buffer o flujo intermedio antes de escribir directamente en el archivo
-            BufferedWriter bfwriter = new BufferedWriter(flwriter);
-
-            //escribe los datos en el archivo
-            bfwriter.write(lista);
-
-            //cierra el buffer intermedio
-            bfwriter.close();
-            System.out.println("Archivo creado satisfactoriamente..");
-            FileInputStream input;
-            byte[] data = null;
-            try {
-                input = new FileInputStream(new File(Valores.VALOR_DIRECTORIO_CREACION_XMLS + "xmltxt.xml"));
-                data = new byte[input.available()];
-                input.read(data);
-                input.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            com.egastos.comprobanteelectronico.esquema.comprobantebase.ComprobanteElectronico c = TransformadorArchivos.byteCompr(data, Valores.VALOR_DIRECTORIO_CREACION_XMLS + "xmltxt.xml");
-            try {
-                AlmacenamientoComprobanteElectronico ac = new AlmacenamientoComprobanteElectronico();
-                String estadof = "1";
-                if (ele.getEstado().equals("AUTORIZADO")) {
-                    estadof = "1";
-                }
-
-                respuestacompro = ac.guardarComprobanteElectronicoRespuestaxml(respuesta, c, c.getInformacionTributariaComprobanteElectronico().getCodDoc(), Valores.VALOR_DIRECTORIO_CREACION_XMLS, "", seccion, ele.getNumeroAutorizacion(), ele.getFecha(), estadof, data);
-            } catch (Exception ex) {
-                Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            System.out.println(c.getInformacionTributariaComprobanteElectronico().getNombreComercial());
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (flwriter != null) {
-                try {//cierra el flujo principal
-                    flwriter.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return respuestacompro;
     }
 
     public static boolean ProcesoAlmacenamientoClaveAcceso(String ClaveAcceso, String seccion) {
@@ -953,10 +807,10 @@ public class BeanComprobantesRecibidos implements Serializable {
             out.close();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.SEVERE, null, ex);
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "No se pudo leer el comprobante.");
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "No se pudo leer el comprobante.");
         } catch (Exception ex) {
             Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.SEVERE, null, ex);
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "No se pudo leer el comprobante.");
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "No se pudo leer el comprobante.");
         }
 
         try {
@@ -967,13 +821,13 @@ public class BeanComprobantesRecibidos implements Serializable {
 
         } catch (ParserConfigurationException ex) {
             Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.SEVERE, null, ex);
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_INFO, "No se pudo leer el comprobante.");
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_INFO, "No se pudo leer el comprobante.");
         } catch (SAXException ex) {
             Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.SEVERE, null, ex);
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_INFO, "No se pudo leer el comprobante.");
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_INFO, "No se pudo leer el comprobante.");
         } catch (IOException ex) {
             Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.SEVERE, null, ex);
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_INFO, "No se pudo leer el comprobante.");
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_INFO, "No se pudo leer el comprobante.");
         }
         if (xml != null) {
             respuesta1 = xml.getElementsByTagName("claveAcceso");
@@ -1004,101 +858,10 @@ public class BeanComprobantesRecibidos implements Serializable {
 
             } else {
 
-                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_INFO, "Erro en el Documento.");
+                MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_INFO, "Erro en el Documento.");
             }
         }
         return claveAcceso;
-
-    }
-
-    public static elementos obtenervarios(byte[] part) {
-        elementos elemnto = new elementos();
-        File archivo = new File(Valores.VALOR_DIRECTORIO_CREACION_XMLS + "xmldescargar.xml");
-        Document documentotrasformado = null;
-        String claveAcceso = "";
-
-        NodeList respuesta1 = null;
-
-        String respuesta = null;
-        Document xml = null;
-        OutputStream out;
-        try {
-            out = new FileOutputStream(archivo);
-            out.write(part);
-            out.close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.SEVERE, null, ex);
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "No se pudo leer el comprobante.");
-        } catch (Exception ex) {
-            Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.SEVERE, null, ex);
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "No se pudo leer el comprobante.");
-        }
-
-        try {
-
-            DocumentBuilder dBuilder = null;
-            dBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            xml = dBuilder.parse(archivo);
-
-        } catch (ParserConfigurationException ex) {
-            Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.SEVERE, null, ex);
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_INFO, "No se pudo leer el comprobante.");
-        } catch (SAXException ex) {
-            Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.SEVERE, null, ex);
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_INFO, "No se pudo leer el comprobante.");
-        } catch (IOException ex) {
-            Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.SEVERE, null, ex);
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_INFO, "No se pudo leer el comprobante.");
-        }
-        if (xml != null) {
-            respuesta1 = xml.getElementsByTagName("claveAcceso");
-            elemnto.setEstado(xml.getElementsByTagName("estado").item(0).getTextContent());
-            elemnto.setNumeroAutorizacion(xml.getElementsByTagName("numeroAutorizacion").item(0).getTextContent());
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            String dateInString = xml.getElementsByTagName("fechaAutorizacion").item(0).getTextContent();
-            try {
-                elemnto.setFecha(formatter.parse(dateInString));
-            } catch (ParseException ex) {
-
-                System.out.println("Formato de fecha incorrecto ingrese dia/mes/año");
-//           
-            }
-//             elemnto.setFecha(new Date());
-
-        }
-        String claveclaveDeAccesosinsri = null;
-
-        if (respuesta1 != null && respuesta1.getLength() > 0) {
-            claveclaveDeAccesosinsri = respuesta1.item(0).getTextContent();
-            elemnto.setClaveAcceso(claveclaveDeAccesosinsri);
-        }
-        if (xml != null && claveclaveDeAccesosinsri == null) {
-            NodeList nodoComprobante = xml.getElementsByTagName("comprobante");
-            for (int l = 0; l < nodoComprobante.getLength(); l++) {
-                org.w3c.dom.Element element = (org.w3c.dom.Element) nodoComprobante.item(l);
-                Node child = element.getFirstChild();
-                if (child instanceof CharacterData) {
-                    CharacterData cd = (CharacterData) child;
-                    respuesta = cd.getData();
-                    break;
-                }
-            }
-        } else {
-            claveAcceso = claveclaveDeAccesosinsri;
-            elemnto.setClaveAcceso(claveAcceso);
-        }
-        if (respuesta != null) {
-            documentotrasformado = convertStringToDocument(respuesta);
-            if (documentotrasformado != null) {
-                claveAcceso = documentotrasformado.getElementsByTagName("claveAcceso").item(0).getTextContent();
-                elemnto.setClaveAcceso(claveAcceso);
-
-            } else {
-
-                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_INFO, "Erro en el Documento.");
-            }
-        }
-        return elemnto;
 
     }
 
@@ -1234,11 +997,11 @@ public class BeanComprobantesRecibidos implements Serializable {
                 faces.responseComplete();
             } else {
                 Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.SEVERE, null, "");
-                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error al bajar el archivo comprimido.");
+                MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Error al bajar el archivo comprimido.");
             }
 
         } else {
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Debe seleccionar al menos un comprobante.");
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Debe seleccionar al menos un comprobante.");
         }
 
     }
@@ -1255,11 +1018,11 @@ public class BeanComprobantesRecibidos implements Serializable {
                 faces.responseComplete();
             } catch (Exception ex) {
                 Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.SEVERE, null, ex);
-                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error al descargar el PDF-RIDE.");
+                MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Error al descargar el PDF-RIDE.");
             }
 
         } else {
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "No se ha seleccionado un comprobante.");
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "No se ha seleccionado un comprobante.");
         }
 
     }
@@ -1275,20 +1038,19 @@ public class BeanComprobantesRecibidos implements Serializable {
                 faces.responseComplete();
             } catch (Exception ex) {
                 Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.SEVERE, null, ex);
-                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error al descargar el XML.");
+                MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Error al descargar el XML.");
             }
 
         } else {
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "No se ha seleccionado un comprobante.");
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "No se ha seleccionado un comprobante.");
         }
 
     }
 
     public void buscarComprobantesRecibidosAutorizados() {
-        estadoindex = false;
         this.obtenerFechas();
         ambiente = new ArrayList<String>();
-        ambiente.add(Valores.VALOR_AMBIENTE);
+        ambiente.add(Valores.AMBIENTE);
         estado = "1";
         ControlSesion ms = new ControlSesion();
         if (ms.obtenerEstadoSesionUsuario() == true) {
@@ -1386,15 +1148,15 @@ public class BeanComprobantesRecibidos implements Serializable {
                 try {
                     fechaInicial = formatter.parse(fechaInicialS);
                 } catch (ParseException ex) {
-                    MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error Fecha Inicial (dia/mes/anio).");
+                    MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Error Fecha Inicial (dia/mes/anio).");
                 }
                 try {
                     fechaFinal = formatter.parse(fechaFinalS);
                 } catch (ParseException ex) {
-                    MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error Fecha Final (dia/mes/anio).");
+                    MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Error Fecha Final (dia/mes/anio).");
                 }
                 if (fechaInicial.after(fechaFinal)) {
-                    MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error en rango de fechas (dia/mes/anio).");
+                    MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Error en rango de fechas (dia/mes/anio).");
                     return;
                 }
                 fechaSeleccionadaInicio = fechaInicial;

@@ -62,16 +62,6 @@ public class BeanGestionPagos implements Serializable {
     private String detalleFactua;
     private Double valorfactura;
     private String nombreProvedor;
-    private String valorestado;
-
-    public String getValorestado() {
-        return valorestado;
-    }
-
-    public void setValorestado(String valorestado) {
-        this.valorestado = valorestado;
-    }
-    
     
     public String getNombreProvedor() {
         return nombreProvedor;
@@ -180,8 +170,6 @@ public class BeanGestionPagos implements Serializable {
      * Creates a new instance of BeanComprobantesRecibidos
      */
     public BeanGestionPagos() {
-        seleccionPeriodoTiempo="1";
-        valorestado="revision";
         ControlSesion ms = new ControlSesion();
             if (!ms.obtenerEstadoSesionUsuario()) {
 
@@ -210,7 +198,7 @@ public class BeanGestionPagos implements Serializable {
             RequestContext.getCurrentInstance().execute("PF('dlg2').hide();");
             
             
-//          MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "MOSTRAR MENSAJE DE QUE SE DEBE ALMACENAR ANTES DE CUMPLIR 3 MESES .");
+//          MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "MOSTRAR MENSAJE DE QUE SE DEBE ALMACENAR ANTES DE CUMPLIR 3 MESES .");
         } catch (Exception ex) {
             Logger.getLogger(BeanGestionPagos.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -240,27 +228,8 @@ public class BeanGestionPagos implements Serializable {
         }
         return true;
     }
-    public void cambiarestadoPagado(){
-          if(pagoSeleccionado!=null){
-        try {
-          
-            DAOPagos pagos=new DAOPagos();
-            pagos.actualizarEstadopago(pagoSeleccionado.getIdpagos(),"pagado");
-            pagos.actualizarFechaPago(pagoSeleccionado.getIdpagos(), new Date());
-            DAOUsuarioAcceso usuarioAcceso=new DAOUsuarioAcceso();
-            usuarioAcceso.actualizarEstadoUsuario(pagoSeleccionado.getUsuarioAcceso().getIdUsuario(),"1");
-            //Envio De Correo a Usuario; 
-            cargarTablaPagos();
-                    } catch (Exception ex) {
-            Logger.getLogger(BeanGestionPagos.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-        }else{
-              MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Deben seleccionar un registro.");
-             
-          }
-    }
+
     public final void cargarTablaPagos() {
-         obtenerFechas();
         ControlSesion ms = new ControlSesion();
         if (ms.obtenerEstadoSesionUsuario() == true) {
             pagosLazy = new LazyDataModel() {
@@ -272,8 +241,8 @@ public class BeanGestionPagos implements Serializable {
                     try {
                         dao_ace = new DAOPagos();
                         // Integer _firstResult, Integer _maxResults,String _cliente,Date _fechaSeleccionadaInicio, Date _fechaActual, String _estado,String valorInicial, String valorFinal
-                        pagosSeleccionados = dao_ace.buscarPaogosVariosParametros(first, pageSize,fechaSeleccionadaInicio,fechaActual,valorestado,valorInicial, valorFinal,nombreEmpresa);
-                        this.setRowCount(dao_ace.obtenerTotalComprobantesVariosParametros(fechaSeleccionadaInicio, fechaActual, valorestado, valorInicial, valorFinal,nombreEmpresa).intValue());
+                        pagosSeleccionados = dao_ace.buscarPaogosVariosParametros(first, pageSize,fechaSeleccionadaInicio,fechaActual,estado,valorInicial, valorFinal);
+                        this.setRowCount(dao_ace.obtenerTotalComprobantesVariosParametros(fechaSeleccionadaInicio, fechaActual, estado, valorInicial, valorFinal).intValue());
                     } catch (Exception ex) {
                         Logger.getLogger(BeanGestionPagos.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -290,17 +259,17 @@ public class BeanGestionPagos implements Serializable {
                     }
                 }
 
-                public Object getRowKey(Pagos ace) {
-                    return ace != null ? ace.getIdpagos() : null;
+                public Object getRowKey(AsignacionComprobanteElectronico ace) {
+                    return ace != null ? ace.getIdAsignacionComprobanteElectronico() : null;
                 }
 
                 @Override
-                public Pagos getRowData(String rowKey) {
-                    List<Pagos> aces = (List<Pagos>) getWrappedData();
+                public AsignacionComprobanteElectronico getRowData(String rowKey) {
+                    List<AsignacionComprobanteElectronico> aces = (List<AsignacionComprobanteElectronico>) getWrappedData();
                     Integer value = Integer.valueOf(rowKey);
 
-                    for (Pagos ace : aces) {
-                        if (ace.getIdpagos().equals(value)) {
+                    for (AsignacionComprobanteElectronico ace : aces) {
+                        if (ace.getIdAsignacionComprobanteElectronico().equals(value)) {
                             return ace;
                         }
                     }
@@ -320,17 +289,17 @@ public class BeanGestionPagos implements Serializable {
         if (opcionValores.equals("2")) {
             apareceValores = false;
             valorInicial = "0";
-            valorFinal = "10";
+            valorFinal = "100";
 
         }
         if (opcionValores.equals("4")) {
             apareceValores = false;
-            valorInicial = "10";
-            valorFinal = "50";
+            valorInicial = "100";
+            valorFinal = "500";
         }
         if (opcionValores.equals("5")) {
             apareceValores = false;
-            valorInicial = "50";
+            valorInicial = "500";
             valorFinal = null;
         }
         if (opcionValores.equals("6")) {
@@ -416,15 +385,15 @@ public class BeanGestionPagos implements Serializable {
                 try {
                     fechaInicial = formatter.parse(fechaInicialS);
                 } catch (ParseException ex) {
-                    MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error Fecha Inicial (dia/mes/anio).");
+                    MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Error Fecha Inicial (dia/mes/anio).");
                 }
                 try {
                     fechaFinal = formatter.parse(fechaFinalS);
                 } catch (ParseException ex) {
-                    MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error Fecha Final (dia/mes/anio).");
+                    MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Error Fecha Final (dia/mes/anio).");
                 }
                 if (fechaInicial.after(fechaFinal)) {
-                    MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error en rango de fechas (dia/mes/anio).");
+                    MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Error en rango de fechas (dia/mes/anio).");
                     return;
                 }
                 fechaSeleccionadaInicio = fechaInicial;

@@ -13,7 +13,6 @@ import com.egastos.modelo.ec.Receptor;
 import com.egastos.utilidades.ControlSesion;
 import com.egastos.utilidades.MensajesPrimefaces;
 import com.egastos.utilidades.Utilidades;
-import com.egastos.utilidades.Valores;
 import java.io.IOException;
 import java.io.Serializable;
 import java.sql.Connection;
@@ -94,7 +93,7 @@ public void verempresa(){
       }
               }else{
                 detalleEmpresa="Ingrese un Ruc";
-                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Campo ruc obligatorio");
+                MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Campo ruc obligatorio");
    
               }
 }
@@ -104,9 +103,9 @@ public void verempresa(){
             FacesContext faces = FacesContext.getCurrentInstance();
             Connection a;
             //pruebas
-            
-           a = DriverManager.getConnection(Valores.VALOR_CONEXION,Valores.VALOR_USUARIOREPORTE,Valores.VALOR_CONTRAREPORTE);
+           a = DriverManager.getConnection("jdbc:mysql://localhost:3306/egastos?zeroDateTimeBehavior=convertToNull", "root", "root");
                 //produccion roler1721
+//           a = DriverManager.getConnection("jdbc:mysql://181.215.96.132:3306/egastos?zeroDateTimeBehavior=convertToNull", "E%finanz@s","E%finanz@s2017");
            Map<String, Object> parametros = new HashMap<String, Object>();
             ControlSesion sesion = new ControlSesion();
          
@@ -140,14 +139,14 @@ public void verempresa(){
 //pruebas
 JasperPrint jasperPrint=null;
     if(valor==1){
-    jasperPrint = JasperFillManager.fillReport(Valores.VALOR_REPORTETOTAL, parametros, a);
+    jasperPrint = JasperFillManager.fillReport("C:\\reportesEgastos\\report.jasper", parametros, a);
     }
     if(valor==2){
-    jasperPrint = JasperFillManager.fillReport(Valores.VALOR_REPORTESECCION, parametros, a);   
+    jasperPrint = JasperFillManager.fillReport("C:\\reportesEgastos\\reportSecciones.jasper", parametros, a);   
     }
     if(valor==3){
          parametros.put("rucempresa",rucEmpresa);
-   jasperPrint = JasperFillManager.fillReport(Valores.VALOR_REPORTEEMPRESA, parametros, a);   
+   jasperPrint = JasperFillManager.fillReport("C:\\reportesEgastos\\reportPorEmpresa.jasper", parametros, a);   
     }
 //produccion
 //JasperPrint jasperPrint=null;
@@ -179,7 +178,7 @@ JasperPrint jasperPrint=null;
             byte[] bites = JasperExportManager.exportReportToPdf(jasperPrint);
             if (bites.length == 919) {
 
-                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "No existen Datos Revise Los Filtos De Busqueda");
+                MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "No existen Datos Revise Los Filtos De Busqueda");
 
             } else {
                 visualizarRIDE(faces, bites, "mensual");
@@ -249,16 +248,16 @@ JasperPrint jasperPrint=null;
                     fechaInicial = formatter.parse(fechaInicialS);
 //                    fechaInicialS = new SimpleDateFormat("yyyy-MM-dd").format(fechaSeleccionadaInicio);
                 } catch (ParseException ex) {
-                    MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error Fecha Inicial (dia/mes/anio).");
+                    MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Error Fecha Inicial (dia/mes/anio).");
                 }
                 try {
                     fechaFinal = formatter.parse(fechaFinalS);
 //                    fechaFinalS = new SimpleDateFormat("yyyy-MM-dd").format(fechaFinal);
                 } catch (ParseException ex) {
-                    MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error Fecha Final (dia/mes/anio).");
+                    MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Error Fecha Final (dia/mes/anio).");
                 }
                 if (fechaInicial.after(fechaFinal)) {
-                    MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error en rango de fechas (dia/mes/anio).");
+                    MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Error en rango de fechas (dia/mes/anio).");
                     return;
                 }
                 fechaSeleccionadaInicio = fechaInicial;

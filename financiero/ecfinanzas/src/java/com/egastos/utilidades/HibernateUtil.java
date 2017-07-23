@@ -25,7 +25,7 @@ public class HibernateUtil {
         try {
 
             Configuration configuration = new AnnotationConfiguration();
-            sesionEgastos = configuration.configure("/hibernate."+Valores.AMBITO+".cfg.xml").buildSessionFactory();
+            sesionEgastos = configuration.configure("/hibernate.cfg.xml").buildSessionFactory();
       
 
         } catch (Throwable ex) {

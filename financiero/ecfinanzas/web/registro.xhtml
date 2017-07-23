@@ -30,30 +30,6 @@ and open the template in the editor.
 
 
                     <h:form id="todo" style="margin-top:2px;"  enctype="multipart/form-data">
-                              <script>
-                            function soloNumeros(evt)
-                            {
-                                tecla = (document.all) ? evt.keyCode : evt.which;
-                                //Tecla de retroceso para borrar, siempre la permite
-                                if (tecla === 8)
-                                    return true;
-                                if (tecla == 46)
-                                    return true;
-                                // Patron de entrada, en este caso solo acepta letras
-                                patron = /\d/;
-
-                                tecla_final = String.fromCharCode(tecla);
-                                return patron.test(tecla_final);
-
-                                //Solo números patron = /\d/;
-
-                                //Números y letras patron = /\w/;
-
-                                //No acepta números patron = /\D/;
-
-                            }
-
-                        </script>
                         <p:ajaxStatus rendered="false" style="position:fixed;right:10px;bottom:10px">  
                             <f:facet name="start">  
                                 <p:graphicImage value="/imagenes/ajax-loader.gif" 
@@ -84,38 +60,38 @@ and open the template in the editor.
                                                         <span>
 
 
-                                                            <h:panelGrid id="dataTable"   columns="1" style="margin-left:auto ;width:100% ; margin-right: auto;text-align: ">
+                                                            <h:panelGrid id="dataTable"   columns="1" style="margin-left:auto ;width:100% ; margin-right: auto;text-align:center ">
                                                             <p:panel style="text-align:center" id="pnlRegistro">
                                                                 <div class="TexAlCenter MarAuto Container90 Fnone TabContent" id="TAB1">
 
                                                                     <div class="EmptyBox5"/>
                                                                     <p:outputLabel value="Los datos Obligatorios inician con (*)" style="font-size:18px;" />
                                                                     <div class="EmptyBox5"/>
-                                                                     <p:inputText  style="width:80%" onkeypress="return soloNumeros(event);"   id="it-identificacion-usuario" value="#{beanRegistro.usuarioNuevo.identificacionUsuario}" styleClass="Container80 Fnone MarAuto Fs18" placeholder="(*)Cédula/Pasaporte" />
+                                                                     <p:inputMask  style="width:80%"   id="it-identificacion-usuario" value="#{beanRegistro.usuarioNuevo.identificacionUsuario}" styleClass="Container80 Fnone MarAuto Fs18" placeholder="(*)Cédula/Pasaporte" mask="9999999999"/>
                                                                     <br/>
                                                                     <br/>
-                                                                    <p:inputText  style="width:80%"  id="it-nombre-usuario" value="#{beanRegistro.usuarioNuevo.nombreUsuario}" styleClass="Container80 Fnone MarAuto Fs18" placeholder="(*)Nombres"/>
+                                                                    <p:inputText  style="width:80%" maxlength="50" id="it-nombre-usuario" value="#{beanRegistro.usuarioNuevo.nombreUsuario}" styleClass="Container80 Fnone MarAuto Fs18" placeholder="(*)Nombres"/>
                                                                    <br/>
                                                                     <br/>
-                                                                     <p:inputText  style="width:80%" id="it-apellido-usuario" value="#{beanRegistro.usuarioNuevo.apellidoUsuario}" styleClass="Container80 Fnone MarAuto Fs18" placeholder="(*)Apellidos" />
+                                                                     <p:inputText  style="width:80%" id="it-apellido-usuario" maxlength="50" value="#{beanRegistro.usuarioNuevo.apellidoUsuario}" styleClass="Container80 Fnone MarAuto Fs18" placeholder="(*)Apellidos" />
                                                                      <br/>
                                                                     <br/>
-                                                                     <p:inputText  style="width:80%" onkeypress="return soloNumeros(event);"  id="it-telefono-principal-usuario" value="#{beanRegistro.usuarioNuevo.telefonoPrincipalUsuario}" styleClass="Container80 Fnone MarAuto Fs18" placeholder="(*)Teléfono Principal" />
+                                                                     <p:inputText  style="width:80%"  id="it-telefono-principal-usuario" maxlength="11" value="#{beanRegistro.usuarioNuevo.telefonoPrincipalUsuario}" styleClass="Container80 Fnone MarAuto Fs18" placeholder="(*)Teléfono Principal" />
                                                                        <br/>
                                                                     <br/> 
-                                                                     <p:inputText  style="width:80%" onkeypress="return soloNumeros(event);" id="it-telefono-adicional-usuario" value="#{beanRegistro.usuarioNuevo.telefonoAdicionalUsuario}" placeholder="Teléfono Adicional" />
+                                                                     <p:inputText  style="width:80%" id="it-telefono-adicional-usuario" maxlength="11" value="#{beanRegistro.usuarioNuevo.telefonoAdicionalUsuario}" placeholder="Teléfono Adicional" />
                                                                     <br/>
                                                                         <br/>
-                                                                    <p:inputText  style="width:80%" id="it-correo-usuario" value="#{beanRegistro.usuarioNuevo.correoPrincipalUsuario}" placeholder="(*)Correo Principal" />
+                                                                    <p:inputText  style="width:80%" id="it-correo-usuario" maxlength="100" value="#{beanRegistro.usuarioNuevo.correoPrincipalUsuario}" placeholder="(*)Correo Principal" />
                                                                     <br/>
                                                                         <br/>
-                                                                    <p:inputText  style="width:80%" id="it-correo-adicional-usuario" value="#{beanRegistro.usuarioNuevo.correoAdicionalUsuario}" placeholder="Correo Adicional" /><br/><br/>
+                                                                    <p:inputText  style="width:80%" id="it-correo-adicional-usuario" maxlength="100" value="#{beanRegistro.usuarioNuevo.correoAdicionalUsuario}" placeholder="Correo Adicional" /><br/><br/>
                                                                                                                                              
                                                                       <p:outputLabel value="Clave De Usuario" style="font-size:18px;"  styleClass="Container80 Fnone MarAuto Fs16"/><br/>
-                                                                    <p:password id="it-clave-usuario" style="width:80%" value="#{beanRegistro.usuarioNuevo.claveUsuarioAcceso}" placeholder="(*)Clave" />
+                                                                    <p:password id="it-clave-usuario" maxlength="10" style="width:80%" value="#{beanRegistro.usuarioNuevo.claveUsuarioAcceso}" placeholder="(*)Clave" />
                                                                      <br/>
                                                                       <br/>  
-                                                                    <p:password id="it-clave2-usuario" style="width:80%" value="#{beanRegistro.confirmacionClave}" placeholder="(*)Repetir Clave" />
+                                                                    <p:password id="it-clave2-usuario" maxlength="10" style="width:80%" value="#{beanRegistro.confirmacionClave}" placeholder="(*)Repetir Clave" />
 
                                                                      <div class="EmptyBox10"/><br/>
                                                                      <p:commandButton id="btnRegistroU" style="width:80%"   value="Registrarse"  actionListener="#{beanRegistro.registrarUsuario()}" >
@@ -154,6 +130,21 @@ and open the template in the editor.
                 </div>
             </div>
         </div>
-      <ui:include  src="menu2.xhtml" />
+        <div style="background-color: #85B2CB" class="footer_btm"><!-- start footer_btm -->
+            <div class="container">
+                <div class="row  footer1">
+                    <div class="col-md-5">
+                        <div class="soc_icons">
+                            <ul class="list-unstyled">
+                                <li><a class="icon1" href="#"></a></li>
+                                <li><a class="icon2" href="#"></a></li>
+                                <li><a class="icon3" href="#"></a></li>
+                            </ul>	
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </body>
 </html>

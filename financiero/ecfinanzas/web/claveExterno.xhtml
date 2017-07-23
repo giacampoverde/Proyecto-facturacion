@@ -32,30 +32,7 @@ and open the template in the editor.
 
 
                     <h:form id="todo" style="margin-top:2px;"  enctype="multipart/form-data">
-                        <script>
-                            function soloNumeros(evt)
-                            {
-                                tecla = (document.all) ? evt.keyCode : evt.which;
-                                //Tecla de retroceso para borrar, siempre la permite
-                                if (tecla === 8)
-                                    return true;
-                                if (tecla == 46)
-                                    return true;
-                                // Patron de entrada, en este caso solo acepta letras
-                                patron = /\d/;
-
-                                tecla_final = String.fromCharCode(tecla);
-                                return patron.test(tecla_final);
-
-                                //Solo números patron = /\d/;
-
-                                //Números y letras patron = /\w/;
-
-                                //No acepta números patron = /\D/;
-
-                            }
-
-                        </script>
+                    
                         <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
                         <div  style="width:100%;background-color: #f9f2f4" class="main"><!-- start main -->
                             <p:panel  style="background-color:#ebe9e9;">
@@ -81,7 +58,7 @@ and open the template in the editor.
                                                                     <p:outputLabel value="Ingrese el numero de cedula para restablecer su clave."/>
                                                                     <div class="EmptyBox5"/>
                                                                     <br/>
-                                                                    <p:inputText onkeypress="return soloNumeros(event);" style="width:80%" value="#{beanRecuperarClave.nombreUsuario}" placeholder="Numero de Cedula " styleClass="Container80 Fnone MarAuto Fs18"/>
+                                                                    <p:inputText style="width:80%" value="#{beanRecuperarClave.nombreUsuario}" placeholder="Numero de Cedula " styleClass="Container80 Fnone MarAuto Fs18"/>
                                                                     <div class="EmptyBox10"/><br/>
                                                                     <p:commandButton id="btnRestablecer" style="width:80%" value="Restablecer clave" actionListener="#{beanRecuperarClave.enviarCorreoRecuperacion()}"/>
                                                                     <div class="EmptyBox10"/>
@@ -116,18 +93,21 @@ and open the template in the editor.
                 </div>
             </div>
         </div>
-       
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <ui:include  src="menu2.xhtml" />
+        <div style="background-color: #85B2CB" class="footer_btm"><!-- start footer_btm -->
+            <div class="container">
+                <div class="row  footer1">
+                    <div class="col-md-5">
+                        <div class="soc_icons">
+                            <ul class="list-unstyled">
+                                <li><a class="icon1" href="#"></a></li>
+                                <li><a class="icon2" href="#"></a></li>
+                                <li><a class="icon3" href="#"></a></li>
+                            </ul>	
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </body>
 </html>

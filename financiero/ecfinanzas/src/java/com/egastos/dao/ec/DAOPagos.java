@@ -8,12 +8,9 @@ package com.egastos.dao.ec;
 import com.egastos.modelo.ec.ComprobanteElectronico;
 import com.egastos.modelo.ec.Pagos;
 import com.egastos.modelo.ec.UsuarioAcceso;
-import com.egastos.utilidades.AES256;
 import com.egastos.utilidades.DAO;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.hibernate.Criteria;
 
 import org.hibernate.Query;
@@ -75,19 +72,19 @@ public class DAOPagos extends DAO {
 //        return q.list();
 //    }
     
-     public Long obtenerTotalComprobantesVariosParametros(Date _fechaSeleccionadaInicio, Date _fechaActual, String _estado,String valorInicial, String valorFinal,String cedula) {
-        Criteria criteriaQuery = buscarCriteriaPlanesVariosParametros(_fechaSeleccionadaInicio, _fechaActual, _estado, valorInicial, valorFinal,cedula);
+     public Long obtenerTotalComprobantesVariosParametros(Date _fechaSeleccionadaInicio, Date _fechaActual, String _estado,String valorInicial, String valorFinal) {
+        Criteria criteriaQuery = buscarCriteriaPlanesVariosParametros(_fechaSeleccionadaInicio, _fechaActual, _estado, valorInicial, valorFinal);
         Long total = Long.parseLong(criteriaQuery.setProjection(Projections.rowCount()).uniqueResult().toString());
         return total;
     }
-        public List buscarPaogosVariosParametros( Integer _firstResult, Integer _maxResults,Date _fechaSeleccionadaInicio, Date _fechaActual, String _estado,String valorInicial, String valorFinal,String cedula) {
-        Criteria criteria_busqueda = this.buscarCriteriaPlanesVariosParametros(_fechaSeleccionadaInicio, _fechaActual, _estado, valorInicial, valorFinal,cedula);
+        public List buscarPaogosVariosParametros( Integer _firstResult, Integer _maxResults,Date _fechaSeleccionadaInicio, Date _fechaActual, String _estado,String valorInicial, String valorFinal) {
+        Criteria criteria_busqueda = this.buscarCriteriaPlanesVariosParametros(_fechaSeleccionadaInicio, _fechaActual, _estado, valorInicial, valorFinal);
         criteria_busqueda.setFirstResult(_firstResult);
         criteria_busqueda.setMaxResults(_maxResults);
         return criteria_busqueda.list();
     }
         
-          private Criteria buscarCriteriaPlanesVariosParametros(Date _fechaSeleccionadaInicio, Date _fechaActual, String _estado,String valorInicial, String valorFinal,String cedula) {
+          private Criteria buscarCriteriaPlanesVariosParametros(Date _fechaSeleccionadaInicio, Date _fechaActual, String _estado,String valorInicial, String valorFinal) {
         Criteria criteriaQuery = currentSession.createCriteria(Pagos.class, "pago");
         criteriaQuery.createAlias("pago.usuarioAcceso", "usuario");
         criteriaQuery.createAlias("pago.planespago", "planes");
@@ -99,12 +96,8 @@ public class DAOPagos extends DAO {
             criteriaQuery.add(Restrictions.or(criterioPorFechaEmision, criterioPorFechaAutorizacion));
             criteriaQuery.addOrder(Order.desc("pago.fechaPago"));
         }
-        if (_estado != null && !_estado.equals("1")) {
+        if (_estado != null) {
             criteriaQuery.add(Restrictions.eq("pago.estadopago", _estado));
-
-        }
-        if (cedula != null && !cedula.equals("")) {
-            criteriaQuery.add(Restrictions.eq("usuario.identificacionUsuario",cedula));
 
         }
         if ((valorInicial != null && !valorInicial.equals("")) && (valorFinal == null || valorFinal.equals(""))) {
@@ -120,30 +113,5 @@ public class DAOPagos extends DAO {
     }
 
 
- public boolean actualizarEstadopago(Integer _idUsuario, String estado) {
-        boolean actualizado = false;
-        try {
-            Pagos pag = (Pagos) currentSession.load(Pagos.class, _idUsuario);
-            pag.setEstadopago(estado);
-            currentSession.merge(pag);
-            actualizado = true;
-        } catch (Exception ex) {
-            Logger.getLogger(DAOUsuarioAcceso.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
-        return actualizado;
-    }
-  public boolean actualizarFechaPago(Integer _idUsuario, Date fecaVali) {
-        boolean actualizado = false;
-        try {
-            Pagos pag = (Pagos) currentSession.load(Pagos.class, _idUsuario);
-            pag.setFechaValidacion(fecaVali);
-            currentSession.merge(pag);
-            actualizado = true;
-        } catch (Exception ex) {
-            Logger.getLogger(DAOUsuarioAcceso.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return actualizado;
-    }
 }

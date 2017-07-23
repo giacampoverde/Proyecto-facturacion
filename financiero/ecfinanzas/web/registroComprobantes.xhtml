@@ -33,30 +33,7 @@ and open the template in the editor.
 
 
                     <h:form id="todo"   enctype="multipart/form-data">
-                                    <script>
-                            function soloNumeros(evt)
-                            {
-                                tecla = (document.all) ? evt.keyCode : evt.which;
-                                //Tecla de retroceso para borrar, siempre la permite
-                                if (tecla === 8)
-                                    return true;
-                                if (tecla == 46)
-                                    return true;
-                                // Patron de entrada, en este caso solo acepta letras
-                                patron = /\d/;
 
-                                tecla_final = String.fromCharCode(tecla);
-                                return patron.test(tecla_final);
-
-                                //Solo números patron = /\d/;
-
-                                //Números y letras patron = /\w/;
-
-                                //No acepta números patron = /\D/;
-
-                            }
-
-                        </script>
                         <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
                         <div  style="width:100%;background-color: #f9f2f4" class="main"><!-- start main -->
 
@@ -121,7 +98,7 @@ and open the template in the editor.
                                                                         <p:panel  style="background-color:#ebe9e9;">
                                                                             <h:panelGrid  columns="1" style="margin-left: auto; margin-right: auto;font-size:12px;width:100%" >
                                                                                 <h:outputText value="Clave De Acceco (49 digitos)" styleClass="FontBold Fs14 hardblue"/>    
-                                                                                <p:inputText onkeypress="return soloNumeros(event);"  value="${beanComprobantesRecibidos.clave}"  style="width:100%" styleClass="FontBold Fs14 hardblue"/><br/>
+                                                                                <p:inputText value="${beanComprobantesRecibidos.clave}"  style="width:100%" styleClass="FontBold Fs14 hardblue"/><br/>
                                                                                 <p:commandButton id="claveac" value="Insertar" update="todo" action="#{beanComprobantesRecibidos.cargarporClave()}"/>
                                                                             </h:panelGrid>
                                                                             <p:blockUI block="todo" trigger="claveac">
@@ -140,38 +117,54 @@ and open the template in the editor.
                                                                     <br/>
                                                                     <h:panelGrid  style="width:80%;text-align:center" columns="2">
                                                                         <h:outputText value="No Mostrar Mensaje: " />
-                                                                        <p:selectBooleanCheckbox value="#{beanComprobantesRecibidos.mensaje90}" />
+                                                                          <p:selectBooleanCheckbox value="#{beanComprobantesRecibidos.mensaje90}" />
                                                                     </h:panelGrid>
-                                                                    <br/>
-                                                                    <h:panelGrid  style="width:100%;text-align:center" columns="1">
-                                                                        <p:commandButton value="Aceptar" action="#{beanComprobantesRecibidos.actualzarCerrar()}"/>
-                                                                    </h:panelGrid>
-
+                                                                        <br/>
+                                                                        <h:panelGrid  style="width:100%;text-align:center" columns="1">
+                                                                            <p:commandButton value="Aceptar" action="#{beanComprobantesRecibidos.actualzarCerrar()}"/>
+                                                                        </h:panelGrid>
+                                                                  
                                                                 </p:dialog>
                                                                 <p:accordionPanel activeIndex="false"  multiple="true">
 
                                                                     <p:tab    title="Carga De Comprobantes Por .XML">
                                                                         <p:panel  style="background-color:#ebe9e9;">
-                                                                            <h:panelGrid   columns="1" style="margin-left: 0; margin-right: auto;font-size:12px;" >
+                                                                            <h:panelGrid   columns="1" style="margin-left: auto; margin-right: auto;font-size:12px;" >
                                                                                 <h:outputText value="Archivo XML" styleClass="FontBold Fs14 hardblue"/>    
 
-                                                                                <h:form id="otromas"   enctype="multipart/form-data">
-                                                                                    <p:fileUpload label="Cargar"   id="valor" value="#{beanComprobantesRecibidos.file}" sizeLimit="100000000" mode="simple" skinSimple="true"/>
 
-                                                                                    <p:commandButton id="xml" value="Almacenar" ajax="false" actionListener="#{beanComprobantesRecibidos.cargaxml()}" />
+                                                                                <p:fileUpload rendered="false"  fileUploadListener="#{beanComprobantesRecibidos.cargaxml}"
+                                                                                              allowTypes="/(\.|\/)(xml)$/" sizeLimit="100000000"
+                                                                                              uploadLabel="Subir"
+                                                                                              cancelLabel="Cancelar"
 
-                                                                                </h:form>   
+                                                                                              label="Seleccionar"
+
+                                                                                              >
+
+                                                                                </p:fileUpload>
 
 
 
                                                                             </h:panelGrid>
+                                                                            <h:form id="otromas" rendered="false" enctype="multipart/form-data">
+                                                                                <p:fileUpload id="valor" value="#{beanComprobantesRecibidos.file}" sizeLimit="100000000" mode="simple" skinSimple="true"/>
+
+                                                                                <p:commandButton id="xml" value="Almacenar" ajax="false" actionListener="#{beanComprobantesRecibidos.cargaxml()}" />
+
+                                                                            </h:form>   
+                                                                            <p:fileUpload id="pr2" style="width:100%" fileUploadListener="#{beanComprobantesRecibidos.cargaxml2}" mode="advanced"
+                                                                                          update="todo" auto="true" sizeLimit="100000" allowTypes="/(\.|\/)(xml|Xml|XML)$/" />
 
 
 
 
-
-
-                                                                          
+                                                                            <p:blockUI block="todo" trigger="pr2">
+                                                                                LOADING<br />
+                                                                                <p:graphicImage value="/imagenes/AjaxLoading.gif" 
+                                                                                                width="100%"
+                                                                                                height="100%"/>  
+                                                                            </p:blockUI>
                                                                         </p:panel>
 
                                                                     </p:tab>
@@ -231,20 +224,20 @@ and open the template in the editor.
                                                                                 <h:outputText value="Fecha" styleClass="FontBold Fs14 hardblue"/> 
                                                                                 <p:panel style="width:100%">
                                                                                     <h:outputText value="Año: " /> 
-                                                                                    <h:inputText  style="width:19%" onkeypress="return soloNumeros(event);"  value="#{beanComprobantesRecibidos.ano}" styleClass="FontBold Fs14 hardblue"/> 
+                                                                                    <h:inputText  style="width:19%" value="#{beanComprobantesRecibidos.ano}" styleClass="FontBold Fs14 hardblue"/> 
                                                                                     <p:spacer width="3%"/>
                                                                                     <h:outputText value="Mes: " /> 
-                                                                                    <h:inputText style="width:14%" onkeypress="return soloNumeros(event);"  value="#{beanComprobantesRecibidos.mes}" styleClass="FontBold Fs14 hardblue"/> 
+                                                                                    <h:inputText style="width:14%" value="#{beanComprobantesRecibidos.mes}" styleClass="FontBold Fs14 hardblue"/> 
                                                                                     <p:spacer width="3%"/>
                                                                                     <h:outputText value="Dia: " /> 
-                                                                                    <h:inputText style="width:14%" onkeypress="return soloNumeros(event);"  value="#{beanComprobantesRecibidos.dia}" styleClass="FontBold Fs14 hardblue"/> 
+                                                                                    <h:inputText style="width:14%" value="#{beanComprobantesRecibidos.dia}" styleClass="FontBold Fs14 hardblue"/> 
                                                                                 </p:panel> <br/>
                                                                                 <h:outputText value="Ruc Proveedor" styleClass="FontBold Fs14 hardblue"/>    
-                                                                                <h:inputText style="width:100%" onkeypress="return soloNumeros(event);"  value="#{beanComprobantesRecibidos.rucempresa}" styleClass="FontBold Fs14 hardblue"/><br/>  
+                                                                                <h:inputText style="width:100%" value="#{beanComprobantesRecibidos.rucempresa}" styleClass="FontBold Fs14 hardblue"/><br/>  
                                                                                 <h:outputText value="Nombre Provedor" styleClass="FontBold Fs14 hardblue"/>    
                                                                                 <h:inputText style="width:100%" value="#{beanComprobantesRecibidos.nombreProvedor}" styleClass="FontBold Fs14 hardblue"/><br/>  
                                                                                 <h:outputText value="Valor Factura" styleClass="FontBold Fs14 hardblue"/>    
-                                                                                <h:inputText style="width:100%" onkeypress="return soloNumeros(event);"  value="#{beanComprobantesRecibidos.valorfactura}" styleClass="FontBold Fs14 hardblue"/> <br/> 
+                                                                                <h:inputText style="width:100%" value="#{beanComprobantesRecibidos.valorfactura}" styleClass="FontBold Fs14 hardblue"/> <br/> 
                                                                                 <h:outputText value="Detalle Factura" styleClass="FontBold Fs14 hardblue"/>    
                                                                                 <h:inputTextarea style="width:100%;border-color: #96A5AE;font-size:15px" value="#{beanComprobantesRecibidos.detalleFactua}" /><br/> 
                                                                                 <p:commandButton id="manual" ajax="false" actionListener="#{beanComprobantesRecibidos.guardarFacturaManual()}" value="Guardar"/>
@@ -282,6 +275,21 @@ and open the template in the editor.
                 </div>
             </div>
         </div>
-      <ui:include  src="menu2.xhtml" />
+        <div style="background-color: #85B2CB" class="footer_btm"><!-- start footer_btm -->
+            <div class="container">
+                <div class="row  footer1">
+                    <div class="col-md-5">
+                        <div class="soc_icons">
+                            <ul class="list-unstyled">
+                                <li><a class="icon1" href="#"></a></li>
+                                <li><a class="icon2" href="#"></a></li>
+                                <li><a class="icon3" href="#"></a></li>
+                            </ul>	
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </body>
 </html>

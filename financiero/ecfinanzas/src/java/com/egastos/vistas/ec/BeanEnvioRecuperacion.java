@@ -78,10 +78,10 @@ public class BeanEnvioRecuperacion implements Serializable{
         DAOUsuarioAcceso dua = new DAOUsuarioAcceso();
         if (clave.equals("") || confirmacionClave.equals("")) {
             if (clave.equals("")) {
-                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_WARN, "El campo Clave no puede estar vacío.");
+                MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_WARN, "El campo Clave no puede estar vacío.");
             }
             if (confirmacionClave.equals("")) {
-                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_WARN, "El campo Confirmación de Clave no puede estar vacío.");
+                MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_WARN, "El campo Confirmación de Clave no puede estar vacío.");
             }
         } else {
             if (clave.equals(confirmacionClave)) {
@@ -93,16 +93,16 @@ public class BeanEnvioRecuperacion implements Serializable{
                     }
                     if (dua.actualizarClaveUsuarioAcceso(usuario.getIdUsuario(), clave)) {
 //                        dua.actualizarEstadoUsuario(usuario.getIdUsuario(),"1");
-                         MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_WARN, "Se ha actualizado la clave correctamente.");
+                         MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_WARN, "Se ha actualizado la clave correctamente.");
                          FacesContext.getCurrentInstance().getExternalContext().redirect("mensajecambioClave.xhtml");
                     } else {
-                         MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_WARN, "No se ha podido actualizar la clave.");
+                         MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_WARN, "No se ha podido actualizar la clave.");
                     }
                 } else {
-                     MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_WARN, "La clave debe tener por lo menos 8 caracteres.");
+                     MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_WARN, "La clave debe tener por lo menos 8 caracteres.");
                 }
             } else {
-                 MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Los datos ingresados en Clave y Confirmación de Clave no coinciden.");
+                 MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Los datos ingresados en Clave y Confirmación de Clave no coinciden.");
             }
         }
     }

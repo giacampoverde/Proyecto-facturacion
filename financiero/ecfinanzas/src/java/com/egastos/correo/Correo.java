@@ -102,11 +102,19 @@ public class Correo {
 
     public void inicializarValoresNotificacion() {
 
-       host = Valores.VALOR_HOST_CORREO_NOTIFICACION;
-       port = Valores.VALOR_PUERTO_CORREO_NOTIFICACION;
-       user = Valores.VALOR_USUARIO_CORREO_NOTIFICACION;     
-       password = Valores.VALOR_PASSWORD_CORREO_NOTIFICACION;
-       dirFrom = Valores.VALOR_CUENTA_CORREO_NOTIFICACION;
+////        host = Valores.VALOR_HOST_CORREO_NOTIFICACION;
+        host = "mail.ecfinanzas.com";
+        password = "Ecu@dor2012";
+        port = "587";
+        user = "soporte@ecfinanzas.com";
+//        port = Valores.VALOR_PUERTO_CORREO_NOTIFICACION;
+
+//        user = Valores.VALOR_USUARIO_CORREO_NOTIFICACION;
+       
+
+//        password = Valores.VALOR_PASSWORD_CORREO_NOTIFICACION;
+
+        dirFrom = Valores.VALOR_CUENTA_CORREO_NOTIFICACION;
 
         setPropiedades(host, port, user);
         session = Session.getDefaultInstance(props);

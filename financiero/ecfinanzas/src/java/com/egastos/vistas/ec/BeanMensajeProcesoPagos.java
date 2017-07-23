@@ -68,15 +68,6 @@ public class BeanMensajeProcesoPagos implements Serializable{
             Logger.getLogger(BeanMensajeProcesoPagos.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    public void  dirigirBeanImagenPagos(){
-        try {
-        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-        HttpServletRequest request = (HttpServletRequest) context.getRequest();
-        FacesContext.getCurrentInstance().getExternalContext().redirect(request.getContextPath() + "/instructivopagos.xhtml");
-        } catch (Exception ex) {
-            Logger.getLogger(BeanMensajeProcesoPagos.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
     
      public void  RegresarBeanProcesoPaginaPagos(){
         try {

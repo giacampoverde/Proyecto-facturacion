@@ -53,7 +53,7 @@ public class BeanRecuperarClave implements Serializable {
 //                    usuarioTmp = usuarioDao.obtenerUsuarioAccesoPorNombre(nombreUsuario);
                       usuarioTmp = usuarioDao.obtenerUsuarioPorRucCedula(nombreUsuario);
                     if (usuarioTmp == null) {
-                        MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "El usuario ingresado no existe.");
+                        MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "El usuario ingresado no existe.");
                     } else {
                        enviarCorreoRestablecerClave(usuarioTmp);
                         FacesContext.getCurrentInstance().getExternalContext().redirect("recuperar-clave1.xhtml");
@@ -63,7 +63,7 @@ public class BeanRecuperarClave implements Serializable {
                 }
 
             }else{
-                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Debe ingresar un numero de cedula.");
+                MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Debe ingresar un numero de cedula.");
             }
         } catch (Exception ex) {
             Logger.getLogger(BeanRecuperarClave.class.getName()).log(Level.SEVERE, null, ex);

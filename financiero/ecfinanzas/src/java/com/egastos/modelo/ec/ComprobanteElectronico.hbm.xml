@@ -24,7 +24,7 @@
             <column name="secuencialComprobanteElectronico" length="9" not-null="true" />
         </property>
         <property name="numeroAutorizacionComprobanteElectronico" type="string">
-            <column name="numeroAutorizacionComprobanteElectronico" length="49" />
+            <column name="numeroAutorizacionComprobanteElectronico" length="37" />
         </property>
         <property name="rucEmisorComprobanteElectronico" type="string">
             <column name="rucEmisorComprobanteElectronico" length="13" not-null="true" />

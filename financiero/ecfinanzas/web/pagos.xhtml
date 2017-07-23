@@ -88,12 +88,12 @@ and open the template in the editor.
                                                             <p:column>
 
 
-                                                                <h1 class="hardblue TexAlCenter" style="font-size:20px;">Seleccione el plan por el cual relizó el pago</h1  >
+                                                                <h1 class="hardblue TexAlCenter" style="font-size:20px;">Seleccione El Plan Por El Cual Relizo El Pago</h1  >
                                                                 <p:selectOneMenu id="car" style="width:100%" effect="drop" value="#{beanProcesoPagos.planId}">
                                                                     <f:selectItem itemLabel="Plan" itemValue="" />
                                                                     <f:selectItems var="val" itemLabel="#{val.meses} MESES--$#{val.valor}" itemValue="#{val.idPlanesPago}" value="#{beanProcesoPagos.planesPago}" />
                                                                 </p:selectOneMenu><br/>
-                                                                <h1 class="hardblue TexAlCenter" style="font-size:20px;">Seleccione la cuenta a la cual pago</h1>
+                                                                <h1 class="hardblue TexAlCenter" style="font-size:20px;">Seleccione La Cuenta A La Cual Pago</h1>
 
                                                                 <p:selectOneMenu style="width:100%" id="som-fechas" value="#{beanProcesoPagos.cuentaSeleccionada}"  effect="drop" >
                                                                     <f:selectItem  itemLabel="cuenta" itemValue=" " />
@@ -103,27 +103,36 @@ and open the template in the editor.
 
                                                                 </p:selectOneMenu><br/>
 
-                                                                <h1 class="hardblue TexAlCenter" style="font-size:20px;">Cuenta cliente de la cual se realizo el pago</h1>
+                                                                <h1 class="hardblue TexAlCenter" style="font-size:20px;">Cuenta Cliente De La Cual Se Realizo el Pago</h1>
                                                                 <p:inputText id="it-secuencial-" onkeypress="return soloNumeros(event);"  style="width:100%" value="#{beanProcesoPagos.numeroCuentaCliente2}" /><br/>
                                                                 <br/>
-                                                                <h1 class="hardblue TexAlCenter" style="font-size:20px;">Numero transferencia (Opcional)</h1>
+                                                                <h1 class="hardblue TexAlCenter" style="font-size:20px;">Numero Transferencia (Opcional)</h1>
                                                                 <p:inputText id="it-secuencial-busqueda4" onkeypress="return soloNumeros(event);" style="width:100%" value="#{beanProcesoPagos.numeroTransferencia}" /><br/>
                                                                 <br/>
-                                                                <h1 class="hardblue TexAlCenter" style="font-size:20px;">Imagen transferencia</h1>
+                                                                <h1 class="hardblue TexAlCenter" style="font-size:20px;">Imagen Transferencia</h1>
                                                                 <p:accordionPanel  activeIndex="false" multiple="true">
                                                                     <p:tab    title="(OPCIONAL)">
                                                                         <p:panel  style="background-color:#ebe9e9;">
                                                                             <h:panelGrid   columns="1" style="margin-left: auto; margin-right: auto;font-size:12px;" >
                                                                                 <h:outputText value="Archivo .png" styleClass="FontBold Fs14 hardblue"/>    
-                                                                            
+                                                                                <p:fileUpload rendered="false"  fileUploadListener="#{beanComprobantesRecibidos.cargaxml}"
+                                                                                              allowTypes="/(\.|\/)(xml)$/" sizeLimit="100000000"
+                                                                                              uploadLabel="Subir"
+                                                                                              cancelLabel="Cancelar"
+
+                                                                                              label="Seleccionar"
+
+                                                                                              >
+
+                                                                                </p:fileUpload>
 
 
 
                                                                             </h:panelGrid>
                                                                             <h:form id="otromas" enctype="multipart/form-data">
-                                                                                <p:fileUpload id="valor" value="#{beanProcesoPagos.file}" sizeLimit="100000000" mode="simple" skinSimple="true"/>
+                                                                                <p:fileUpload id="valor" value="#{beanComprobantesRecibidos.file}" sizeLimit="100000000" mode="simple" skinSimple="true"/>
 
-                                                                                <p:commandButton id="xml" value="Almacenar" ajax="false" actionListener="#{beanProcesoPagos.foto()}" />
+                                                                                <p:commandButton id="xml" value="Almacenar" ajax="false" actionListener="#{beanComprobantesRecibidos.cargaxml()}" />
                                                                                 <p:blockUI block="todo" trigger="xml" >
                                                                                     LOADING<br />
                                                                                     <p:graphicImage value="/imagenes/AjaxLoading.gif" 
@@ -176,6 +185,21 @@ and open the template in the editor.
                 </div>
             </div>
         </div>
-         <ui:include  src="menu2.xhtml" />
+        <div style="background-color: #85B2CB" class="footer_btm"><!-- start footer_btm -->
+            <div class="container">
+                <div class="row  footer1">
+                    <div class="col-md-5">
+                        <div class="soc_icons">
+                            <ul class="list-unstyled">
+                                <li><a class="icon1" href="#"></a></li>
+                                <li><a class="icon2" href="#"></a></li>
+                                <li><a class="icon3" href="#"></a></li>
+                            </ul>	
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </body>
 </html>

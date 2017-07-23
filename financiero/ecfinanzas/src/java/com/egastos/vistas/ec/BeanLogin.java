@@ -61,21 +61,21 @@ public class BeanLogin implements Serializable {
                             if (usuario.getPerfil().getDescripcionPerfil().equals("Usuario Interno") || usuario.getPerfil().getDescripcionPerfil().equals("UsuarioAdministrador")) {
                                 DAOAsignacionComprobanteElectronico a = new DAOAsignacionComprobanteElectronico();
                                 Long numeroComprobantes = a.obtenerTotalComprobantesElectronicosRuecibidosPorRUC(nombreUsuario);
-                                if (numeroComprobantes > Integer.parseInt(Valores.VALOR_NUMERO_MAXIMO_COMPROBANTES)) {
+                                if (numeroComprobantes > Integer.parseInt(Valores.numeroMaximoComprobantes)) {
                                     DAOPagos pag = new DAOPagos();
                                     Pagos pago = pag.ObtenerPagos(usuario.getIdUsuario(),"pagado");
                                     if (pag != null) {
                                         Fecha actual = new Fecha(new Date());
                                         Fecha vence = new Fecha(pago.getFechaPago());
                                         if (vence.antesOrEquals(actual)) {
-                                            cs.iniciarSesion(usuario.getNombreUsuarioAcceso(), usuario.getPerfil().getIdPerfil().toString(), usuario.getIdUsuario().toString(), usuario.getNombreUsuario(), usuario.getApellidoUsuario(), usuario.getIdentificacionUsuario(), "Valores.VALOR_RUC_EMISOR", "1");
+                                            cs.iniciarSesion(usuario.getNombreUsuarioAcceso(), usuario.getPerfil().getIdPerfil().toString(), usuario.getIdUsuario().toString(), usuario.getNombreUsuario(), usuario.getApellidoUsuario(), usuario.getIdentificacionUsuario(), Valores.VALOR_RUC_EMISOR, "1");
                                         } else {
                                             //update a la tabla pagos a estado vencido 
                                             //update a la tabla usuario a estado inactivo y mesaje acorde a la razon 
                                         }
                                     }
                                 } else {
-                                    cs.iniciarSesion(usuario.getNombreUsuarioAcceso(), usuario.getPerfil().getIdPerfil().toString(), usuario.getIdUsuario().toString(), usuario.getNombreUsuario(), usuario.getApellidoUsuario(), usuario.getIdentificacionUsuario(), "Valores.VALOR_RUC_EMISOR", "1");
+                                    cs.iniciarSesion(usuario.getNombreUsuarioAcceso(), usuario.getPerfil().getIdPerfil().toString(), usuario.getIdUsuario().toString(), usuario.getNombreUsuario(), usuario.getApellidoUsuario(), usuario.getIdentificacionUsuario(), Valores.VALOR_RUC_EMISOR, "1");
                                 
                                        FacesContext.getCurrentInstance().getExternalContext().redirect(request.getContextPath() + "/gestionPagos.xhtml");
                                 }
@@ -83,7 +83,7 @@ public class BeanLogin implements Serializable {
                             } else {
                                 DAOAsignacionComprobanteElectronico a = new DAOAsignacionComprobanteElectronico();
                                 Long numeroComprobantes = a.obtenerTotalComprobantesElectronicosRuecibidosPorRUC(nombreUsuario);
-                                if (numeroComprobantes > Integer.parseInt(Valores.VALOR_NUMERO_MAXIMO_COMPROBANTES)) {
+                                if (numeroComprobantes > Integer.parseInt(Valores.numeroMaximoComprobantes)) {
                                     DAOPagos pag = new DAOPagos();
                                     Pagos pago = pag.ObtenerPagos(usuario.getIdUsuario(),"pagado");
                                     if (pag != null) {
@@ -96,7 +96,7 @@ public class BeanLogin implements Serializable {
                                         } else {
                                         DAOUsuarioAcceso usuarioAcceso=new DAOUsuarioAcceso();
                                         usuarioAcceso.actualizarestado(usuario.getIdUsuario(),"4");
-                                        usuarioAcceso.actualizarMensaje(usuario.getIdUsuario(),"Estimado cliente el periodo por el cual usted pago a finalizado.");
+                                        usuarioAcceso.actualizarMensaje(usuario.getIdUsuario(),"Estimado Cliente El Perido Por El Cual Usted Pago A Finalizado.");
                                          cs.iniciaSesionTemporal(""+usuario.getIdUsuario());
                                           FacesContext.getCurrentInstance().getExternalContext().redirect(request.getContextPath() + "/mensajePagos.xhtml");
                                                 //update a la tabla pagos a estado vencido 
@@ -105,7 +105,7 @@ public class BeanLogin implements Serializable {
                                     }else{
                                         DAOUsuarioAcceso usuarioAcceso=new DAOUsuarioAcceso();
                                         usuarioAcceso.actualizarestado(usuario.getIdUsuario(),"4");
-                                        usuarioAcceso.actualizarMensaje(usuario.getIdUsuario(),"Estimado cliente su limite de almacenamiento  de 50 comprobantes se ha completado. ");
+                                        usuarioAcceso.actualizarMensaje(usuario.getIdUsuario(),"Estimado Cliente Su Limite De Almacenamiento  De 50 Comprobantes Se Ha Completado. ");
                                         cs.iniciaSesionTemporal(""+usuario.getIdUsuario());
                                          FacesContext.getCurrentInstance().getExternalContext().redirect(request.getContextPath() + "/mensajePagos.xhtml");
                                      
@@ -124,7 +124,7 @@ public class BeanLogin implements Serializable {
                                 insertAudi.setMensajeTransaccion("Inicio De Sesion");
                                 insertAudi.setUsuarioAcceso(usuario);
                                 daoaudito.insertarRegistro(insertAudi);
-                                cs.iniciarSesion(usuario.getNombreUsuarioAcceso(), usuario.getPerfil().getIdPerfil().toString(), usuario.getIdUsuario().toString(), usuario.getNombreUsuario(), usuario.getApellidoUsuario(), usuario.getIdentificacionUsuario(), "Valores.VALOR_RUC_EMISOR", "1");
+                                cs.iniciarSesion(usuario.getNombreUsuarioAcceso(), usuario.getPerfil().getIdPerfil().toString(), usuario.getIdUsuario().toString(), usuario.getNombreUsuario(), usuario.getApellidoUsuario(), usuario.getIdentificacionUsuario(), Valores.VALOR_RUC_EMISOR, "1");
                             } else {
                                 insertAudi.setFecha(new Date());
                                 insertAudi.setFechaHora(new Date());
@@ -135,15 +135,14 @@ public class BeanLogin implements Serializable {
                             }
                             FacesContext.getCurrentInstance().getExternalContext().redirect(request.getContextPath() + "/cambio-clave.xhtml");
                         } else if (usuario.getEstadoUsuario().equals("2")) {
-                            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Su cuenta ha sido desactivada.");
+                            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Su cuenta ha sido desactivada.");
                         }else if(usuario.getEstadoUsuario().equals("4")){
                                DAOPagos pag=new DAOPagos();
                                Pagos pago=pag.ObtenerPagos(usuario.getIdUsuario(),"revision");
 //                               cs.iniciaSesionTemporal(""+usuario.getIdUsuario());
                                if(pago!=null){
-                                 MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_INFO, "Estimado cliente su pago se encuentra en estado de revisión.");
+                                 MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_INFO, "Estimado Cliente Su Pago Se Encuentra En Estado De Revisión.");
                                }else{
-                                cs.iniciaSesionTemporal(""+usuario.getIdUsuario());
                                FacesContext.getCurrentInstance().getExternalContext().redirect(request.getContextPath() + "/mensajePagos.xhtml");
                                }
                              //PAGO VENCIDO
@@ -151,20 +150,20 @@ public class BeanLogin implements Serializable {
                             //mostrar una pantalla para que realice el pago
                         }
                     } else {
-                        MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Nombre de usuario o contraseña están incorrectos.");
+                        MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Nombre de usuario o contraseña están incorrectos.");
 
                     }
                 } catch (Exception ex) {
                     Logger.getLogger(BeanLogin.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else if (nombreUsuario == null && claveUsuario == null) {
-                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Por favor ingrese sus datos para continuar.");
+                MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Por favor ingrese sus datos para continuar.");
             } else if (nombreUsuario.equals("") && claveUsuario.equals("")) {
-                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Por favor ingrese sus datos para continuar.");
+                MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Por favor ingrese sus datos para continuar.");
             } else if (nombreUsuario.equals("")) {
-                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Por favor ingrese su  usuario para continuar.");
+                MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Por favor ingrese su  usuario para continuar.");
             } else if (claveUsuario.equals("")) {
-                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Por favor ingrese su clave para continuar.");
+                MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Por favor ingrese su clave para continuar.");
             }
         } catch (Exception ex) {
             Logger.getLogger(BeanLogin.class.getName()).log(Level.SEVERE, null, ex);

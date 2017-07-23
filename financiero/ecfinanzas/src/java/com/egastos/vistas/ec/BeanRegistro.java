@@ -58,50 +58,50 @@ public class BeanRegistro implements Serializable {
     public boolean validarDatosUsuario() {
         boolean respuesta = true;
         if (this.usuarioNuevo.getIdentificacionUsuario() == null || this.usuarioNuevo.getIdentificacionUsuario().trim().equals("")) {
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Debe ingresar el número de identificación.");
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Debe ingresar el número de identificación.");
             respuesta = false;
         } else if (this.usuarioNuevo.getNombreUsuario() == null || this.usuarioNuevo.getNombreUsuario().trim().equals("")) {
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Debe ingresar sus nombres.");
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Debe ingresar sus nombres.");
             respuesta = false;
         } else if (!Validaciones.isTexto(this.usuarioNuevo.getNombreUsuario())) {
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Debe ingresar solo letras en el campo Nombres.");
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Debe ingresar solo letras en el campo Nombres.");
             respuesta = false;
         } else if (this.usuarioNuevo.getApellidoUsuario() == null || this.usuarioNuevo.getApellidoUsuario().trim().equals("")) {
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Debe ingresar sus apellidos.");
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Debe ingresar sus apellidos.");
             respuesta = false;
         } else if (!Validaciones.isTexto(this.usuarioNuevo.getApellidoUsuario())) {
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Debe ingresar solo letras en el campo Apellidos.");
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Debe ingresar solo letras en el campo Apellidos.");
             respuesta = false;
         } else if (this.usuarioNuevo.getTelefonoPrincipalUsuario() == null || this.usuarioNuevo.getTelefonoPrincipalUsuario().trim().equals("")) {
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Debe ingresar un número de teléfono.");
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Debe ingresar un número de teléfono.");
             respuesta = false;
         } else if (!Validaciones.isNum(this.usuarioNuevo.getTelefonoPrincipalUsuario())) {
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Debe ingresar solo números en el campo Teléfono Principal.");
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Debe ingresar solo números en el campo Teléfono Principal.");
             respuesta = false;
         } else if (this.usuarioNuevo.getTelefonoAdicionalUsuario() == null && this.usuarioNuevo.getTelefonoAdicionalUsuario().trim().equals("")) {
             if (!Validaciones.isNum(this.usuarioNuevo.getTelefonoAdicionalUsuario())) {
-                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Debe ingresar solo números en el campo Teléfono Adicional.");
+                MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Debe ingresar solo números en el campo Teléfono Adicional.");
                 respuesta = false;
             }
         } else if (this.usuarioNuevo.getCorreoPrincipalUsuario() == null || this.usuarioNuevo.getCorreoPrincipalUsuario().trim().equals("")) {
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Debe ingresar un correo eléctrónico.");
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Debe ingresar un correo eléctrónico.");
             respuesta = false;
         } else if (!Validaciones.isEmail(this.usuarioNuevo.getCorreoPrincipalUsuario())) {
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Debe ingresar un correo eléctrónico principal válido.");
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Debe ingresar un correo eléctrónico principal válido.");
             respuesta = false;
         } else if (this.usuarioNuevo.getCorreoAdicionalUsuario() != null && !this.usuarioNuevo.getCorreoAdicionalUsuario().trim().equals("")) {
             if (!Validaciones.isEmail(this.usuarioNuevo.getCorreoAdicionalUsuario())) {
-                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Debe ingresar un correo eléctrónico adicional válido.");
+                MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Debe ingresar un correo eléctrónico adicional válido.");
                 respuesta = false;
             }
         } else if (this.usuarioNuevo.getClaveUsuarioAcceso() == null || this.usuarioNuevo.getClaveUsuarioAcceso().trim().equals("")) {
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Debe ingresar una contraseña.");
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Debe ingresar una contraseña.");
             respuesta = false;
         } else if (this.usuarioNuevo.getClaveUsuarioAcceso().trim().length() < 8) {
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "La contraseña ingresada debe tener mínimo 8 caracteres.");
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "La contraseña ingresada debe tener mínimo 8 caracteres.");
             respuesta = false;
         } else if (!this.usuarioNuevo.getClaveUsuarioAcceso().equals(this.confirmacionClave)) {
-            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "La contraseña ingresada no coincide con la confirmación de la misma.");
+            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "La contraseña ingresada no coincide con la confirmación de la misma.");
             respuesta = false;
         }
         return respuesta;
@@ -130,16 +130,16 @@ public class BeanRegistro implements Serializable {
                             if (ua1 == null && ua2 == null) {
                                 validado = true;
                             } else {
-                                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "La identificación ya se encuentra registrada por otro usuario/empresa.");
+                                MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "La identificación ya se encuentra registrada por otro usuario/empresa.");
                             }
                         } else {
-                            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "El número de cédula no es válido.");
+                            MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "El número de cédula no es válido.");
                         }
                     } else if (identificacion.length() == 13) {
                         if (!Validaciones.validarRucPersonaNatural(identificacion)) {
                             if (!Validaciones.validarRucSociedadPrivada(identificacion)) {
                                 if (!Validaciones.validarRucSociedadPublica(identificacion)) {
-                                    MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "El RUC no es válido.");
+                                    MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "El RUC no es válido.");
                                 } else {
                                     validado = true;
                                 }
@@ -161,19 +161,19 @@ public class BeanRegistro implements Serializable {
                             if (ua1 == null && ua2 == null) {
                                 validado = true;
                             } else {
-                                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "La identificación ya se encuentra registrada por otro usuario.");
+                                MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "La identificación ya se encuentra registrada por otro usuario.");
                                 validado = false;
                             }
                         }
                     } else {
-                        MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "La identificación ingresada no pertenece a una Cédula/RUC válido.");
+                        MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "La identificación ingresada no pertenece a una Cédula/RUC válido.");
                     }
                 } else {
-                    MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "La identificación debe ser un número.");
+                    MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "La identificación debe ser un número.");
                 }
 
             } else {
-                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "La identificación Cédula/RUC no puede estar vacía.");
+                MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "La identificación Cédula/RUC no puede estar vacía.");
             }
         } catch (Exception ex) {
             Logger.getLogger(BeanRegistro.class.getName()).log(Level.SEVERE, null, ex);
@@ -204,7 +204,7 @@ public class BeanRegistro implements Serializable {
                     usuarioRegistrado = daousuario.insertarUsuarioAcceso(usuarioNuevo);
                     //Enviar Correo
 
-                    // MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_INFO, "El registro se ha completado con exito.");
+                    // MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_INFO, "El registro se ha completado con exito.");
                     if (usuarioRegistrado != null) {
                         Correo envio = new Correo("1");
 
@@ -219,7 +219,7 @@ public class BeanRegistro implements Serializable {
                         HttpServletRequest request = (HttpServletRequest) context.getRequest();
                         FacesContext.getCurrentInstance().getExternalContext().redirect(request.getContextPath() + "/mensajeFinalRegistro.xhtml");
                     }else{
-                       MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_INFO, "El registro se ha completado con exito.");
+                       MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_INFO, "El registro se ha completado con exito.");
                        RequestContext.getCurrentInstance().update("todo");
                     }
                             RequestContext.getCurrentInstance().update("todo");

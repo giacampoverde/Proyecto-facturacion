@@ -274,15 +274,15 @@ public boolean actualizarVisitas(Integer _idUsuario, int _visitas) {
         return criteria_busqueda.list();
     }
 
-    public List buscarUsuariosInternosVariosParametros(String cedula, String nombre, String inic,String fin, Integer _firstResult, Integer _maxResults) {
-        Criteria criteria_busqueda = this.buscarUsuariosInternosVariosParametros(cedula, nombre, inic,fin);
+    public List buscarUsuariosInternosVariosParametros(String _estado, String cedula, String nombre, Integer _firstResult, Integer _maxResults) {
+        Criteria criteria_busqueda = this.buscarUsuariosInternosVariosParametros(_estado, cedula, nombre);
         criteria_busqueda.setFirstResult(_firstResult);
         criteria_busqueda.setMaxResults(_maxResults);
         return criteria_busqueda.list();
     }
 
-    public Long obtenerTotalUsuariosInternosPorCriteriaComprobantesVariosParametros(String cedula, String nombre, String inic,String fin) {
-        Criteria criteria_query = buscarUsuariosInternosVariosParametros(cedula, nombre, inic,fin);
+    public Long obtenerTotalUsuariosInternosPorCriteriaComprobantesVariosParametros(String _estado, String cedula, String nombre) {
+        Criteria criteria_query = buscarUsuariosInternosVariosParametros(_estado, cedula, nombre);
         Long total = Long.parseLong(criteria_query.setProjection(Projections.rowCount()).uniqueResult().toString());
         return total;
     }
@@ -293,24 +293,16 @@ public boolean actualizarVisitas(Integer _idUsuario, int _visitas) {
         return total;
     }
 
-    private Criteria buscarUsuariosInternosVariosParametros(String cedula, String nombre, String inic,String fin) {
+    private Criteria buscarUsuariosInternosVariosParametros(String _estado, String cedula, String nombre) {
         Criteria criteria_query = currentSession.createCriteria(UsuarioAcceso.class, "UsuarioAcceso");
-//        if (!_estado.equals("-1")) {
-//            criteria_query.add(Restrictions.eq("UsuarioAcceso.estadoUsuario", _estado));
-//        }
-        if (cedula!=null&&!cedula.equals("")) {
+        if (!_estado.equals("-1")) {
+            criteria_query.add(Restrictions.eq("UsuarioAcceso.estadoUsuario", _estado));
+        }
+        if (!cedula.equals("")) {
             criteria_query.add(Restrictions.eq("UsuarioAcceso.identificacionUsuario", cedula));
         }
         if (!nombre.equals("")) {
             criteria_query.add(Restrictions.eq("UsuarioAcceso.nombreUsuario", nombre));
-        }
-         if ((inic != null && !inic.equals("")) && (fin == null || fin.equals(""))) {
-            criteria_query.add(Restrictions.gt("UsuarioAcceso.visitas",Integer.parseInt(inic)));
-        }
-        if (inic != null && !inic.equals("") && fin != null && !fin.equals("")) {
-            criteria_query.add(Restrictions.gt("UsuarioAcceso.visitas",Integer.parseInt(inic)));
-            criteria_query.add(Restrictions.le("UsuarioAcceso.visitas",Integer.parseInt(fin)));
-       
         }
         return criteria_query;
     }

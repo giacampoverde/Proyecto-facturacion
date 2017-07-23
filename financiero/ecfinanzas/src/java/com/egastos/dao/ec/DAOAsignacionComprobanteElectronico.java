@@ -56,7 +56,6 @@ public class DAOAsignacionComprobanteElectronico extends DAO {
         q.setParameter("id", id);
         return q.list();
     }
-   
 
     public boolean insertarAsignacionComprobanteElectronico(AsignacionComprobanteElectronico asignacion) {
         currentSession.save(asignacion);
@@ -135,7 +134,7 @@ public class DAOAsignacionComprobanteElectronico extends DAO {
         return criteria_busqueda.list();
     }
 
-    public Criteria buscarCriteriaComprobantesVariosParametros(List _ambiente, String _secuencial, String _rucEmisor, String _rucReceptor, Date _fechaSeleccionadaInicio, Date _fechaActual, String _estado, String tipo, String nombreEmpresa, String valorInicial, String valorFinal) {
+    private Criteria buscarCriteriaComprobantesVariosParametros(List _ambiente, String _secuencial, String _rucEmisor, String _rucReceptor, Date _fechaSeleccionadaInicio, Date _fechaActual, String _estado, String tipo, String nombreEmpresa, String valorInicial, String valorFinal) {
         Criteria criteriaQuery = currentSession.createCriteria(AsignacionComprobanteElectronico.class, "asignacion");
         criteriaQuery.createAlias("asignacion.comprobanteElectronico", "comprobanteElectronico");
         criteriaQuery.createAlias("comprobanteElectronico.tipoComprobanteElectronico", "tipoComprobanteElectronico");

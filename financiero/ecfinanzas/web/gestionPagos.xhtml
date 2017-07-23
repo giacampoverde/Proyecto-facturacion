@@ -57,28 +57,17 @@ and open the template in the editor.
                     <div class="col-md-3">
 
                         <div  class="contact-form">
-                            <p:accordionPanel  multiple="true">
+                            <p:accordionPanel activeIndex="false" multiple="true">
                                 <p:tab    title="Buscar">
                                     <p:panel id="busqued"  style="background-color:#ebe9e9;">
                                         <h:panelGrid   columns="1"  style="margin-left: auto; margin-right: auto;border:0px none;background:none;width:90%" class="TexAlCenter MarAuto">
-                                            <!--analizar estado que valores van a estar en la base-->
-                                            <h:outputText value="Estado:" styleClass="FontBold Fs14 hardblue"/>  
-                                            <p:selectOneMenu style="width:100%" id="som-fechas2" value="#{beanGestionPagos.valorestado}" effect="drop" >
-                                                <f:selectItem itemLabel="Todos" itemValue="1" />
-                                                <f:selectItem itemLabel="Pendientes" itemValue="pendientes" />
-                                                <f:selectItem itemLabel="Revisión" itemValue="revision" />  
-                                                <f:selectItem itemLabel="Pagado" itemValue="pagado" />  
-                                     
-                                            </p:selectOneMenu>
-                                        </h:panelGrid>
-                                        <h:panelGrid   columns="1"  style="margin-left: auto; margin-right: auto;border:0px none;background:none;width:90%" class="TexAlCenter MarAuto">
 
                                             <h:outputText value="Valor:" styleClass="FontBold Fs14 hardblue"/>  
-                                            <p:selectOneMenu style="width:100%" id="som-fechas5" value="#{beanGestionPagos.opcionValores}" effect="drop" >
+                                            <p:selectOneMenu style="width:100%" id="som-fechas2" value="#{beanGestionPagos.opcionValores}" effect="drop" >
                                                 <f:selectItem itemLabel="Todos" itemValue="1" />
-                                                <f:selectItem itemLabel="De 0 a $10" itemValue="2" />
-                                                <f:selectItem itemLabel="De $10 a $50" itemValue="4" />  
-                                                <f:selectItem itemLabel="Mayor a $50" itemValue="5" />  
+                                                <f:selectItem itemLabel="De 0 a $100" itemValue="2" />
+                                                <f:selectItem itemLabel="De $100 a $500" itemValue="4" />  
+                                                <f:selectItem itemLabel="Mayor a $500" itemValue="5" />  
                                                 <f:selectItem itemLabel="Rango" itemValue="6"/> 
                                                 <p:ajax event="valueChange" listener="#{beanGestionPagos.abrirValores()}" update="valores"/>
                                             </p:selectOneMenu>
@@ -93,7 +82,7 @@ and open the template in the editor.
                                         </h:panelGrid>
                                         <h:panelGrid   columns="1"  style="margin-left: auto; margin-right: auto;border:0px none;background:none;width:80%" class="TexAlCenter MarAuto">
 
-                                            <h:outputText value="Fecha De Pago:" styleClass="FontBold Fs14 hardblue"/>  
+                                            <h:outputText value="Fecha:" styleClass="FontBold Fs14 hardblue"/>  
                                             <p:selectOneMenu style="width:100%" id="som-fechas" value="#{beanGestionPagos.seleccionPeriodoTiempo}" effect="drop" >
                                                 <f:selectItem itemLabel="Todos" itemValue="1" />
                                                 <f:selectItem itemLabel="Hoy" itemValue="2" />
@@ -111,7 +100,7 @@ and open the template in the editor.
                                                 <h:outputText value="Hasta:" styleClass="FontBold Fs14 hardblue"/>  
                                                 <h:inputText id="ot-fecha-final" value="#{beanGestionPagos.fechaFinalS}" style="width:100%" styleClass="FontBold Fs12 hardblue" />
                                             </p:panelGrid><br/>
-                                            <h:outputText value="Cedula o Ruc:" styleClass="FontBold Fs14 hardblue"/>  
+                                            <h:outputText value="Nombre Empresa:" styleClass="FontBold Fs14 hardblue"/>  
                                             <p:inputText id="it-secuencial-busqueda2" style="width:100%" value="#{beanGestionPagos.nombreEmpresa}" /><br/>
 
                                             <p:commandButton id="busc" value="Buscar" update=":todo:dt-comprobantes-recibidos-autorizados" actionListener="#{beanGestionPagos.cargarTablaPagos()}" onclick="PF('wv-dt-emitidos-autorizados').getPaginator().setPage(0);"/><br/>
@@ -143,7 +132,7 @@ and open the template in the editor.
                                         <span>
                                             <h:panelGrid    columns="1" style="margin-left:auto ;width:100% ; margin-right: auto;">
                                                 <p:panel  style="background-color:#ebe9e9;">
-                                                    <p:dataTable id="dt-comprobantes-recibidos-autorizados" widgetVar="wv-dt-emitidos-autorizados" var="pagos" selectionMode="single" value="#{beanGestionPagos.pagosLazy}" paginator="true" rows="5" emptyMessage="No hay registros" 
+                                                    <p:dataTable id="dt-comprobantes-recibidos-autorizados" widgetVar="wv-dt-emitidos-autorizados" var="pagos" value="#{beanGestionPagos.pagosLazy}" paginator="true" rows="5" emptyMessage="No hay registros" 
                                                                  paginatorPosition="bottom"
                                                                  rowsPerPageTemplate="5,10,15" lazy="true" reflow="true" rowKey="#{pagos.idpagos}" selection="#{beanGestionPagos.pagoSeleccionado}" scrollable="false" >
                                                         <p:column style="font-weight: bold" headerText="Cedula" width="11%" >
@@ -157,27 +146,24 @@ and open the template in the editor.
 
                                                         <p:column style="font-weight: bold" headerText="Cuenta Cliente" width="11%" >
 
-                                                            <h:outputText style="font-weight: lighter" value="#{pagos.numeroCuentaOrigen}" />
-
+                                                            <h:outputText style="font-weight: lighter" value="#{pagos.numeroCuentaOrigen}" >
+                                                                <f:convertDateTime pattern="yyyy/MM/dd" />
+                                                            </h:outputText>
                                                         </p:column>
 
                                                         <p:column style="font-weight: bold" headerText="Cuenta Empresa" width="11%">
                                                             <h:outputText style="font-weight: lighter" value="#{pagos.numeroCuenta}" />
                                                         </p:column>
                                                         <p:column style="font-weight: bold" headerText="Fecha Pago" width="11%">
-                                                            <h:outputText style="font-weight: lighter" value="#{pagos.fechaPago}" >
-                                                                <f:convertDateTime pattern="yyyy/MM/dd" />
-                                                            </h:outputText>
+                                                            <h:outputText style="font-weight: lighter" value="#{pagos.fechaPago}" />
                                                         </p:column>
                                                         <p:column style="font-weight: bold" headerText="Fecha Caducidad" width="11%">
-                                                            <h:outputText style="font-weight: lighter" value="#{pagos.fechacaduca}" >
-                                                                <f:convertDateTime pattern="yyyy/MM/dd" />
-                                                            </h:outputText>
+                                                            <h:outputText style="font-weight: lighter" value="#{pagos.fechacaduca}" />
                                                         </p:column>
-                                                        <p:column style="font-weight: bold" headerText="Plan" width="10%">
+                                                        <p:column style="font-weight: bold" headerText="Plan" width="8%">
                                                             <h:outputText style="font-weight: lighter" value="#{pagos.planespago.meses} Meses" />
                                                         </p:column>
-                                                        <p:column rendered="true" headerText="Valor" width="7%" class="scrollColumn">
+                                                        <p:column rendered="true" headerText="Valor" width="11%" class="scrollColumn">
                                                             <h:outputText style="font-weight: lighter" value="$#{pagos.valorPago}" />
                                                         </p:column>
                                                         <p:column style="font-weight: bold" headerText="transferencia" width="11%">
@@ -187,21 +173,10 @@ and open the template in the editor.
                                                             <h:outputText style="font-weight: lighter" value="#{pagos.estadopago}" />
                                                         </p:column>
 
-
+                                                        <p:column   selectionMode="single" width="11%" />
                                                     </p:dataTable>
 
-                                                </p:panel>
-                                                <p:panel  style="text-align:center ">
-                                                 
-                                                    <p:commandButton  value="Cambio Estado Pago" actionListener="#{beanGestionPagos.cambiarestadoPagado}" update=":todo:dt-comprobantes-recibidos-autorizados" >
-                                                        <p:confirm header="Confirmacion De Pagos" message="Confirmar Pago?" icon="ui-icon-alert" />
-                                                    </p:commandButton>
-
-                                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                                                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                                                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                                                    </p:confirmDialog>
-                                                </p:panel>
+                                                </p:panel> 
                                             </h:panelGrid>
 
                                         </span>
@@ -234,6 +209,22 @@ and open the template in the editor.
                 </div>
             </div>
         </div>
-   <ui:include  src="menu2.xhtml" />
+        <div style="background-color: #85B2CB" class="footer_btm"><!-- start footer_btm -->
+            <div >
+                <div class="row  footer1">
+                    <div class="col-md-5">
+                        <div class="soc_icons">
+                            <ul class="list-unstyled">
+
+                                <li><a class="icon1" href="#"></a></li>
+                                <li><a class="icon2" href="#"></a></li>
+                                <li><a class="icon3" href="#"></a></li>
+                            </ul>	
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </body>
 </html>

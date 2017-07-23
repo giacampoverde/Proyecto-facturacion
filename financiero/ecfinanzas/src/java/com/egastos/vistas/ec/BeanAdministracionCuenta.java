@@ -305,17 +305,17 @@ public class BeanAdministracionCuenta implements Serializable{
             if (!Validaciones.isNum(nombre)) {
                 boolean actualizado = this.instanciarDAO().actualizarNombreUsuario(usuarioAcceso.getIdUsuario(), nombre);
                 if (actualizado) {
-                     MensajesPrimefaces. mostrarMensaje(FacesMessage.SEVERITY_INFO, "Su nombre ha sido actualizado.");
+                     MensajesPrimefaces. mostrarMensajeDialog(FacesMessage.SEVERITY_INFO, "Su nombre ha sido actualizado.");
 
                 } else {
-                     MensajesPrimefaces. mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error al actualizar su nombre.");
+                     MensajesPrimefaces. mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Error al actualizar su nombre.");
                 }
             } else {
-                MensajesPrimefaces.  mostrarMensaje(FacesMessage.SEVERITY_ERROR, "El nombre no puede contener números.");
+                MensajesPrimefaces.  mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "El nombre no puede contener números.");
                 nombre = usuarioAcceso.getNombreUsuario();
             }
         } else {
-              MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "El nombre no puede estar vacío.");
+              MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "El nombre no puede estar vacío.");
             nombre = usuarioAcceso.getNombreUsuario();
         }
 
@@ -338,17 +338,17 @@ public class BeanAdministracionCuenta implements Serializable{
             if (!Validaciones.isNum(apellido)) {
                 boolean actualizado = this.instanciarDAO().actualizarApellidoUsuario(usuarioAcceso.getIdUsuario(), apellido);
                 if (actualizado) {
-                    MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_INFO, "Su apellido ha sido actualizado.");
+                    MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_INFO, "Su apellido ha sido actualizado.");
 
                 } else {
-                     MensajesPrimefaces. mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error al actualizar su apellido.");
+                     MensajesPrimefaces. mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Error al actualizar su apellido.");
                 }
             } else {
-                 MensajesPrimefaces. mostrarMensaje(FacesMessage.SEVERITY_ERROR, "El apellido no puede contener números.");
+                 MensajesPrimefaces. mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "El apellido no puede contener números.");
                 apellido = usuarioAcceso.getApellidoUsuario();
             }
         } else {
-              MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "El apellido no puede estar vacío.");
+              MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "El apellido no puede estar vacío.");
             apellido = usuarioAcceso.getApellidoUsuario();
         }
 
@@ -360,17 +360,17 @@ public class BeanAdministracionCuenta implements Serializable{
             if (Validaciones.isEmail(correoPrincipal)) {
                 boolean actualizado = this.instanciarDAO().actualizarCorreoPrincipalUsuario(usuarioAcceso.getIdUsuario(), correoPrincipal);
                 if (actualizado) {
-                     MensajesPrimefaces. mostrarMensaje(FacesMessage.SEVERITY_INFO, "Su correo principal ha sido actualizado.");
+                     MensajesPrimefaces. mostrarMensajeDialog(FacesMessage.SEVERITY_INFO, "Su correo principal ha sido actualizado.");
 
                 } else {
-                      MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error al actualizar su correo principal.");
+                      MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Error al actualizar su correo principal.");
                 }
             } else {
-                  MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "El correo ingresado no es válido.");
+                  MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "El correo ingresado no es válido.");
                 correoPrincipal = usuarioAcceso.getCorreoPrincipalUsuario();
             }
         } else {
-             MensajesPrimefaces. mostrarMensaje(FacesMessage.SEVERITY_INFO, "El correo no puede estar vacío.");
+             MensajesPrimefaces. mostrarMensajeDialog(FacesMessage.SEVERITY_INFO, "El correo no puede estar vacío.");
             correoPrincipal = usuarioAcceso.getCorreoPrincipalUsuario();
         }
 
@@ -382,13 +382,13 @@ public class BeanAdministracionCuenta implements Serializable{
             if (Validaciones.isEmail(correoAdicional)) {
                 boolean actualizado = this.instanciarDAO().actualizarCorreoAdicionalUsuario(usuarioAcceso.getIdUsuario(), correoAdicional);
                 if (actualizado) {
-                      MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_INFO, "Su correo adicional ha sido actualizado.");
+                      MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_INFO, "Su correo adicional ha sido actualizado.");
 
                 } else {
-                     MensajesPrimefaces. mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error al actualizar su correo adicional.");
+                     MensajesPrimefaces. mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Error al actualizar su correo adicional.");
                 }
             } else {
-                 MensajesPrimefaces. mostrarMensaje(FacesMessage.SEVERITY_ERROR, "El correo ingresado no es válido.");
+                 MensajesPrimefaces. mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "El correo ingresado no es válido.");
                 if (usuarioAcceso.getCorreoAdicionalUsuario() != null) {
                     correoAdicional = usuarioAcceso.getCorreoAdicionalUsuario();
                 } else {
@@ -411,17 +411,17 @@ public class BeanAdministracionCuenta implements Serializable{
             if (Validaciones.isNum(telefonoPrincipal)) {
                 boolean actualizado = this.instanciarDAO().actualizarTelefonoPrincipalUsuario(usuarioAcceso.getIdUsuario(), telefonoPrincipal);
                 if (actualizado) {
-                      MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_INFO, "Su teléfono principal ha sido actualizado.");
+                      MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_INFO, "Su teléfono principal ha sido actualizado.");
 
                 } else {
-                      MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error al actualizar su teléfono principal.");
+                      MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Error al actualizar su teléfono principal.");
                 }
             } else {
-                  MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "El teléfono no puede contener letras.");
+                  MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "El teléfono no puede contener letras.");
                 telefonoPrincipal = usuarioAcceso.getTelefonoPrincipalUsuario();
             }
         } else {
-             MensajesPrimefaces. mostrarMensaje(FacesMessage.SEVERITY_ERROR, "El teléfono no puede estar vacío.");
+             MensajesPrimefaces. mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "El teléfono no puede estar vacío.");
             telefonoPrincipal = usuarioAcceso.getTelefonoPrincipalUsuario();
         }
 
@@ -433,13 +433,13 @@ public class BeanAdministracionCuenta implements Serializable{
             if (Validaciones.isNum(telefonoAdicional)) {
                 boolean actualizado = this.instanciarDAO().actualizarTelefonoAdicionalUsuario(usuarioAcceso.getIdUsuario(), telefonoAdicional);
                 if (actualizado) {
-                      MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_INFO, "Su teléfono adicional ha sido actualizado.");
+                      MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_INFO, "Su teléfono adicional ha sido actualizado.");
 
                 } else {
-                      MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error al actualizar su teléfono adicional.");
+                      MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Error al actualizar su teléfono adicional.");
                 }
             } else {
-                  MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "El teléfono no puede contener letras.");
+                  MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "El teléfono no puede contener letras.");
                 if (usuarioAcceso.getTelefonoAdicionalUsuario() != null) {
                     telefonoAdicional = usuarioAcceso.getTelefonoAdicionalUsuario();
                 } else {
@@ -459,20 +459,20 @@ public class BeanAdministracionCuenta implements Serializable{
         ControlSesion cs = new ControlSesion();
         try {
             if (contraseniaActual == null || contraseniaActual.equals("") || contraseniaNueva == null || contraseniaNueva.equals("") || confirmaNuevaContrasenia == null || confirmaNuevaContrasenia.equals("")) {
-                  MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Son obligatorios todos los campos.");
+                  MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Son obligatorios todos los campos.");
             } else {
 
                 if (!contraseniaGuardada.equals(AES256.toAES256(contraseniaActual))) {
-                      MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "La contraseña actual no es correcta.");
+                      MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "La contraseña actual no es correcta.");
                 } else {
                     if (contraseniaNueva.length() < 8 || confirmaNuevaContrasenia.length() < 8) {
-                          MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "La contraseña debe tener un mínimo de 8 caracteres.");
+                          MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "La contraseña debe tener un mínimo de 8 caracteres.");
                     } else {
                         if (!contraseniaNueva.equals(confirmaNuevaContrasenia)) {
-                              MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Las contraseñas no coinciden.");
+                              MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Las contraseñas no coinciden.");
                         } else {
                             if (AES256.toAES256(contraseniaNueva).equals(contraseniaGuardada)) {
-                                 MensajesPrimefaces. mostrarMensaje(FacesMessage.SEVERITY_ERROR, "No puede ingresar la misma contraseña.");
+                                 MensajesPrimefaces. mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "No puede ingresar la misma contraseña.");
                             } else {
                                 try {
                                     boolean actualizada = false;
@@ -480,9 +480,9 @@ public class BeanAdministracionCuenta implements Serializable{
                                         actualizada = this.instanciarDAO().actualizarClaveUsuarioAcceso(usuarioAcceso.getIdUsuario(), contraseniaNueva);
                                     } 
                                     if (actualizada) {
-                                         MensajesPrimefaces. mostrarMensaje(FacesMessage.SEVERITY_INFO, "Su contraseña se ha actualizado correctamente.");
+                                         MensajesPrimefaces. mostrarMensajeDialog(FacesMessage.SEVERITY_INFO, "Su contraseña se ha actualizado correctamente.");
                                     } else {
-                                         MensajesPrimefaces. mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error al actualizar su contraseña.");
+                                         MensajesPrimefaces. mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Error al actualizar su contraseña.");
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
