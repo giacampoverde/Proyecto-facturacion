@@ -14,6 +14,10 @@ import com.egastos.modelo.ec.UsuarioAcceso;
 import com.egastos.utilidades.ControlSesion;
 import com.egastos.utilidades.MensajesPrimefaces;
 import com.egastos.utilidades.Valores;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
@@ -25,7 +29,10 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
+import org.primefaces.model.DefaultUploadedFile;
+import org.primefaces.model.UploadedFile;
 
 /**
  *
@@ -46,9 +53,49 @@ public class BeanProcesoPagos implements Serializable {
     private String cuenta2;
     private String cuenta3;
     private String cuentaSeleccionada;
+    private UploadedFile file;
 
     public String getNumeroTransferencia() {
         return numeroTransferencia;
+    }
+
+    public void foto() {
+        Logger.getLogger(BeanComprobantesRecibidos.class.getName()).log(Level.INFO, "Imagen Fotos.");
+        if (!file.getFileName().equals("")) {
+            if (file.getFileName().substring((file.getFileName().length() - 3), file.getFileName().length()).equals("png")
+                    || file.getFileName().substring((file.getFileName().length() - 3), file.getFileName().length()).equals("PNG")
+                    || file.getFileName().substring((file.getFileName().length() - 3), file.getFileName().length()).equals("Png")
+                    || file.getFileName().substring((file.getFileName().length() - 3), file.getFileName().length()).equals("jpg")
+                    || file.getFileName().substring((file.getFileName().length() - 3), file.getFileName().length()).equals("JPG")
+                    || file.getFileName().substring((file.getFileName().length() - 3), file.getFileName().length()).equals("Jpg")) {
+                try {
+                    File file2 = new File("C:\\transferencias\\asd.png");
+                    int width = 200;
+                    int height = 200;
+
+                    BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+                    Graphics2D g = image.createGraphics();
+                    ImageIO.write(image, "png", file2);
+                } catch (IOException ex) {
+                    Logger.getLogger(BeanProcesoPagos.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                file = new DefaultUploadedFile();
+                MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Formato de archivo incorrecto");
+            }
+        } else {
+            file = new DefaultUploadedFile();
+            MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "No ha cargador un archivo");
+        }
+    }
+
+    public UploadedFile getFile() {
+        return file;
+    }
+
+    public void setFile(UploadedFile file) {
+        this.file = file;
     }
 
     public void setNumeroTransferencia(String numeroTransferencia) {
@@ -105,11 +152,11 @@ public class BeanProcesoPagos implements Serializable {
 
     public void registrarPago() {
         ControlSesion ms = new ControlSesion();
-            if (!ms.obtenerEstadoSesionUsuario()) {
+        if (!ms.obtenerEstadoSesionUsuario()) {
 
-                BeanDireccionamiento nosesion=new BeanDireccionamiento();
-                nosesion.direccionarLogin();
-            }
+            BeanDireccionamiento nosesion = new BeanDireccionamiento();
+            nosesion.direccionarLogin();
+        }
         try {
             if (planId == null) {
                 
@@ -131,7 +178,7 @@ public class BeanProcesoPagos implements Serializable {
                     }
 //                    }else{
 ////                      if(numeroTransferencia.equals("")){
-////                          MensajesPrimefaces.mostrarMensajeDialog(FacesMessage.SEVERITY_ERROR, "Porfavor ingrese el numero de .");
+////                          MensajesPrimefaces.mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Porfavor ingrese el numero de .");
 ////                          return;
 ////                      }
 //                    }
@@ -141,7 +188,7 @@ public class BeanProcesoPagos implements Serializable {
 
             Calendar cal = Calendar.getInstance();
             cal.setTime(nuevaFecha);
-            cal.add(Calendar.DATE, planSeleccionado.getMeses());
+            cal.add(Calendar.MONTH, planSeleccionado.getMeses());
             nuevaFecha = cal.getTime();
             Pagos pagos = new Pagos();
             pagos.setEstadopago("revision");
@@ -155,7 +202,7 @@ public class BeanProcesoPagos implements Serializable {
             pagos.setPlanespago(planSeleccionado);
             //pagos imagen
 //            if(imagen){
-//                
+//
 //            }
 
             pagos.setImagenTransferencia(cuentaSeleccionada);
@@ -179,9 +226,9 @@ public class BeanProcesoPagos implements Serializable {
 
             usuarios = usuario.obtenerUsuarioAccesoPorId(Integer.parseInt(ms.obtenerIdUsuarioSesionActiva()));
             planesPago = daoPlanes.obtenerPlanesPago();
-            cuentaP = Valores.numeroCuentaEmpresa;
-            cuenta2 = Valores.numeroCuentaEmpresa;
-            cuenta3 = Valores.numeroCuentaEmpresa;
+            cuentaP = Valores.VALOR_NUMERO_CUENTA1;
+            cuenta2 = Valores.VALOR_NUMERO_CUENTA2;
+            cuenta3 = Valores.VALOR_NUMERO_CUENTA3;
         } catch (Exception ex) {
             Logger.getLogger(BeanProcesoPagos.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -214,7 +261,6 @@ public class BeanProcesoPagos implements Serializable {
     public void setNumeroCuentaCliente2(String numeroCuentaCliente2) {
         this.numeroCuentaCliente2 = numeroCuentaCliente2;
     }
-
 
     public String getValorPagado() {
         return valorPagado;

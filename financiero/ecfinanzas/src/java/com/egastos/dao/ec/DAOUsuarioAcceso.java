@@ -38,14 +38,14 @@ public class DAOUsuarioAcceso extends DAO {
         super(dao);
     }
 
-    public List<UsuarioAcceso> obtenerUsuariosPorEmpresa(String _ruc) {
+    /*public List<UsuarioAcceso> obtenerUsuariosPorEmpresa(String _ruc) {
 
         Query q = currentSession.createQuery("select aue.usuarioAcceso from AsignacionUsuarioEmpresa aue where aue.clienteEmpresa.idClienteEmpresa=:_ruc");
 
         q.setParameter("_ruc", _ruc);
         return q.list();
 
-    }
+    }*/
 
     public List<UsuarioAcceso> obtenerUsuario() {
 
@@ -145,7 +145,7 @@ public class DAOUsuarioAcceso extends DAO {
         return actualizado;
 
     }
-      public boolean actualizarEstaMensaje(Integer _idUsuario, String _mensaje) {
+    public boolean actualizarEstaMensaje(Integer _idUsuario, String _mensaje) {
         boolean actualizado = false;
         try {
             UsuarioAcceso ua = (UsuarioAcceso) currentSession.load(UsuarioAcceso.class, _idUsuario);
@@ -158,7 +158,7 @@ public class DAOUsuarioAcceso extends DAO {
         return actualizado;
 
     }
-     public boolean actualizarMensaje(Integer _idUsuario, String mensaje) {
+    public boolean actualizarMensaje(Integer _idUsuario, String mensaje) {
         boolean actualizado = false;
         try {
             UsuarioAcceso ua = (UsuarioAcceso) currentSession.load(UsuarioAcceso.class, _idUsuario);
@@ -171,7 +171,7 @@ public class DAOUsuarioAcceso extends DAO {
         return actualizado;
 
     }
-public boolean actualizarVisitas(Integer _idUsuario, int _visitas) {
+    public boolean actualizarVisitas(Integer _idUsuario, int _visitas) {
         boolean actualizado = false;
         try {
             UsuarioAcceso ua = (UsuarioAcceso) currentSession.load(UsuarioAcceso.class, _idUsuario);
@@ -239,7 +239,7 @@ public boolean actualizarVisitas(Integer _idUsuario, int _visitas) {
         return actualizado;
 
     }
-       public boolean actualizarestado(Integer _idUsuario, String estado) {
+    public boolean actualizarestado(Integer _idUsuario, String estado) {
         boolean actualizado = false;
         try {
             UsuarioAcceso ua = (UsuarioAcceso) currentSession.load(UsuarioAcceso.class, _idUsuario);
@@ -274,15 +274,15 @@ public boolean actualizarVisitas(Integer _idUsuario, int _visitas) {
         return criteria_busqueda.list();
     }
 
-    public List buscarUsuariosInternosVariosParametros(String _estado, String cedula, String nombre, Integer _firstResult, Integer _maxResults) {
-        Criteria criteria_busqueda = this.buscarUsuariosInternosVariosParametros(_estado, cedula, nombre);
+    public List buscarUsuariosInternosVariosParametros(String cedula, String nombre, String inic,String fin, Integer _firstResult, Integer _maxResults) {
+        Criteria criteria_busqueda = this.buscarUsuariosInternosVariosParametros(cedula, nombre, inic,fin);
         criteria_busqueda.setFirstResult(_firstResult);
         criteria_busqueda.setMaxResults(_maxResults);
         return criteria_busqueda.list();
     }
 
-    public Long obtenerTotalUsuariosInternosPorCriteriaComprobantesVariosParametros(String _estado, String cedula, String nombre) {
-        Criteria criteria_query = buscarUsuariosInternosVariosParametros(_estado, cedula, nombre);
+    public Long obtenerTotalUsuariosInternosPorCriteriaComprobantesVariosParametros(String cedula, String nombre, String inic,String fin) {
+        Criteria criteria_query = buscarUsuariosInternosVariosParametros(cedula, nombre, inic,fin);
         Long total = Long.parseLong(criteria_query.setProjection(Projections.rowCount()).uniqueResult().toString());
         return total;
     }
@@ -293,16 +293,24 @@ public boolean actualizarVisitas(Integer _idUsuario, int _visitas) {
         return total;
     }
 
-    private Criteria buscarUsuariosInternosVariosParametros(String _estado, String cedula, String nombre) {
+    private Criteria buscarUsuariosInternosVariosParametros(String cedula, String nombre, String inic,String fin) {
         Criteria criteria_query = currentSession.createCriteria(UsuarioAcceso.class, "UsuarioAcceso");
-        if (!_estado.equals("-1")) {
-            criteria_query.add(Restrictions.eq("UsuarioAcceso.estadoUsuario", _estado));
-        }
-        if (!cedula.equals("")) {
+//        if (!_estado.equals("-1")) {
+//            criteria_query.add(Restrictions.eq("UsuarioAcceso.estadoUsuario", _estado));
+//        }
+        if (cedula!=null&&!cedula.equals("")) {
             criteria_query.add(Restrictions.eq("UsuarioAcceso.identificacionUsuario", cedula));
         }
         if (!nombre.equals("")) {
             criteria_query.add(Restrictions.eq("UsuarioAcceso.nombreUsuario", nombre));
+        }
+        if ((inic != null && !inic.equals("")) && (fin == null || fin.equals(""))) {
+            criteria_query.add(Restrictions.gt("UsuarioAcceso.visitas",Integer.parseInt(inic)));
+        }
+        if (inic != null && !inic.equals("") && fin != null && !fin.equals("")) {
+            criteria_query.add(Restrictions.gt("UsuarioAcceso.visitas",Integer.parseInt(inic)));
+            criteria_query.add(Restrictions.le("UsuarioAcceso.visitas",Integer.parseInt(fin)));
+
         }
         return criteria_query;
     }
@@ -364,14 +372,4 @@ public boolean actualizarVisitas(Integer _idUsuario, int _visitas) {
         }
         return (UsuarioAcceso) currentSession.merge(p);
     }
-
-//    public boolean cambiarEstadoUsuarioAcceso(Integer _idUsuario, String _estadoUsuario) throws Exception {
-//        UsuarioAcceso u = (UsuarioAcceso) currentSession.load(UsuarioAcceso.class, _idUsuario);
-//        if (u == null) {
-//            throw new Exception("No se ha encontrado el registro que se quiere actualizar.");
-//        }
-//        u.setEstadoUsuario(_estadoUsuario);
-//        currentSession.merge(u);
-//        return true;
-//    }
 }

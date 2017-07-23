@@ -236,7 +236,7 @@ public class BeanGestionVisitas implements Serializable {
 
     public final void cargarTablaPagos() {
         ControlSesion ms = new ControlSesion();
-        if (ms.obtenerEstadoSesionUsuario() == true) {
+        if (ms.obtenerEstadoSesionUsuario()) {
             pagosLazy = new LazyDataModel() {
                 @Override
                 public List load(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {

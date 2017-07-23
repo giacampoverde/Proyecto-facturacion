@@ -54,7 +54,7 @@ public class AlmacenamientoComprobanteElectronico {
     private TipoComprobanteElectronico tipo_comprobante_electronico;
 
     public boolean guardarComprobanteElectronicoPendiente(com.egastos.firma.sri.produccion.RespuestaSRI _respuestaSRI, ComprobanteElectronico _comprobante,
-            String _estado, String _mensaje, String _direccionArchivoFirmado) {
+                                                          String _estado, String _mensaje, String _direccionArchivoFirmado) {
 
         boolean guardado_pendiente = false;
         this.llenarValores(_respuestaSRI, _comprobante);
@@ -128,8 +128,8 @@ public class AlmacenamientoComprobanteElectronico {
     }
 
     public boolean guardarComprobanteElectronico(com.egastos.firma.sri.produccion.RespuestaSRI _respuestaSRI,
-            ComprobanteElectronico _comprobanElectronico, String _tipo, String _directorio_factura_hoy_hora_min_segs, String nombre
-    ,String seccion) {
+                                                 ComprobanteElectronico _comprobanElectronico, String _tipo, String _directorio_factura_hoy_hora_min_segs, String nombre
+            ,String seccion) {
 
         boolean guardado_comprobante_electronico_bd = false;
         ArchivoRespuestaSRI archivo_respuesta = new ArchivoRespuestaSRI();
@@ -228,6 +228,91 @@ public class AlmacenamientoComprobanteElectronico {
 
     }
 
+
+    public boolean guardarComprobanteElectronicoRespuestaxml(byte[] respuesta_byte,
+                                                             ComprobanteElectronico _comprobanElectronico, String _tipo, String _directorio_factura_hoy_hora_min_segs, String nombre
+            ,String seccion,String numeautoriza,Date fechaAuto,String estado,byte[] frima) {
+
+        boolean guardado_comprobante_electronico_bd = false;
+
+        this.llenarValoresRespuesta(_comprobanElectronico,numeautoriza,fechaAuto,estado);
+
+
+
+
+        String observacion = "";
+
+
+        DAOComprobanteElectronico dao_comprobante_electronico = null;
+        com.egastos.modelo.ec.ComprobanteElectronico ce_guardado = null;
+
+        try {
+            dao_comprobante_electronico = new DAOComprobanteElectronico();
+            // solo almacena comprobanes autorizados
+
+            ce_guardado = dao_comprobante_electronico.guardarComprobanteElectronico(clave_acceso, establecimiento, punto_emision, secuencial, numero_autorizacion,
+                    nombre_comercial_emisor, razon_social_emisor, ruc_emisor, ambiente, estado, observacion, fecha_emision, fecha_autorizacion, importe_total,
+                    tipo_comprobante_electronico,
+                    respuesta_byte, frima,seccion);
+
+//            ce_guardado = dao_comprobante_electronico.guardarComprobanteElectronico(clave_acceso, establecimiento, punto_emision,secuencial, numero_autorizacion, nombre_comercial_emisor, razon_social_emisor, ruc_emisor, ambiente, estado, observacion, fecha_emision, fecha_autorizacion, importe_total, tipo_comprobante_electronico, respuesta_byte,comprobante_bytes, _formaPago,_numeroDocumento);
+        } catch (Exception ex) {
+            Logger.getLogger(AlmacenamientoComprobanteElectronico.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (ce_guardado != null) {
+
+            /**
+             * Si el comprobante es una factura se guardan los detalles
+             */
+            DAODetalle dao_detalle = null;
+            try {
+                dao_detalle = new DAODetalle();
+            } catch (Exception ex) {
+                Logger.getLogger(AlmacenamientoComprobanteElectronico.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if (_comprobanElectronico.getInformacionTributariaComprobanteElectronico().getCodDoc().equals("01")) {
+                List<Detalle> detalles = _comprobanElectronico.ConstruirFactura().getDetalles();
+                if (detalles != null && !detalles.isEmpty()) {
+                    for (Detalle d : detalles) {
+
+                        try {
+
+                            dao_detalle.guardarDetalle(d.getCodigoPrincipal(), d.getDescripcion(), d.getCantidad(), d.getPrecioUnitario(), ce_guardado);
+                        } catch (Exception ex) {
+                            Logger.getLogger(AlmacenamientoComprobanteElectronico.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                    }
+                }
+            }
+            Receptor r = null;
+            DAOReceptor dao_receptor = null;
+            try {
+                dao_receptor = new DAOReceptor();
+                r = dao_receptor.obtenerReceptorPorIdentificacion(ruc_receptor);
+                if (r == null) {
+
+                    r = dao_receptor.guardarReceptor(ruc_receptor, razon_social_receptor);
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(AlmacenamientoComprobanteElectronico.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            DAOAsignacionComprobanteElectronico dao_asignacion_ce = null;
+            AsignacionComprobanteElectronico asignacion_ce_guardado = null;
+            try {
+                dao_asignacion_ce = new DAOAsignacionComprobanteElectronico();
+                asignacion_ce_guardado = dao_asignacion_ce.guardarAsignacionComprobanteElectronico(ce_guardado, r);
+                guardado_comprobante_electronico_bd = true;
+            } catch (Exception ex) {
+                Logger.getLogger(AlmacenamientoComprobanteElectronico.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+        return guardado_comprobante_electronico_bd;
+
+    }
+
     private void llenarValores(RespuestaSRI _respuesta, ComprobanteElectronico _comprobante) {
         if (_respuesta != null) {
             if (_respuesta.getEstado().equals("1") || _respuesta.getEstado().equals("2")) {
@@ -256,7 +341,7 @@ public class AlmacenamientoComprobanteElectronico {
             ruc_receptor = _comprobante.ConstruirNotaCredito().getInformacionNotaCredito().getIdentificacionComprador();
             razon_social_receptor = _comprobante.ConstruirNotaCredito().getInformacionNotaCredito().getRazonSocialComprador();
             importe_total = _comprobante.ConstruirNotaCredito().getInformacionNotaCredito().getValorModificacion();
-        
+
         } else if (tipo.equals(Valores.COMPROBANTE_RETENCION)) {
             ruc_receptor = _comprobante.ConstruirComprobanteRetencion().getInformacionComprobanteRetencion().getIdentificacionSujetoRetenido();
             razon_social_receptor = _comprobante.ConstruirComprobanteRetencion().getInformacionComprobanteRetencion().getRazonSocialSujetoRetenido();
@@ -271,11 +356,53 @@ public class AlmacenamientoComprobanteElectronico {
             Logger.getLogger(AlmacenamientoComprobanteElectronico.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    private void llenarValoresRespuesta(ComprobanteElectronico _comprobante,String numero,Date fecha,String estados) {
 
+
+        numero_autorizacion = numero;
+        fecha_autorizacion = fecha;
+
+
+        fecha_emision = Utilidades.obtenerFechaEmisionComprobante(_comprobante);
+        ambiente = _comprobante.getInformacionTributariaComprobanteElectronico().getAmbiente();
+        razon_social_emisor = _comprobante.getInformacionTributariaComprobanteElectronico().getRazonSocial();
+        nombre_comercial_emisor = _comprobante.getInformacionTributariaComprobanteElectronico().getNombreComercial();
+        estado = estados;
+        ruc_emisor = _comprobante.getInformacionTributariaComprobanteElectronico().getRuc();
+        clave_acceso = _comprobante.getInformacionTributariaComprobanteElectronico().getClaveAcceso();
+        establecimiento = _comprobante.getInformacionTributariaComprobanteElectronico().getCodigoEstablecimiento();
+        punto_emision = _comprobante.getInformacionTributariaComprobanteElectronico().getPuntoEmision();
+        secuencial = _comprobante.getInformacionTributariaComprobanteElectronico().getSecuencial();
+
+        importe_total = null;
+        String tipo = _comprobante.getInformacionTributariaComprobanteElectronico().getCodDoc();
+        if (tipo.equals(Valores.FACTURA)) {
+            ruc_receptor = _comprobante.ConstruirFactura().getInformacionFactura().getIdentificacionComprador();
+            razon_social_receptor = _comprobante.ConstruirFactura().getInformacionFactura().getRazonSocialComprador();
+            importe_total = _comprobante.ConstruirFactura().getInformacionFactura().getImporteTotal();
+        } else if (tipo.equals(Valores.NOTA_CREDITO)) {
+            ruc_receptor = _comprobante.ConstruirNotaCredito().getInformacionNotaCredito().getIdentificacionComprador();
+            razon_social_receptor = _comprobante.ConstruirNotaCredito().getInformacionNotaCredito().getRazonSocialComprador();
+            importe_total = _comprobante.ConstruirNotaCredito().getInformacionNotaCredito().getValorModificacion();
+
+        } else if (tipo.equals(Valores.COMPROBANTE_RETENCION)) {
+            ruc_receptor = _comprobante.ConstruirComprobanteRetencion().getInformacionComprobanteRetencion().getIdentificacionSujetoRetenido();
+            razon_social_receptor = _comprobante.ConstruirComprobanteRetencion().getInformacionComprobanteRetencion().getRazonSocialSujetoRetenido();
+
+        }
+
+        DAOTipoComprobanteElectronico dao_tipo_comprobante_electronico = null;
+        try {
+            dao_tipo_comprobante_electronico = new DAOTipoComprobanteElectronico();
+            tipo_comprobante_electronico = dao_tipo_comprobante_electronico.obtenerTipoComprobanteElectronicoPorCodigo(tipo);
+        } catch (Exception ex) {
+            Logger.getLogger(AlmacenamientoComprobanteElectronico.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     public boolean guardarPorClaveDeAcceso(String _claveAcceso,String seccion) {
         boolean guardado = false;
         RespuestaSRI respuesta = null;
-       
+
         com.egastos.firma.sri.pruebas.FacturacionElectronica facturacion_pruebas = new com.egastos.firma.sri.pruebas.FacturacionElectronica();
         ConsultaComprobantePro consulta_pro = new ConsultaComprobantePro();
         if (_claveAcceso != null) {
@@ -294,15 +421,15 @@ public class AlmacenamientoComprobanteElectronico {
                         Logger.getLogger(AlmacenamientoComprobanteElectronico.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     if (ce == null) {
-                    
+
                         ComprobanteElectronico c = TransformadorArchivos.byteCompr(respuesta.getComprobante().getBytes("UTF-8"), Valores.VALOR_DIRECTORIO_CREACION_XMLS + RandomStringUtils.randomAlphanumeric(10).concat(".xml"));
-                      
+
                         guardado = guardarComprobanteElectronico(respuesta, c, c.getInformacionTributariaComprobanteElectronico().getCodDoc(), Valores.VALOR_DIRECTORIO_CREACION_XMLS, "",seccion);
 
                     }
                 }else{
                     if(respuesta.getEstado().equals("5")){
-                       
+
                     }
                 }
             } catch (Exception ex) {

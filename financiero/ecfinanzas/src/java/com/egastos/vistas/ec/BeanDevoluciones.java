@@ -51,7 +51,7 @@ public class BeanDevoluciones {
     private Date fechaFinal;
     private Date fechaSeleccionadaInicio;
     private Date fechaActual;
-     private boolean apareceRago = false;
+    private boolean apareceRago = false;
 
     public Date getFechaSeleccionadaInicio() {
         return fechaSeleccionadaInicio;
@@ -76,8 +76,8 @@ public class BeanDevoluciones {
     public void setApareceRago(boolean apareceRago) {
         this.apareceRago = apareceRago;
     }
-     
-      public void abrirDialogRangoFechas() {
+
+    public void abrirDialogRangoFechas() {
         if (seleccionPeriodoTiempo != null) {
             if (seleccionPeriodoTiempo.equals("6")) {
                 fechaInicial = new Date();
@@ -91,14 +91,14 @@ public class BeanDevoluciones {
             }
         }
     }
-        public String fechaFormateada(Date _fecha) {
+    public String fechaFormateada(Date _fecha) {
         if (_fecha == null) {
             _fecha = new Date();
         }
         return Utilidades.obtenerFechaFormatoddMMyyyy(_fecha);
     }
     public void generarExcel() {
-      ControlSesion ms = new ControlSesion();
+        ControlSesion ms = new ControlSesion();
         try {
             List<cmp> comprobantes = new ArrayList<cmp>();
 //            DAOAsignacionComprobanteElectronico dao=new DAOAsignacionComprobanteElectronico();
@@ -119,7 +119,7 @@ public class BeanDevoluciones {
             FileInputStream file = new FileInputStream(new File( Valores.VALOR_RUTAEXCEL));
 
             // Crear el objeto que tendra el libro de Excel
-           HSSFWorkbook workbook = new HSSFWorkbook(file);
+            HSSFWorkbook workbook = new HSSFWorkbook(file);
 
             /*
             20
@@ -303,7 +303,7 @@ public class BeanDevoluciones {
             }
             FacesContext faces = FacesContext.getCurrentInstance();
             HttpServletResponse response = bajarArchivoRespuesta(faces,data, "devoluciones.xls");
-            
+
             faces.responseComplete();
         } catch (IOException ex) {
             Logger.getLogger(BeanDevoluciones.class.getName()).log(Level.SEVERE, null, ex);
